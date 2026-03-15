@@ -1,7 +1,6 @@
 import Link from "next/link";
 import AuthLogo from "../_components/auth-logo";
 import AuthProvide from "../_components/auth-provide";
-import LoginForm from "./_components/login-from";
 import RegisterForm from "./_components/register-form";
 
 const RegisterPage = () => {
