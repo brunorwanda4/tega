@@ -73,7 +73,11 @@ export function DashboardSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter className="bg-base-100">
-        <Button variant={"ghost"} className=" justify-start cursor-pointer">
+        <Button
+          onClick={() => router.push("/auth/login")}
+          variant={"ghost"}
+          className=" justify-start cursor-pointer"
+        >
           <SlLogout />
           <span className={cn(!open && "sr-only")}>Logout</span>
         </Button>

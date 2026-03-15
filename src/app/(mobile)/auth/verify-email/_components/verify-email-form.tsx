@@ -1,26 +1,25 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils";
-import { OTPInput, REGEXP_ONLY_DIGITS, SlotProps } from "input-otp"
-import { useEffect, useState } from "react";
-import { RegisterType } from "../../register/_schema/register-schema";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { OTPInput, REGEXP_ONLY_DIGITS, type SlotProps } from "input-otp";
 import { useRouter } from "next/navigation";
-
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import type { RegisterType } from "../../register/_schema/register-schema";
 
 const VerifyEmailForm = () => {
   const [email, setEmail] = useState<string | null>(null);
 
   const router = useRouter();
-   useEffect(() => {
-     const storedData = localStorage.getItem("tega_register_data");
+  useEffect(() => {
+    const storedData = localStorage.getItem("tega_register_data");
 
-     if (storedData) {
-       const parsedData = JSON.parse(storedData) as RegisterType;
-       setEmail(parsedData.email);
-     }
-   }, []);
+    if (storedData) {
+      const parsedData = JSON.parse(storedData) as RegisterType;
+      setEmail(parsedData.email);
+    }
+  }, []);
 
   const [code, setCode] = useState<string>("");
 
@@ -51,7 +50,9 @@ const VerifyEmailForm = () => {
         />
       </div>
       <div className=" flex flex-col items-center">
-        <span className="text-sm text-muted-foreground">Didn't receive a code?</span>
+        <span className="text-sm text-muted-foreground">
+          Didn't receive a code?
+        </span>
         <button className="btn btn-link">Resend code</button>
       </div>
     </div>
