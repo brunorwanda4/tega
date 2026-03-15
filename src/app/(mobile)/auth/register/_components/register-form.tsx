@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { type RegisterType, registerSchema } from "../_schema/register-schema";
+import AuthLoadingIcon from "../../_components/auth-loading-icon";
+import { cn } from "@/lib/utils";
 
 const RegisterForm = () => {
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +41,7 @@ const RegisterForm = () => {
     setError(null);
     setSuccess(null);
 
-    
+
     startTransition(() => {
       try {
         localStorage.setItem("tega_register_data", JSON.stringify(data));
@@ -173,10 +175,11 @@ const RegisterForm = () => {
       <Button
         type="submit"
         disabled={form.formState.isSubmitting || isPending}
-        className=" mt-6 w-full "
+        className=" mt-6 w-full cursor-pointer"
       >
-        Sign up
+       {form.formState.isSubmitting   || !isPending  ?  <span>Sign up</span> : <AuthLoadingIcon />}
       </Button>
+
     </form>
   );
 };

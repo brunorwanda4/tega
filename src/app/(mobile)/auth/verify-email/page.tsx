@@ -1,16 +1,18 @@
-import AuthLogo from "../_components/auth-logo";
+import GoBackButton from "@/components/common/go-back-button";
+import VerifyEmailForm from "./_components/verify-email-form";
 
 const VerifyEmail = () => {
   return (
     <div>
-      <AuthLogo />
+      <GoBackButton />
       <div className=" text-center gap-4 flex flex-col">
-        <h3 className=" font-semibold text-3xl ">Create Account</h3>
+        <h3 className=" font-semibold text-3xl ">Verify Code</h3>
         <p className=" text-neutral text-sm">
-          Fill your information below or register <br /> with your social
-          accounts
+          Please enter the code we just sent to <br />
+           email
         </p>
       </div>
+<VerifyEmailForm />
     </div>
   );
 };
