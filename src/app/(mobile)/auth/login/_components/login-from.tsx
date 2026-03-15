@@ -34,7 +34,7 @@ const LoginForm = () => {
   return (
     <form
       id="login-form"
-      className="w-full mt-8"
+      className="w-full "
       onSubmit={form.handleSubmit(onSubmit)}
     >
       <FieldGroup>
@@ -53,7 +53,6 @@ const LoginForm = () => {
                   id="login-form-email"
                   aria-invalid={fieldState.invalid}
                   placeholder="Enter your email"
-                  autoComplete="off"
                 />
               </div>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -71,6 +70,7 @@ const LoginForm = () => {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className=" absolute right-3 top-3"
+                  name="email"
                 >
                   {showPassword ? (
                     <IoEyeOutline size={20} className=" text-neutral" />
@@ -81,10 +81,10 @@ const LoginForm = () => {
                 <Input
                   {...field}
                   id="login-form-password"
+                  name="password"
                   aria-invalid={fieldState.invalid}
                   placeholder="Enter your password"
                   type={showPassword ? "text" : "password"}
-                  autoComplete="off"
                 />
               </div>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -97,7 +97,7 @@ const LoginForm = () => {
         disabled={form.formState.isSubmitting}
         className=" mt-6 w-full "
       >
-        Login
+        Sign in
       </Button>
     </form>
   );
