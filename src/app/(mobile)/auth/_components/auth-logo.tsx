@@ -8,7 +8,13 @@ interface AuthLogoProps {
 const AuthLogo = ({ className }: AuthLogoProps) => {
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      <Image src="/light-logo.svg" alt="Tega Logo" width={30} height={30} />
+      <Image
+        priority
+        src="/light-logo.svg"
+        alt="Tega Logo"
+        width={30}
+        height={30}
+      />
       <h1 className=" font-cal-sans text-3xl">Tega</h1>
     </div>
   );

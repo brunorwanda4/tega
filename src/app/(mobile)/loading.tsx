@@ -11,7 +11,7 @@ const MobileLoadingPage = () => {
           width={40}
           height={40}
         />
-        <h1 className=" font-cal-sans text-4xl">Tega</h1>
+        <h1 className=" font-cal-sans text-4xl text-primary-content">Tega</h1>
       </div>
     </section>
   );
