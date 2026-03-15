@@ -1,8 +1,8 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter,  } from "next/navigation";
-import { useState , useTransition} from "react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { AiOutlineMail, AiOutlineUser } from "react-icons/ai";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
@@ -15,9 +15,9 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { type RegisterType, registerSchema } from "../_schema/register-schema";
-import AuthLoadingIcon from "../../_components/auth-loading-icon";
 import { cn } from "@/lib/utils";
+import AuthLoadingIcon from "../../_components/auth-loading-icon";
+import { type RegisterType, registerSchema } from "../_schema/register-schema";
 
 const RegisterForm = () => {
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +40,6 @@ const RegisterForm = () => {
   const onSubmit = (data: RegisterType) => {
     setError(null);
     setSuccess(null);
-
 
     startTransition(() => {
       try {
@@ -176,10 +175,14 @@ const RegisterForm = () => {
         type="submit"
         disabled={form.formState.isSubmitting || isPending}
         className=" mt-6 w-full cursor-pointer"
+        size={"lg"}
       >
-       {form.formState.isSubmitting   || !isPending  ?  <span>Sign up</span> : <AuthLoadingIcon />}
+        {form.formState.isSubmitting || !isPending ? (
+          <span>Sign up</span>
+        ) : (
+          <AuthLoadingIcon />
+        )}
       </Button>
-
     </form>
   );
 };
