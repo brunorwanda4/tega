@@ -1,8 +1,8 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useRouter, useTransition } from "next/navigation";
-import { useState } from "react";
+import { useRouter,  } from "next/navigation";
+import { useState , useTransition} from "react";
 import { Controller, useForm } from "react-hook-form";
 import { AiOutlineMail, AiOutlineUser } from "react-icons/ai";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
@@ -38,7 +38,14 @@ const RegisterForm = () => {
   const onSubmit = (data: RegisterType) => {
     setError(null);
     setSuccess(null);
+
+    
     startTransition(() => {
+      try {
+        localStorage.setItem("tega_register_data", JSON.stringify(data));
+      } catch (err) {
+        console.warn("Unable to save registration data to localStorage", err);
+      }
       router.push("/auth/verify-email");
     });
   };
