@@ -3,9 +3,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { AiOutlineMail } from "react-icons/ai";
+import { AiOutlineMail, AiOutlineUser } from "react-icons/ai";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Field,
   FieldError,
@@ -13,21 +14,24 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { type LoginType, loginSchema } from "../_schema/login-schema";
+import { type RegisterType, registerSchema } from "../_schema/register-schema";
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const form = useForm<LoginType>({
-    resolver: zodResolver(loginSchema),
+
+  const form = useForm<RegisterType>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
       password: "",
+      name: "",
+      terms: false,
     },
   });
 
-  const onSubmit = (data: LoginType) => {
+  const onSubmit = (data: RegisterType) => {
     setError(null);
     setSuccess(null);
   };
@@ -39,6 +43,27 @@ const LoginForm = () => {
       onSubmit={form.handleSubmit(onSubmit)}
     >
       <FieldGroup>
+        <Controller
+          name="name"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid} className=" w-full">
+              <FieldLabel htmlFor="login-form-name">Name</FieldLabel>
+              <div className="relative">
+                <div className=" absolute right-3 top-3">
+                  <AiOutlineUser size={20} className=" text-neutral" />
+                </div>
+                <Input
+                  {...field}
+                  id="login-form-name"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Enter your name"
+                />
+              </div>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
         <Controller
           name="email"
           control={form.control}
@@ -92,22 +117,49 @@ const LoginForm = () => {
             </Field>
           )}
         />
-
-        <div className=" flex justify-end">
-          <Link href="/auth/forgot-password" className=" link">
-            Forgot password?
-          </Link>
-        </div>
       </FieldGroup>
+      <Controller
+        name="terms"
+        control={form.control}
+        render={({ field, fieldState }) => (
+          <Field data-invalid={fieldState.invalid} className="  ">
+            <div className="flex flex-row items-center gap-2 mt-6">
+              <Checkbox
+                id="register-form-terms"
+                name={field.name}
+                checked={field.value}
+                onCheckedChange={field.onChange}
+                aria-invalid={fieldState.invalid}
+                className=" size-4 max-w-4 "
+              />
+              <FieldLabel
+                htmlFor="register-form-terms"
+                className="mb-0 cursor-pointer"
+              >
+                I agree with{" "}
+                <Link
+                  href="/terms"
+                  target="_blank"
+                  className="link link-primary"
+                >
+                  Terms & Conditions
+                </Link>
+              </FieldLabel>
+            </div>
+            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+          </Field>
+        )}
+      />
+
       <Button
         type="submit"
         disabled={form.formState.isSubmitting}
         className=" mt-6 w-full "
       >
-        Sign in
+        Sign up
       </Button>
     </form>
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
