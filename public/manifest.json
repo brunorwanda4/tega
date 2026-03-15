@@ -2,10 +2,10 @@
   "name": "Tega",
   "short_name": "Tega",
   "description": "Smart bus transport app in Rwanda",
-  "start_url": "/",
+  "start_url": "/auth/login",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0f172a",
+  "background_color": "#fefefe",
+  "theme_color": "#181818",
   "orientation": "portrait",
   "icons": [
     {

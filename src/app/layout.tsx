@@ -83,6 +83,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={cn("font-sans", inter.variable)}>
+      <head>
+        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="Tega" />
+      </head>
       <body
         className={`${fontBiryani.variable} ${fontInter.variable} ${fontCalSans.variable} antialiased`}
       >
