@@ -72,6 +72,7 @@ const pwaConfig = {
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  turbopack: {}, // Silence Turbopack warning for webpack-based PWA plugin
 };
 
 export default withPWA(pwaConfig)(nextConfig);
