@@ -18,6 +18,8 @@ import { type LoginType, loginSchema } from "../_schema/login-schema";
 const LoginForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const form = useForm<LoginType>({
     resolver: zodResolver(loginSchema),
@@ -30,6 +32,7 @@ const LoginForm = () => {
   const onSubmit = (data: LoginType) => {
     setError(null);
     setSuccess(null);
+    startTransition(() => {});
   };
 
   return (
@@ -54,6 +57,7 @@ const LoginForm = () => {
                   id="login-form-email"
                   aria-invalid={fieldState.invalid}
                   placeholder="Enter your email"
+                  disabled={isPending}
                 />
               </div>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -72,6 +76,7 @@ const LoginForm = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className=" absolute right-3 top-3"
                   name="email"
+                  disabled={isPending}
                 >
                   {showPassword ? (
                     <IoEyeOutline size={20} className=" text-neutral" />
@@ -86,6 +91,7 @@ const LoginForm = () => {
                   aria-invalid={fieldState.invalid}
                   placeholder="Enter your password"
                   type={showPassword ? "text" : "password"}
+                  disabled={isPending}
                 />
               </div>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -101,7 +107,7 @@ const LoginForm = () => {
       </FieldGroup>
       <Button
         type="submit"
-        disabled={form.formState.isSubmitting}
+        disabled={form.formState.isSubmitting || isPending}
         className=" mt-6 w-full "
       >
         Sign in

@@ -1,6 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
+import { useRouter, useTransition } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { AiOutlineMail, AiOutlineUser } from "react-icons/ai";
@@ -19,7 +20,10 @@ import { type RegisterType, registerSchema } from "../_schema/register-schema";
 const RegisterForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const router = useRouter();
 
   const form = useForm<RegisterType>({
     resolver: zodResolver(registerSchema),
@@ -34,6 +38,9 @@ const RegisterForm = () => {
   const onSubmit = (data: RegisterType) => {
     setError(null);
     setSuccess(null);
+    startTransition(() => {
+      router.push("/auth/verify-email");
+    });
   };
 
   return (
@@ -58,6 +65,7 @@ const RegisterForm = () => {
                   id="login-form-name"
                   aria-invalid={fieldState.invalid}
                   placeholder="Enter your name"
+                  disabled={isPending}
                 />
               </div>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -79,6 +87,7 @@ const RegisterForm = () => {
                   id="login-form-email"
                   aria-invalid={fieldState.invalid}
                   placeholder="Enter your email"
+                  disabled={isPending}
                 />
               </div>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -96,7 +105,8 @@ const RegisterForm = () => {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className=" absolute right-3 top-3"
-                  name="email"
+                  name="password"
+                  disabled={isPending}
                 >
                   {showPassword ? (
                     <IoEyeOutline size={20} className=" text-neutral" />
@@ -111,6 +121,7 @@ const RegisterForm = () => {
                   aria-invalid={fieldState.invalid}
                   placeholder="Enter your password"
                   type={showPassword ? "text" : "password"}
+                  disabled={isPending}
                 />
               </div>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -131,6 +142,7 @@ const RegisterForm = () => {
                 onCheckedChange={field.onChange}
                 aria-invalid={fieldState.invalid}
                 className=" size-4 max-w-4 "
+                disabled={isPending}
               />
               <FieldLabel
                 htmlFor="register-form-terms"
@@ -153,7 +165,7 @@ const RegisterForm = () => {
 
       <Button
         type="submit"
-        disabled={form.formState.isSubmitting}
+        disabled={form.formState.isSubmitting || isPending}
         className=" mt-6 w-full "
       >
         Sign up
