@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 
 const VerifyEmailForm = () => {
   const [email, setEmail] = useState<string | null>(null);
+
   const router = useRouter();
    useEffect(() => {
      const storedData = localStorage.getItem("tega_register_data");
