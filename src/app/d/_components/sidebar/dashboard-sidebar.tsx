@@ -30,9 +30,9 @@ export function DashboardSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className={cn(" bg-white px-4", { "px-0": !open })}
+      className={cn(" bg-base-100 px-4", { "px-0": !open })}
     >
-      <SidebarHeader className=" bg-white flex flex-row justify-between items-center">
+      <SidebarHeader className=" bg-base-100 flex flex-row justify-between items-center">
         {open && (
           <Link href="/d" className=" flex gap-2 items-center">
             <Image src={"/light-logo.svg"} alt="Logo" height={36} width={36} />
@@ -41,7 +41,7 @@ export function DashboardSidebar() {
         )}
         <SidebarTrigger className=" cursor-pointer" />
       </SidebarHeader>
-      <SidebarContent className="bg-white pt-6">
+      <SidebarContent className="bg-base-100 pt-6">
         {dashboardSidebarContentGroups.map((group) => (
           <SidebarGroup key={group.index ?? group.label}>
             <SidebarGroupContent>
@@ -58,7 +58,7 @@ export function DashboardSidebar() {
                         className:
                           !open &&
                           pathname === item.url &&
-                          "text-primary bg-white",
+                          "text-primary bg-base-100",
                       }),
                       " justify-start rounded-md cursor-pointer",
                     )}
@@ -72,10 +72,10 @@ export function DashboardSidebar() {
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter className="bg-white">
+      <SidebarFooter className="bg-base-100">
         <Button variant={"ghost"} className=" justify-start cursor-pointer">
           <SlLogout />
-          {open && <span>Logout</span>}
+          <span className={cn(!open && "sr-only")}>Logout</span>
         </Button>
       </SidebarFooter>
     </Sidebar>
