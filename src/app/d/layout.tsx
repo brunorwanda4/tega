@@ -8,7 +8,7 @@ const ComponentName = (props: LayoutProps<"/d">) => {
       <DashboardSidebar />
       <main className="bg-base-200 w-full relative">
         <DashboardNavbar />
-        {props.children}
+        <div className="pt-20 px-8">{props.children}</div>
       </main>
     </SidebarProvider>
   );
