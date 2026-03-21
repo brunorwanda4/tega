@@ -23,7 +23,7 @@ const DashboardNavbar = () => {
   return (
     <header
       className={cn(
-        " bg-base-100 fixed w-full h-16 pl-8 items-center pr-74 flex justify-between py-4",
+        " bg-base-100 fixed w-full h-16 pl-8 items-center pr-74 flex justify-between py-4 z-50",
         !open && "pr-16",
       )}
     >

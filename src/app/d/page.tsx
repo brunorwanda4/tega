@@ -94,30 +94,41 @@ export default function TegaDashboard() {
       <section>
         <h2 className="text-xl font-bold mb-4">Quick stats</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {stats.map((stat, idx) => (
-            <Card
-              key={idx}
-              className="border-none bg-base-100 shadow-sm rounded-xl"
-            >
-              <CardContent className="p-5 space-y-2">
-                <p className="text-sm text-base-content/70 font-medium">
-                  {stat.title}
-                </p>
-                <p className="text-3xl font-bold">{stat.value}</p>
-                {stat.subValue && (
-                  <p className="text-[10px] text-base-content/50">
-                    {stat.subValue}
+          {stats.map((stat, idx) => {
+            const hasSlash = stat.value.includes("/");
+            const [mainValue, denominator] = stat.value.split("/");
+            return (
+              <Card
+                key={idx}
+                className="border-none bg-base-100 shadow-sm rounded-xl py-0"
+              >
+                <CardContent className="p-5 space-y-2">
+                  <p className="text-sm text-base-content/70 font-medium">
+                    {stat.title}
                   </p>
-                )}
-                {stat.trend && (
-                  <div className="flex items-center gap-1 text-[10px] text-success bg-success/10 w-fit px-2 py-0.5 rounded-full">
-                    <IoTrendingUpOutline />
-                    <span>{stat.trend}</span>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+                  <p className="text-3xl font-bold">
+                    {mainValue}
+                    {hasSlash && (
+                      <span className="text-base-content/50 ">
+                        /{denominator}
+                      </span>
+                    )}
+                  </p>
+                  {stat.subValue && (
+                    <p className="text-[10px] text-base-content/50">
+                      {stat.subValue}
+                    </p>
+                  )}
+                  {stat.trend && (
+                    <div className="flex items-center gap-1 text-[10px] text-success bg-success/10 w-fit px-2 py-0.5 rounded-full">
+                      <IoTrendingUpOutline />
+                      <span>{stat.trend}</span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </section>
 
@@ -144,12 +155,12 @@ export default function TegaDashboard() {
 
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-neutral text-neutral-content hover:bg-neutral/90 h-12 px-6 rounded-lg gap-2">
+              <Button className=" rounded-md">
                 <IoAdd className="text-xl" />
                 Add booking
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] bg-base-100 p-8 rounded-3xl">
+            <DialogContent className="sm:max-w-[500px] bg-base-100 max-h-[90vh] overflow-y-scroll ">
               <DialogHeader>
                 <DialogTitle className="text-center text-xl font-bold">
                   Book a ticket
@@ -208,12 +219,12 @@ export default function TegaDashboard() {
                 <Button
                   variant="outline"
                   onClick={() => setIsOpen(false)}
-                  className="w-full border-2 border-neutral h-12 font-bold rounded-xl"
+                  className=" rounded-md"
                 >
                   Cancel
                 </Button>
                 <Button
-                  className="w-full bg-neutral text-neutral-content h-12 font-bold rounded-xl"
+                  className="w-full rounded-md"
                   onClick={() => setIsOpen(false)}
                 >
                   Done
@@ -225,56 +236,40 @@ export default function TegaDashboard() {
 
         {/* Shadcn Table */}
         <div className="rounded-xl overflow-hidden shadow-sm">
-          <Table className="bg-base-100">
-            <TableHeader className="bg-neutral">
-              <TableRow className="hover:bg-transparent border-none">
-                <TableHead className="text-neutral-content font-medium h-14">
-                  Available bus
-                </TableHead>
-                <TableHead className="text-neutral-content font-medium">
-                  Available tickets
-                </TableHead>
-                <TableHead className="text-neutral-content font-medium">
-                  Departure time
-                </TableHead>
-                <TableHead className="text-neutral-content font-medium">
-                  Bus plate
-                </TableHead>
-                <TableHead className="text-neutral-content font-medium">
-                  Amount
-                </TableHead>
-                <TableHead className="text-neutral-content font-medium text-right pr-10">
-                  Details
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <table className="table bg-base-100 table-zebra">
+            {/* head */}
+            <thead className="bg-primary text-primary-content">
+              <tr>
+                <th className="font-medium">Available bus</th>
+                <th className="font-medium">Available tickets</th>
+                <th className="font-medium">Departure time</th>
+                <th className="font-medium">Bus plate</th>
+                <th className="font-medium">Amount</th>
+                <th className="text-right pr-10 font-medium">Details</th>
+              </tr>
+            </thead>
+            <tbody>
               {bookings.map((booking, idx) => (
-                <TableRow
-                  key={idx}
-                  className="border-base-200 hover:bg-base-200/50"
-                >
-                  <TableCell className="font-medium h-14">
-                    {booking.route}
-                  </TableCell>
-                  <TableCell className="text-success font-medium">
+                <tr key={idx} className="hover:bg-base-200/50 border-base-200">
+                  <td className="font-medium">{booking.route}</td>
+                  <td className="text-success font-medium">
                     {booking.tickets}
-                  </TableCell>
-                  <TableCell>{booking.time}</TableCell>
-                  <TableCell>{booking.plate}</TableCell>
-                  <TableCell className="font-bold">{booking.amount}</TableCell>
-                  <TableCell className="text-right pr-6">
+                  </td>
+                  <td>{booking.time}</td>
+                  <td>{booking.plate}</td>
+                  <td className="font-bold">{booking.amount}</td>
+                  <th className="text-right pr-6">
                     <Button
                       variant="outline"
                       className="rounded-full border-neutral px-6 h-8 text-xs font-bold hover:bg-neutral hover:text-neutral-content"
                     >
                       Book
                     </Button>
-                  </TableCell>
-                </TableRow>
+                  </th>
+                </tr>
               ))}
-            </TableBody>
-          </Table>
+            </tbody>
+          </table>
         </div>
 
         {/* Pagination */}
@@ -294,7 +289,7 @@ export default function TegaDashboard() {
               <Button
                 key={page}
                 variant={page === 1 ? "default" : "outline"}
-                className={`h-8 w-8 rounded-full p-0 ${page === 1 ? "bg-neutral text-neutral-content" : ""}`}
+                className={`h-8 w-8 rounded-full p-0 ${page === 1 ? "" : ""}`}
               >
                 {page}
               </Button>
@@ -302,7 +297,7 @@ export default function TegaDashboard() {
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full h-8 w-8 bg-neutral text-neutral-content"
+              className="rounded-full h-8 w-8 "
             >
               <IoChevronForward />
             </Button>

@@ -1,7 +1,9 @@
 import type { IconType } from "react-icons";
 import { CiGrid42 } from "react-icons/ci";
+import { FaBus } from "react-icons/fa";
 import { FaRegComment } from "react-icons/fa6";
 import { HiOutlineCurrencyDollar } from "react-icons/hi2";
+import { ImLocation } from "react-icons/im";
 import { MdPerson4 } from "react-icons/md";
 import { RiCompassDiscoverLine } from "react-icons/ri";
 import { RxPeople } from "react-icons/rx";
@@ -37,6 +39,16 @@ export const dashboardSidebarContentGroups: sidebarGroupsProps[] = [
         title: "Client Tracking",
         icon: RiCompassDiscoverLine,
         url: "/d/client-tracking",
+      },
+      {
+        title: "Bus Tracking",
+        icon: ImLocation,
+        url: "/d/bus-tracking",
+      },
+      {
+        title: "Vehicles",
+        icon: FaBus,
+        url: "/d/vehicles",
       },
       {
         title: "Drivers",
