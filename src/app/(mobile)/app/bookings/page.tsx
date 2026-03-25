@@ -6,11 +6,9 @@ import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useScrollDirection } from "@/hooks/use-scroll";
 import { cn } from "@/lib/utils";
 
 const BookingsPage: NextPage = () => {
-  const isVisible = useScrollDirection(4);
   return (
     <>
       <Head>

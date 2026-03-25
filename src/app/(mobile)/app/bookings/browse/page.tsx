@@ -4,6 +4,7 @@ import { ArrowLeft, Circle, MapPin, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import AppGoBackButton from "../../_components/common/go-back-button";
 
 const locations = [
   { id: 1, name: "Muhanga bus park", road: "Kigali Road" },
@@ -18,30 +19,24 @@ export default function PickupLocation() {
   const handleSelect = (name: string) => {
     // Navigate to available buses and pass the location as a query param
     router.push(
-      `/booking/available-buses?location=${encodeURIComponent(name)}`,
+      `/app/bookings/available-buses?location=${encodeURIComponent(name)}`,
     );
   };
 
   return (
     <div className="flex flex-col space-y-4">
-      {/* Header */}
       <div className="px-6 flex items-center gap-4">
-        <Button variant="outline" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="w-6 h-6 text-black" />
-        </Button>
+        <AppGoBackButton />
         <h1 className="text-[20px] font-semibold">Pickup location</h1>
       </div>
 
-      {/* Search Input Area */}
       <div className="px-6 mb-8 flex items-center gap-3">
-        {/* The square icon from design */}
         <div className="relative w-full">
           <Input placeholder="e.g, Muhanga bus park" className="pl-4 pr-10 " />
           <X className="absolute right-3 top-3.5 w-5 h-5 text-[#9CA3AF]" />
         </div>
       </div>
 
-      {/* Location List */}
       <div className="flex-1 overflow-y-auto px-6">
         {locations.map((loc) => (
           <div
