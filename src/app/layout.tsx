@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { fontBiryani, fontCalSans, fontInter } from "@/lib/fonts/fonts";
-import { Inter } from "next/font/google";
-import { cn } from "@/lib/utils";
+import {
+  fontBricolage,
+  fontGeistMono,
+  fontGeistSans,
+  fontInter,
+} from "@/lib/fonts/fonts";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: {
@@ -82,7 +85,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("font-sans", inter.variable)}>
+    <html data-theme="white" lang="en" className={cn("", fontInter.variable)}>
       <head>
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -90,7 +93,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Tega" />
       </head>
       <body
-        className={`${fontBiryani.variable} ${fontInter.variable} ${fontCalSans.variable} antialiased`}
+        className={`${fontGeistSans.variable} ${fontGeistMono.variable} ${fontBricolage.variable} ${fontInter.variable} antialiased`}
       >
         {children}
       </body>

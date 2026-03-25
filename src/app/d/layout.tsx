@@ -7,9 +7,9 @@ const ComponentName = (props: LayoutProps<"/d">) => {
   return (
     <SidebarProvider>
       <DashboardSidebar />
-      <main className="bg-base-200 w-full relative">
+      <main className="bg-base-200 w-full relative font-inter">
         <DashboardNavbar />
-        <div className="pt-20 px-8">
+        <div className="pt-20 px-8 font-inter ">
           <TooltipProvider>{props.children}</TooltipProvider>
         </div>
       </main>

@@ -11,7 +11,7 @@ import {
   FiPlus,
   FiSearch,
 } from "react-icons/fi";
-import { RiMicrosoftExcelFill } from "react-icons/ri";
+import { PiMicrosoftExcelLogo } from "react-icons/pi";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -124,7 +124,7 @@ const ClientsPage = () => {
               className="bg-base-100 border-base-300"
             >
               <DropdownMenuItem className="flex gap-2 cursor-pointer">
-                <RiMicrosoftExcelFill className="text-success" /> Microsoft
+                <PiMicrosoftExcelLogo className="text-success" /> Microsoft
                 Excel
               </DropdownMenuItem>
               <DropdownMenuItem className="flex gap-2 cursor-pointer">
