@@ -20,9 +20,6 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-// Replace with your actual Mapbox access token
-const MAPBOX_TOKEN = "YOUR_MAPBOX_TOKEN_HERE";
-
 // Types for our data
 type TripRoute = {
   pickupName: string;
@@ -274,6 +271,7 @@ const MapComponent = ({ tripRoute }: { tripRoute: TripRoute }) => {
       features: [
         {
           type: "Feature",
+          properties: {},
           geometry: {
             type: "LineString",
             coordinates: tripRoute.fullRouteCoords,
@@ -293,8 +291,7 @@ const MapComponent = ({ tripRoute }: { tripRoute: TripRoute }) => {
           latitude: -1.9441,
           zoom: 12,
         }}
-        mapStyle="mapbox://styles/mapbox/light-v11"
-        mapboxAccessToken={MAPBOX_TOKEN}
+        mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
       >
         {/* Source for the route line */}
         <Source id="my-data" type="geojson" data={routeGeoJSON}>
