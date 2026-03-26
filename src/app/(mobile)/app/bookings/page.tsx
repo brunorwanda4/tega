@@ -16,14 +16,14 @@ const BookingsPage: NextPage = () => {
         <title>Tega | Bookings Overview</title>
       </Head>
       <AppHeader />
-      <div className="flex flex-col relative pt-12">
-        <main className="  pt-[20px] pb-[96px]">
+      <div className="flex flex-col relative pt-4">
+        <main className="">
           <h2 className="text-[20px] font-semibold text-[#1F1F24] mb-[20px]">
             Bookings
           </h2>
 
-          <div className="flex gap-3 mb-[28px]">
-            <Button className="bg-[#1F1F24] text-white rounded-full h-[40px] px-[24px] text-[14px] hover:bg-[#1F1F24]/90">
+          <div className="flex gap-2 mb-4">
+            <Button  className=" rounded-full">
               Upcoming
             </Button>
             <Button

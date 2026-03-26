@@ -24,20 +24,20 @@ export default function PickupLocation() {
   };
 
   return (
-    <div className="flex flex-col space-y-4">
-      <div className="px-6 flex items-center gap-4">
+    <div className="flex flex-col space-y-4 pt-4">
+      <div className=" flex items-center gap-4">
         <AppGoBackButton />
         <h1 className="text-[20px] font-semibold">Pickup location</h1>
       </div>
 
-      <div className="px-6 mb-8 flex items-center gap-3">
+      <div className=" mb-8 flex items-center gap-3">
         <div className="relative w-full">
           <Input placeholder="e.g, Muhanga bus park" className="pl-4 pr-10 " />
           <X className="absolute right-3 top-3.5 w-5 h-5 text-[#9CA3AF]" />
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6">
+      <div className="flex-1 overflow-y-auto ">
         {locations.map((loc) => (
           <div
             key={loc.id}

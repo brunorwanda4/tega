@@ -6,12 +6,12 @@ import { useScrollDirection } from "@/hooks/use-scroll";
 import { cn } from "@/lib/utils";
 
 const AppHeader = () => {
-  const isVisible = useScrollDirection(8);
+  // const isVisible = useScrollDirection(8);
   return (
     <header
       className={cn(
-        "fixed max-w-md mx-auto top-0 left-0 right-0 h-12 bg-base-100 flex items-center justify-between  px-6 z-50 transition-transform duration-300 ",
-        isVisible ? "translate-y-0 " : "-translate-y-full",
+        " max-w-md mx-auto top-0 left-0 right-0 h-12 bg-base-100 flex items-center justify-between z-50 transition-transform duration-300 ",
+
       )}
     >
       <div className="flex items-center gap-2.5">

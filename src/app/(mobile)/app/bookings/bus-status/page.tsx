@@ -64,7 +64,7 @@ const BusStatusPage: NextPage = () => {
 
         <section className="bg-base-100  rounded-t-2xl -mx-6 px-6  pt-[20px] relative  space-y-[20px]">
           {/* Header Card: Vehicle and Seats Info */}
-          <Card className="rounded-[12px]  bg-base-200 p-[16px] border-none">
+          <Card className="rounded-[12px] border-transparent  bg-base-200 p-[16px] border-none">
             <CardContent className="p-0 flex items-center justify-between gap-[16px]">
               <div>
                 <h3 className="text-[15px] text-sm font-semibold text-[#1F1F24]">
