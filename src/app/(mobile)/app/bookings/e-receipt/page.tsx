@@ -1,10 +1,10 @@
-'use client';
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { QRCodeSVG } from 'qrcode.react';
-import AppGoBackButton from '../../_components/common/go-back-button';
+"use client";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { QRCodeSVG } from "qrcode.react";
+import React from "react";
+import { Button } from "@/components/ui/button";
+import AppGoBackButton from "../../_components/common/go-back-button";
 
 export default function BusTicket() {
   const router = useRouter();
@@ -14,14 +14,14 @@ export default function BusTicket() {
       {/* Header */}
       <div className="w-full max-w-sm">
         <div className="flex items-center mb-6">
-
           <AppGoBackButton />
-          <h1 className="text-base font-semibold text-[#1F1F24] mx-auto pr-9">Bus ticket</h1>
+          <h1 className="text-base font-semibold text-[#1F1F24] mx-auto pr-9">
+            Bus ticket
+          </h1>
         </div>
 
         {/* Ticket Card */}
         <div className="w-full bg-white rounded-2xl shadow-md overflow-visible relative">
-
           {/* Top dark section: route */}
           <div className="bg-[#1F1F24] rounded-t-2xl px-5 py-5 text-white">
             <div className="flex items-center justify-between">
@@ -35,7 +35,9 @@ export default function BusTicket() {
                 <p className="text-sm font-bold uppercase">bus stop</p>
               </div>
             </div>
-            <p className="text-center text-xs text-gray-400 mt-3">Fri 18 Sept 2025</p>
+            <p className="text-center text-xs text-gray-400 mt-3">
+              Fri 18 Sept 2025
+            </p>
           </div>
 
           {/* Ticket body */}
@@ -57,21 +59,31 @@ export default function BusTicket() {
             <div className="flex items-center justify-between mb-1">
               <div>
                 <p className="text-lg font-bold text-[#1F1F24]">09:10 AM</p>
-                <p className="text-xs text-gray-500 leading-tight">Kigali city, Nyamirambo<br />buspark</p>
+                <p className="text-xs text-gray-500 leading-tight">
+                  Kigali city, Nyamirambo
+                  <br />
+                  buspark
+                </p>
               </div>
               {/* Duration indicator */}
               <div className="flex flex-col items-center mx-2">
                 <div className="flex items-center gap-1">
                   <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
                   <div className="border-t border-dashed border-gray-400 w-12"></div>
-                  <span className="text-[10px] text-gray-500 border border-gray-300 rounded-full px-1.5 py-0.5 whitespace-nowrap">2h 15min</span>
+                  <span className="text-[10px] text-gray-500 border border-gray-300 rounded-full px-1.5 py-0.5 whitespace-nowrap">
+                    2h 15min
+                  </span>
                   <div className="border-t border-dashed border-gray-400 w-12"></div>
                   <div className="w-1.5 h-1.5 rounded-full bg-gray-400"></div>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-lg font-bold text-[#1F1F24]">09:10 AM</p>
-                <p className="text-xs text-gray-500 leading-tight text-right">Muhanga city, Cyakabiri<br />bus stop</p>
+                <p className="text-xs text-gray-500 leading-tight text-right">
+                  Muhanga city, Cyakabiri
+                  <br />
+                  bus stop
+                </p>
               </div>
             </div>
 
@@ -79,7 +91,9 @@ export default function BusTicket() {
             <div className="flex items-end justify-between mt-5">
               <div>
                 <p className="text-sm font-semibold text-[#1F1F24]">Thur</p>
-                <p className="text-sm font-semibold text-[#1F1F24]">27/8/2025,</p>
+                <p className="text-sm font-semibold text-[#1F1F24]">
+                  27/8/2025,
+                </p>
                 <p className="text-sm font-semibold text-[#1F1F24]">07:10 PM</p>
                 <p className="text-xs text-gray-400 mt-1">Booking time</p>
               </div>
@@ -99,7 +113,10 @@ export default function BusTicket() {
             The notches are positioned absolutely outside the card's white bg,
             overlapping its sides. The dashed line sits between them.
           */}
-          <div className="relative flex items-center" style={{ height: '24px' }}>
+          <div
+            className="relative flex items-center"
+            style={{ height: "24px" }}
+          >
             {/* Left notch — sits flush on the left edge */}
             {/*<div
               className="absolute bg-gray-100 rounded-full z-10 size-12 -left-3 -top-2 "
@@ -120,8 +137,8 @@ export default function BusTicket() {
             <div className="flex justify-center mb-5">
               {/* Placeholder QR — replace with real <QRCode /> component */}
               <div className="">
-                              <QRCodeSVG value="Tega-Ticket-KI58B0271" size={140} />
-                            </div>
+                <QRCodeSVG value="Tega-Ticket-KI58B0271" size={140} />
+              </div>
             </div>
 
             {/* Agency policy */}
@@ -130,7 +147,11 @@ export default function BusTicket() {
                 Agency policy
               </p>
               <p className="text-[10px] text-gray-400 leading-relaxed text-center">
-                [1] Passengers are not entitled to a refund if they miss the bus due to their own delay. However, a refund will be provided if the delay is caused by the Agency. [2] Passengers are solely responsible for their luggage. The Agency will not be held liable for any lost or missing items.
+                [1] Passengers are not entitled to a refund if they miss the bus
+                due to their own delay. However, a refund will be provided if
+                the delay is caused by the Agency. [2] Passengers are solely
+                responsible for their luggage. The Agency will not be held
+                liable for any lost or missing items.
               </p>
             </div>
           </div>
@@ -142,6 +163,7 @@ export default function BusTicket() {
         <Button
           size="lg"
           className="w-full "
+          onClick={() => router.push("/app/bookings/loading-routes")}
         >
           Download ticket
         </Button>
@@ -150,7 +172,7 @@ export default function BusTicket() {
           variant="outline"
           className="w-full mt-2"
           onClick={() => router.push("/app")}
-          >
+        >
           Go Home
         </Button>
       </div>

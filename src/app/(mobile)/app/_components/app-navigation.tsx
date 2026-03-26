@@ -17,9 +17,10 @@ const NavigationBar: NextPage = () => {
   ];
 
   return (
-    <footer className="fixed max-w-md mx-auto bottom-0 left-0 right-0 h-16 pb-4 bg-base-100 border-t border-border flex items-center justify-around px-5">
+    <footer className="fixed z-50 max-w-md mx-auto bottom-0 left-0 right-0 h-16 pb-4 bg-base-100 border-t border-border flex items-center justify-around px-5">
       {navItems.map((item) => {
-        const isActive = pathname.startsWith(item.href) &&
+        const isActive =
+          pathname.startsWith(item.href) &&
           (item.href === "/app" ? pathname === "/app" : true);
         return (
           <Link

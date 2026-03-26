@@ -1,16 +1,21 @@
-import React from 'react';
-import Image from 'next/image';
-import { LuCircle, LuMapPin,  LuRadio } from "react-icons/lu";
-import { Button } from "@/components/ui/button";
+"use client";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React from "react";
 import { FaCheckCircle } from "react-icons/fa";
-import { Separator } from '@/components/ui/separator';
+import { LuCircle, LuMapPin, LuRadio } from "react-icons/lu";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 export const BookingCard = () => {
+  const router = useRouter();
   return (
     <div className="w-full ">
       {/* Header: Date and Ticket Status */}
       <div className="flex justify-between items-center mb-4">
-        <span className="text-[16px] font-bold text-[#1F1F24]">Feb 24, 2024-10:00 AM</span>
+        <span className="text-[16px] font-bold text-[#1F1F24]">
+          Feb 24, 2024-10:00 AM
+        </span>
         <div className="flex items-center gap-1.5 bg-[#F3F4F6] px-3 py-1 rounded-full text-[#555555] text-[12px] font-medium cursor-pointer">
           <FaCheckCircle className="size-4 text-[#219653]" />
           View ticket
@@ -22,10 +27,10 @@ export const BookingCard = () => {
       <div className="flex gap-4 items-start mb-6 mt-4">
         {/* Bus Illustration */}
         <div className="w-1/3">
-          <Image 
-             src="/svg/bus.svg"
-            alt="Bus" 
-            width={180} 
+          <Image
+            src="/svg/bus.svg"
+            alt="Bus"
+            width={180}
             height={100}
             className="object-contain"
           />
@@ -49,14 +54,19 @@ export const BookingCard = () => {
           <div className="relative pl-4 space-y-4 mt-2">
             {/* Vertical Dashed Line */}
             <div className="absolute left-[3px] top-2 bottom-2 w-0 border-l border-dashed border-[#1F1F24]"></div>
-            
+
             <div className="flex flex-col">
-                <Separator />
+              <Separator />
               <div className="flex items-center gap-2 pt-2">
-                <LuCircle className="size-2 text-[#1F1F24] fill-white z-10" strokeWidth={4} />
+                <LuCircle
+                  className="size-2 text-[#1F1F24] fill-white z-10"
+                  strokeWidth={4}
+                />
                 <span className="text-[11px] text-[#828282]">From</span>
               </div>
-              <p className="text-[13px] font-bold text-[#1F1F24] pl-4">Kigali city, Nyamirambo</p>
+              <p className="text-[13px] font-bold text-[#1F1F24] pl-4">
+                Kigali city, Nyamirambo
+              </p>
             </div>
 
             <div className="flex flex-col">
@@ -64,14 +74,19 @@ export const BookingCard = () => {
                 <LuMapPin className="size-3 text-[#1F1F24] z-10" />
                 <span className="text-[11px] text-[#828282]">To</span>
               </div>
-              <p className="text-[13px] font-bold text-[#1F1F24] pl-4">Muhanga, Sothern province</p>
+              <p className="text-[13px] font-bold text-[#1F1F24] pl-4">
+                Muhanga, Sothern province
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Live Monitoring Button */}
-      <Button className="w-full bg-[#1F1F24] text-white rounded-full h-11 font-bold flex gap-2 hover:bg-[#1F1F24]/90">
+      <Button
+        onClick={() => router.push("/app/bookings/tracking")}
+        className=" w-full"
+      >
         <LuRadio className="size-4 animate-pulse" />
         Live monitoring
       </Button>
