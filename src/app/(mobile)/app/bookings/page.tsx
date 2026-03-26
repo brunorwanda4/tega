@@ -16,7 +16,7 @@ const BookingsPage: NextPage = () => {
       </Head>
 
       <div className="flex flex-col relative">
-        <main className="flex-1 overflow-y-auto px-[24px] pt-[20px] pb-[96px]">
+        <main className="flex-1 overflow-y-auto  pt-[20px] pb-[96px]">
           <h2 className="text-[20px] font-semibold text-[#1F1F24] mb-[20px]">
             Bookings
           </h2>
@@ -67,7 +67,7 @@ const BookingsPage: NextPage = () => {
                   <Input
                     type="text"
                     placeholder="Where are you traveling from ?"
-                    className="h-[48px] px-[16px] rounded-[8px] bg-[#F9FAFB] border-[#E5E7EB] text-[15px] placeholder:text-[#9CA3AF]"
+                    className="placeholder:text-[#9CA3AF]"
                   />
                   <X className="absolute right-[16px] top-[14px] w-[20px] h-[20px] text-[#9CA3AF] cursor-pointer" />
                 </div>
@@ -82,7 +82,7 @@ const BookingsPage: NextPage = () => {
             </div>
 
             {/* Destination Input Group */}
-            <div className="ml-[12px]">
+            <div className="">
               {" "}
               {/* Match alignment relative to icons */}
               <label className="block text-[16px] font-medium text-[#1F1F24] mb-[12px]">
@@ -92,7 +92,7 @@ const BookingsPage: NextPage = () => {
                 <Input
                   type="text"
                   placeholder="Where are you going ?"
-                  className="h-[48px] px-[16px] rounded-[8px] bg-[#F9FAFB] border-[#E5E7EB] text-[15px] placeholder:text-[#9CA3AF]"
+                  className=" placeholder:text-[#9CA3AF]"
                 />
                 <X className="absolute right-[16px] top-[14px] w-[20px] h-[20px] text-[#9CA3AF] cursor-pointer" />
               </div>
