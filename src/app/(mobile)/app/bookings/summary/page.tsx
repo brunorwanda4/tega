@@ -89,7 +89,7 @@ export default function ReviewSummary() {
         <Button
           size="lg"
           className="w-full"
-          onClick={() => router.push('/app/bookings/payment')}
+          onClick={() => router.push('/app/bookings/payment-success')}
         >
           Proceed Payment
         </Button>
