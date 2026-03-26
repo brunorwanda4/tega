@@ -7,6 +7,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import AppHeader from "../_components/app-header";
 
 const BookingsPage: NextPage = () => {
   return (
@@ -14,9 +15,9 @@ const BookingsPage: NextPage = () => {
       <Head>
         <title>Tega | Bookings Overview</title>
       </Head>
-
-      <div className="flex flex-col relative">
-        <main className="flex-1 overflow-y-auto  pt-[20px] pb-[96px]">
+      <AppHeader />
+      <div className="flex flex-col relative pt-12">
+        <main className="  pt-[20px] pb-[96px]">
           <h2 className="text-[20px] font-semibold text-[#1F1F24] mb-[20px]">
             Bookings
           </h2>

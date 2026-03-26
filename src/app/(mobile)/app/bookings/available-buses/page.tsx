@@ -1,10 +1,25 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Circle, Settings2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Circle,
+  Minus,
+  Plus,
+  Settings2,
+} from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 import AppGoBackButton from "../../_components/common/go-back-button";
 
 type FilterType = "all" | "earliest" | "late";
@@ -72,6 +87,12 @@ export default function AvailableBuses() {
   const router = useRouter();
   const location = searchParams.get("location") || "Muhanga, Cyakabiri";
   const [activeFilter, setActiveFilter] = useState<FilterType>("earliest");
+  const [isSeatsSheetOpen, setIsSeatsSheetOpen] = useState(false);
+  const [isAgencySheetOpen, setIsAgencySheetOpen] = useState(false);
+  const [selectedSeats, setSelectedSeats] = useState(2);
+  const [selectedAgency, setSelectedAgency] = useState<string | null>(null);
+
+  const agencies = Array.from(new Set(allBuses.map((bus) => bus.agency)));
 
   const getFilteredBuses = () => {
     switch (activeFilter) {
@@ -91,9 +112,23 @@ export default function AvailableBuses() {
 
   const filteredBuses = getFilteredBuses();
 
+  const handleBusCardClick = () => {
+    setIsSeatsSheetOpen(true);
+  };
+
+  const handleSeatsApply = () => {
+    setIsSeatsSheetOpen(false);
+    setIsAgencySheetOpen(true);
+  };
+
+  const handleAgencyApply = () => {
+    setIsAgencySheetOpen(false);
+    router.push("/app/bookings/bus-status");
+  };
+
   return (
     <div className="flex flex-col ">
-      <div className="">
+      <div className=" bg-primary text-primary-content -mx-6 px-6 py-4">
         <div className="flex items-center gap-4">
           <AppGoBackButton />
           <div>
@@ -144,20 +179,115 @@ export default function AvailableBuses() {
         {/* Bus Cards List */}
         <div className="space-y-4">
           {filteredBuses.map((bus) => (
-            <BusResultCard
+            <button
+              type="button"
               key={bus.id}
-              plateNumber={bus.plateNumber}
-              agency={bus.agency}
-              delay={bus.delay}
-              seats={bus.seats}
-              color={bus.color}
-              status={bus.status}
-              departureTime={bus.departureTime}
-              price={bus.price}
-            />
+              onClick={handleBusCardClick}
+              className="cursor-pointer w-full text-left"
+            >
+              <BusResultCard
+                plateNumber={bus.plateNumber}
+                agency={bus.agency}
+                delay={bus.delay}
+                seats={bus.seats}
+                color={bus.color}
+                status={bus.status}
+                departureTime={bus.departureTime}
+                price={bus.price}
+              />
+            </button>
           ))}
         </div>
       </div>
+
+      {/* Filter by Seats Sheet */}
+      <Sheet open={isSeatsSheetOpen} onOpenChange={setIsSeatsSheetOpen}>
+        <SheetContent side="bottom" className="rounded-t-3xl">
+          <SheetHeader>
+            <SheetTitle className="text-center text-[20px] font-bold">
+              Filter by Seats
+            </SheetTitle>
+            <Separator />
+          </SheetHeader>
+
+          <div className="px-4 py-6">
+            <div className="mb-2">
+              <p className="text-[16px] font-semibold text-[#1F1F24]">Seats</p>
+              <p className="text-[13px] text-[#828282]">
+                Number of available seats
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-6 my-8">
+              <Button
+                variant="outline"
+                size="icon"
+                className=" rounded-md"
+                onClick={() => setSelectedSeats(Math.max(1, selectedSeats - 1))}
+              >
+                <Minus className="w-5 h-5" />
+              </Button>
+
+              <span className="text-[32px] font-bold min-w-[60px] text-center">
+                {selectedSeats}
+              </span>
+
+              <Button
+                size="icon"
+                className="rounded-md"
+                onClick={() => setSelectedSeats(selectedSeats + 1)}
+              >
+                <Plus className="w-5 h-5" />
+              </Button>
+            </div>
+
+            <Button size={"lg"} className=" w-full" onClick={handleSeatsApply}>
+              Apply
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Filter by Agency Sheet */}
+      <Sheet open={isAgencySheetOpen} onOpenChange={setIsAgencySheetOpen}>
+        <SheetContent side="bottom" className="rounded-t-3xl">
+          <SheetHeader className=" space-y-4">
+            <SheetTitle className="text-center text-[20px] font-bold">
+              Filter by Agency
+            </SheetTitle>
+            <Separator />
+          </SheetHeader>
+
+          <div className="px-4 py-6">
+            <div className="space-y-2 mb-6">
+              {agencies.map((agency) => (
+                <button
+                  type="button"
+                  key={agency}
+                  onClick={() => setSelectedAgency(agency)}
+                  className={cn(
+                    "w-full text-center py-3 text-[16px] transition-all",
+                    selectedAgency === agency
+                      ? "font-bold text-[#1F1F24] scale-110"
+                      : "text-[#9CA3AF] font-normal",
+                  )}
+                >
+                  {agency}
+                </button>
+              ))}
+              
+            </div>
+
+            <Button
+              className=" rounded-md w-full"
+              size={"lg"}
+              onClick={handleAgencyApply}
+            >
+              Apply
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
