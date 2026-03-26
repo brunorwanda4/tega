@@ -31,7 +31,7 @@ export default function PaymentSuccess() {
         <Button
           size="lg"
           className="w-full "
-          onClick={() => router.push('/app/booking/e-receipt')}
+          onClick={() => router.push('/app/bookings/e-receipt')}
         >
           View e-receipt
         </Button>

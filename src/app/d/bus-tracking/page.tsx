@@ -13,10 +13,10 @@ import {
   FiPhone,
   FiSearch,
 } from "react-icons/fi";
-import Map, { Layer, type MapRef, Marker, Source } from "react-map-gl";
+import Map, { Layer, type MapRef, Marker, Source } from "react-map-gl/maplibre";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import "mapbox-gl/dist/mapbox-gl.css";
+import "maplibre-gl/dist/maplibre-gl.css";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
