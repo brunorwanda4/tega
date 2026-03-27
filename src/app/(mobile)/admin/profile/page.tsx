@@ -52,7 +52,7 @@ export default function ProfilePage() {
             </div>
             <div className="flex-1">
               <h2 className="text-lg font-bold text-[#1F1F24]">
-                Reponce Mugisha
+                Allen Mugisha
               </h2>
               <div className="flex flex-wrap items-center gap-2">
                 <p className="text-[14px] text-[#828282]">
