@@ -15,7 +15,6 @@ import {
   LuUser,
 } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
-import AppGoBackButton from "../_components/common/go-back-button";
 
 export default function ProfilePage() {
   const router = useRouter();

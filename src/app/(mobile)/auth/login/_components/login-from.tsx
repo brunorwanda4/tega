@@ -15,6 +15,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { users } from "@/examples/user";
 import AuthLoadingIcon from "../../_components/auth-loading-icon";
 import type { RegisterType } from "../../register/_schema/register-schema";
 import { type LoginType, loginSchema } from "../_schema/login-schema";
@@ -50,12 +51,20 @@ const LoginForm = () => {
     setError(null);
     setSuccess(null);
     startTransition(() => {
-      if (email && password) {
-        if (email === data.email && password === data.password) {
-          router.push("/app/bookings");
+      const user = users.find(
+        (u) => u.email === data.email && u.password === data.password
+      );
+
+      if (user) {
+        if (user.role === "admin") {
+          router.push("/admin");
+        } else if (user.role === "manager") {
+          router.push("/manager");
         } else {
-          setError("Invalid email or password");
+          router.push("/app");
         }
+      } else {
+        setError("Invalid email or password");
       }
     });
   };
