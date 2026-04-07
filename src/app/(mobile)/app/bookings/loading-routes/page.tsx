@@ -31,7 +31,7 @@ export default function LoadingTravelRoutes() {
 
       <div className="relative z-10 flex flex-1 h-full items-center justify-center">
         <div className="relative flex flex-col items-center justify-center bg-white rounded-full size-38 shadow-2xl border border-gray-100">
-          <div className="absolute inset-0 rounded-full border-[3px] border-transparent border-t-[#1F1F24] animate-spin"></div>
+          <div className="absolute inset-0https://meet.google.com/zpz-nnus-bpb rounded-full border-[3px] border-transparent border-t-[#1F1F24] animate-spin"></div>
 
           <div className="flex flex-col items-center space-y-2">
             <LuBus className="size-10 text-[#1F1F24]" />

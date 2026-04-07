@@ -37,6 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import Link from "next/link";
 
 // Types
 interface Client {
@@ -67,7 +68,7 @@ const ClientsPage = () => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-6 space-y-6 bg-base-100 text-base-content min-h-screen"
+      className="p-6 space-y-6 min-h-screen"
     >
       {/* Header Actions */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4">
@@ -138,18 +139,18 @@ const ClientsPage = () => {
       {/* Main Table */}
       <div className="rounded-xl border border-base-300 overflow-hidden shadow-sm">
         <Table>
-          <TableHeader className="bg-neutral text-neutral-content">
+          <TableHeader className="bg-primary text-primary-content">
             <TableRow className="hover:bg-transparent border-none">
-              <TableHead className="text-neutral-content">
+              <TableHead className="text-primary-content">
                 Client names
               </TableHead>
-              <TableHead className="text-neutral-content">
+              <TableHead className="text-primary-content">
                 Email address
               </TableHead>
-              <TableHead className="text-neutral-content">Gender</TableHead>
-              <TableHead className="text-neutral-content">Location</TableHead>
-              <TableHead className="text-neutral-content">04-11-2024</TableHead>
-              <TableHead className="text-neutral-content text-right">
+              <TableHead className="text-primary-content">Gender</TableHead>
+              <TableHead className="text-primary-content">Location</TableHead>
+              <TableHead className="text-primary-content">04-11-2024</TableHead>
+              <TableHead className="text-primary-content text-right">
                 Activity
               </TableHead>
             </TableRow>
@@ -157,17 +158,17 @@ const ClientsPage = () => {
           <TableBody>
             {[...Array(10)].map((_, i) => (
               <TableRow
-                key={i}
+                key={`${i}-123${i + 9}`}
                 className={i % 2 === 0 ? "bg-base-100" : "bg-base-200/50"}
               >
                 <TableCell className="font-medium">
-                  <div className="flex items-center gap-3">
+                  <Link href={`/d/clients/${i + 1}`} className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={`https://i.pravatar.cc/150?u=${i}`} />
                       <AvatarFallback>BC</AvatarFallback>
                     </Avatar>
                     Beatrice Carrot
-                  </div>
+                  </Link>
                 </TableCell>
                 <TableCell className="text-base-content/70">
                   andy@gmail.com

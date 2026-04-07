@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import {
   usePathname,
   useRouter,
@@ -16,12 +16,37 @@ import {
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { dashboardSidebarContentGroups } from "./dashboard-sidebar-content";
+import { Loader2 } from "lucide-react";
+
+function LinkLoadingIndicator({
+  icon: Icon,
+  title,
+  isOpen,
+}: {
+  icon: React.ComponentType<{ size: number; className: string }>;
+  title: string;
+  isOpen: boolean;
+}) {
+  const { pending } = useLinkStatus();
+
+  return (
+    <>
+      {pending ? (
+  <Loader2 size={24} className="size-5 animate-spin" />
+      ) : (
+        <Icon size={24} className="size-5" />
+      )}
+      {isOpen && <span>{title}</span>}
+    </>
+  );
+}
 
 export function DashboardSidebar() {
   const router = useRouter();
@@ -49,22 +74,17 @@ export function DashboardSidebar() {
                 {group.items.map((item) => (
                   <SidebarMenuItem
                     key={item.url}
-                    onClick={() => router.push(item.url)}
-                    className={cn(
-                      " text-neutral",
-                      buttonVariants({
-                        variant: pathname === item.url ? "default" : "ghost",
-                        size: "default",
-                        className:
-                          !open &&
-                          pathname === item.url &&
-                          "text-primary bg-base-100",
-                      }),
-                      " justify-start rounded-md cursor-pointer",
-                    )}
+                  
                   >
-                    <item.icon size={24} className="size-5" />
-                    {open && <span>{item.title}</span>}
+                    <SidebarMenuButton tooltip={item.title} isActive={pathname === item.url} render={
+                        <Link
+                          href={item.url}
+                          className=" flex items-center gap-4 w-full"
+                        />
+                      }> 
+
+                    <LinkLoadingIndicator icon={item.icon} title={item.title} isOpen={open} />
+                    </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
               </SidebarMenu>
