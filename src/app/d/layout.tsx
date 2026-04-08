@@ -9,9 +9,13 @@ const ComponentName = (props: LayoutProps<"/d">) => {
       <DashboardSidebar />
       <main className="bg-base-200 w-full relative font-inter">
         <DashboardNavbar />
-        <div className="pt-20 px-8 font-inter ">
+        <div className="pt-20 px-8 font-inter flex-1 ">
           <TooltipProvider>{props.children}</TooltipProvider>
         </div>
+        <footer className="  bg-base-100  flex justify-between p-4 text-sm opacity-70  w-full mt-8">
+          <p><span className="font-medium">Tega company</span>  solution of transport in Rwanda</p>
+          <span className=" font-semibold">MVP 1.0</span>
+        </footer>
       </main>
     </SidebarProvider>
   );

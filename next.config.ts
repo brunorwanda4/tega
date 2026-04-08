@@ -73,6 +73,14 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   turbopack: {}, // Silence Turbopack warning for webpack-based PWA plugin
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "loremflickr.com",
+      }
+    ],
+  }
 };
 
 export default withPWA(pwaConfig)(nextConfig);

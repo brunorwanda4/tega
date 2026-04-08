@@ -74,14 +74,14 @@ export function DashboardSidebar() {
                 {group.items.map((item) => (
                   <SidebarMenuItem
                     key={item.url}
-                  
+
                   >
-                    <SidebarMenuButton tooltip={item.title} isActive={pathname === item.url} render={
+                    <SidebarMenuButton className={cn(pathname === item.url ? "bg-primary text-primary-content" : "")} tooltip={item.title} isActive={pathname === item.url} render={
                         <Link
                           href={item.url}
                           className=" flex items-center gap-4 w-full"
                         />
-                      }> 
+                      }>
 
                     <LinkLoadingIndicator icon={item.icon} title={item.title} isOpen={open} />
                     </SidebarMenuButton>
