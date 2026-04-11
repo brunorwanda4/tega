@@ -24,9 +24,7 @@ const AppLication: NextPage = () => {
           </h2>
 
           <div className="flex gap-2 mb-4">
-            <Button  className=" rounded-full">
-              Upcoming
-            </Button>
+            <Button className=" rounded-full">Upcoming</Button>
             <Button
               className="bg-[#E5E7EB] text-[#555555] rounded-full h-[40px] px-[24px] text-[14px] hover:bg-[#E5E7EB]/80"
               variant="secondary"
@@ -41,7 +39,7 @@ const AppLication: NextPage = () => {
             </Button>
           </div>
 
-         <BookingCard />
+          <BookingCard />
 
           {/* 5. Destination Input Section */}
           <section className="space-y-6 pt-4">

@@ -88,7 +88,7 @@ export default function TegaDashboard() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-base-200 p-6 space-y-8 font-sans text-base-content">
+    <div className="min-h-screen  space-y-8 font-sans text-base-content">
       {/* Quick Stats Section */}
       <section>
         <h2 className="text-xl font-bold mb-4">Quick stats</h2>
@@ -234,7 +234,7 @@ export default function TegaDashboard() {
         </div>
 
         {/* Shadcn Table */}
-        <div className="rounded-xl overflow-hidden shadow-sm">
+        <div className=" overflow-hidden ">
           <table className="table bg-base-100 table-zebra">
             {/* head */}
             <thead className="bg-primary text-primary-content">
