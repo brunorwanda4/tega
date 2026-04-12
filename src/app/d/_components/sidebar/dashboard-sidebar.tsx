@@ -1,4 +1,5 @@
 "use client";
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link, { useLinkStatus } from "next/link";
 import {
@@ -23,7 +24,6 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { dashboardSidebarContentGroups } from "./dashboard-sidebar-content";
-import { Loader2 } from "lucide-react";
 
 function LinkLoadingIndicator({
   icon: Icon,
@@ -39,7 +39,7 @@ function LinkLoadingIndicator({
   return (
     <>
       {pending ? (
-  <Loader2 size={24} className="size-5 animate-spin" />
+        <Loader2 size={24} className="size-5 animate-spin" />
       ) : (
         <Icon size={24} className="size-5" />
       )}
@@ -72,18 +72,27 @@ export function DashboardSidebar() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {group.items.map((item) => (
-                  <SidebarMenuItem
-                    key={item.url}
-
-                  >
-                    <SidebarMenuButton className={cn(pathname === item.url ? "bg-primary text-primary-content" : "")} tooltip={item.title} isActive={pathname === item.url} render={
+                  <SidebarMenuItem key={item.url}>
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      // isActive={pathname === item.url}
+                      render={
                         <Link
                           href={item.url}
-                          className=" flex items-center gap-4 w-full"
+                          className={cn(
+                            " flex items-center gap-4 w-full",
+                            pathname === item.url
+                              ? "bg-primary text-primary-content hover:bg-primary/80"
+                              : "",
+                          )}
                         />
-                      }>
-
-                    <LinkLoadingIndicator icon={item.icon} title={item.title} isOpen={open} />
+                      }
+                    >
+                      <LinkLoadingIndicator
+                        icon={item.icon}
+                        title={item.title}
+                        isOpen={open}
+                      />
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}

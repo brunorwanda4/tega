@@ -1,4 +1,5 @@
 import type { IconType } from "react-icons";
+import { AiOutlineAudit } from "react-icons/ai";
 import { CiGrid42 } from "react-icons/ci";
 import { FaBus } from "react-icons/fa";
 import { FaRegComment } from "react-icons/fa6";
@@ -64,6 +65,11 @@ export const dashboardSidebarContentGroups: sidebarGroupsProps[] = [
         title: "Communications",
         icon: FaRegComment,
         url: "/d/communications",
+      },
+      {
+        title: "Audit Logs",
+        icon: AiOutlineAudit,
+        url: "/d/audit-logs",
       },
     ],
   },
