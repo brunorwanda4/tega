@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import React, { useState } from "react";
 import { FaFileCsv } from "react-icons/fa";
 import {
@@ -37,7 +38,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import Link from "next/link";
 
 // Types
 interface Client {
@@ -162,7 +162,10 @@ const ClientsPage = () => {
                 className={i % 2 === 0 ? "bg-base-100" : "bg-base-200/50"}
               >
                 <TableCell className="font-medium">
-                  <Link href={`/d/clients/${i + 1}`} className="flex items-center gap-3">
+                  <Link
+                    href={`/d/clients/${i + 1}`}
+                    className="flex items-center gap-3"
+                  >
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={`https://i.pravatar.cc/150?u=${i}`} />
                       <AvatarFallback>BC</AvatarFallback>
