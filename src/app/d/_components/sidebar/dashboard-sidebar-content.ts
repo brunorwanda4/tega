@@ -37,11 +37,6 @@ export const dashboardSidebarContentGroups: sidebarGroupsProps[] = [
         url: "/d/clients",
       },
       {
-        title: "Client Tracking",
-        icon: RiCompassDiscoverLine,
-        url: "/d/client-tracking",
-      },
-      {
         title: "Bus Tracking",
         icon: ImLocation,
         url: "/d/bus-tracking",

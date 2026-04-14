@@ -282,7 +282,10 @@ export default function DriverProfilePage() {
       {/* Page content */}
       <div className="max-w-5xl mx-auto px-6 py-6 space-y-6">
         {/* Back */}
-        <button className="flex items-center gap-1 text-sm text-zinc-500 hover:text-black transition-colors">
+        <button
+          type="button"
+          className="flex items-center gap-1 text-sm text-zinc-500 hover:text-black transition-colors"
+        >
           <ChevronLeft className="h-4 w-4" /> Back
         </button>
 

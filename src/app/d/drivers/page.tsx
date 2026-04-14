@@ -2,7 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FiChevronDown, FiMessageSquare, FiPhone } from "react-icons/fi";
+import {
+  FiChevronDown,
+  FiMessageSquare,
+  FiPhone,
+  FiSearch,
+} from "react-icons/fi";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -69,12 +74,13 @@ const DriversPage = () => {
     <div className="p-6 space-y-6">
       {/* TOP BAR */}
       <div className="flex justify-between items-center">
-        <Input
-          placeholder="Search a driver"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="max-w-sm"
-        />
+        <div className="relative w-full max-w-sm">
+          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/50" />
+          <Input
+            placeholder="Search a driver"
+            className="pl-10 bg-base-100 border-base-300 focus:ring-primary"
+          />
+        </div>
 
         <div className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded cursor-pointer">
           All drivers <FiChevronDown />
