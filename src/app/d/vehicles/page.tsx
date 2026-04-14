@@ -121,7 +121,7 @@ export default function AdminBusesPage() {
 
                 <Button
                   variant="outline"
-                  className="w-full border-[#1F1F24] text-[#1F1F24] rounded-xl font-bold flex gap-2 hover:bg-[#1F1F24] hover:text-white transition-all"
+                  className="w-full border-[#1F1F24] text-[#1F1F24] rounded-xl font-bold flex gap-2 hover:bg-[#1F1F24] hover:text-white transition-all mb-4"
                   onClick={() => router.push(`/d/vehicles/${bus.id}`)}
                 >
                   <LuInfo className="size-4" /> View Full Details
