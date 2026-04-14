@@ -18,7 +18,7 @@ export type BusData = {
 export const MOCK_BUSES: BusData[] = [
   {
     id: 1,
-    plateNumber: "KI-58-B-0271",
+    plateNumber: "RWF123D",
     agency: "Volcano express",
     priceRf: "1,507 RF",
     departureTime: "09:10 AM",
@@ -34,7 +34,7 @@ export const MOCK_BUSES: BusData[] = [
   },
   {
     id: 2,
-    plateNumber: "KI-58-B-0271",
+    plateNumber: "RWF123D",
     agency: "Horizon express",
     priceRf: "1,507 RF",
     departureTime: "10:30 AM",
@@ -50,7 +50,7 @@ export const MOCK_BUSES: BusData[] = [
   },
   {
     id: 3,
-    plateNumber: "KI-58-B-0271",
+    plateNumber: "RWF123D",
     agency: "Kivu belt",
     priceRf: "1,507 RF",
     departureTime: "08:45 AM",

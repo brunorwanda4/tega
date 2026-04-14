@@ -2,12 +2,12 @@ import { ArrowLeft, ArrowRight, Heart, MapPin, Navigation } from "lucide-react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
+import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import AppGoBackButton from "../../_components/common/go-back-button";
-import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
+import AppGoBackButton from "../../_components/common/go-back-button";
 
 const BusStatusPage: NextPage = () => {
   return (
@@ -68,9 +68,11 @@ const BusStatusPage: NextPage = () => {
             <CardContent className="p-0 flex items-center justify-between gap-[16px]">
               <div>
                 <h3 className="text-[15px] text-sm font-semibold text-[#1F1F24]">
-                  KI-58-B-0271
+                  RWF123D
                 </h3>
-                <p className="text-[13px] text-sm text-[#828282]">Horizon express</p>
+                <p className="text-[13px] text-sm text-[#828282]">
+                  Horizon express
+                </p>
               </div>
 
               {/* Specialized image for seats remaining display (red progress bar) */}
@@ -118,7 +120,9 @@ const BusStatusPage: NextPage = () => {
               {/* Arrives At card */}
               <div>
                 <p className="text-[20px] font-bold text-[#1F1F24]">09:18 AM</p>
-                <p className="text-[12px] text-[#828282] mt-[4px]">Arrives at</p>
+                <p className="text-[12px] text-[#828282] mt-[4px]">
+                  Arrives at
+                </p>
               </div>
             </div>
             {/* Vehicle and Agency Details and Fare */}
@@ -146,19 +150,21 @@ const BusStatusPage: NextPage = () => {
                     <span className="text-[#1F1F24] font-medium">Volcano</span>
                   </div>
                 </div>
-
               </div>
             </div>
             <div className="flex justify-end items-center ">
-            <p className="text-lg font-extrabold text-[#1F1F24]">
-              1,507 RWF
-            </p>
+              <p className="text-lg font-extrabold text-[#1F1F24]">1,507 RWF</p>
             </div>
           </div>
 
-
-          <Link href="/app/bookings/passenger-details" className={cn(buttonVariants({variant: "default", size: "lg"}),"w-full rounded-md mt-[24px]")}>
-                    Pay the fare
+          <Link
+            href="/app/bookings/passenger-details"
+            className={cn(
+              buttonVariants({ variant: "default", size: "lg" }),
+              "w-full rounded-md mt-[24px]",
+            )}
+          >
+            Pay the fare
           </Link>
         </section>
       </div>

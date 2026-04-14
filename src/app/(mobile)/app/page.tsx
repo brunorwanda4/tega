@@ -81,7 +81,7 @@ const AppLication: NextPage = () => {
             <div className="">
               {" "}
               {/* Match alignment relative to icons */}
-              <label className="block text-[16px] font-medium text-[#1F1F24] mb-[12px]">
+              <label className="block text-[16px] font-medium text-[#1F1F24] mb-[12px] ">
                 Destination
               </label>
               <div className="relative flex-grow">

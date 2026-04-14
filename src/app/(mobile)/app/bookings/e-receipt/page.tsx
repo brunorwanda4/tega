@@ -45,7 +45,7 @@ export default function BusTicket() {
             {/* Ticket ID */}
             <div className="flex justify-center mb-4">
               <span className="border border-gray-300 rounded-full px-5 py-1 text-xs font-medium text-[#1F1F24] tracking-wide">
-                KI-58-B-0271
+                RWF123D
               </span>
             </div>
 
