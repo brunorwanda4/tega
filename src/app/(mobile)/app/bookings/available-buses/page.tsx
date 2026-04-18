@@ -118,12 +118,11 @@ export default function AvailableBuses() {
 
   const handleSeatsApply = () => {
     setIsSeatsSheetOpen(false);
-    setIsAgencySheetOpen(true);
+    router.push("/app/bookings/bus-status");
   };
 
   const handleAgencyApply = () => {
     setIsAgencySheetOpen(false);
-    router.push("/app/bookings/bus-status");
   };
 
   return (
