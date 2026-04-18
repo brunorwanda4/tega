@@ -312,7 +312,7 @@ function BusResultCard({
 }) {
   return (
     <Card className=" shadow-none py-4">
-      <CardHeader className="flex justify-between items-start mb-4">
+      <CardHeader className="flex justify-between items-start ">
         <div>
           <p className="font-bold text-[15px]">{plateNumber}</p>
           <p className="text-[13px] text-[#828282]">{agency}</p>
@@ -321,7 +321,7 @@ function BusResultCard({
       </CardHeader>
 
       {/* Timeline view */}
-      <CardContent className="flex items-center justify-between mb-4 gap-2">
+      <CardContent className="flex items-center justify-between  gap-2">
         <div className="text-center">
           <p className="font-bold text-[16px]">{departureTime}</p>
           <p className="text-[10px] text-[#828282]">Kigali city</p>

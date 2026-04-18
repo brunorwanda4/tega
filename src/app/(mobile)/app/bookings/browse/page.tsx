@@ -38,7 +38,128 @@ interface RecentSearch {
 const STORAGE_KEY = "pickup_recent_searches";
 const MAX_RECENT = 5;
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Search Engine ────────────────────────────────────────────────────────────
+
+interface ParsedQuery {
+  mode: "from-to" | "keyword" | "amount";
+  from?: string; // when mode = from-to
+  to?: string; // when mode = from-to
+  keyword?: string; // when mode = keyword
+  amount?: string; // when mode = amount
+}
+
+/**
+ * Parses a raw search string into a structured query.
+ *
+ * Supported patterns:
+ *   "Muhanga to Karuma"     → from-to  (separator: "to", "-", "→", ">", "/")
+ *   "Muhanga Karuma"        → from-to  (two distinct words, no separator needed)
+ *   "Muhanga"               → keyword  (single term, matches any field)
+ *   "500" / "500 RWF"       → amount
+ */
+function parseQuery(raw: string): ParsedQuery | null {
+  const q = raw.trim();
+  if (!q) return null;
+
+  // Amount-only search: digits possibly followed by letters/spaces
+  if (/^\d[\d\s,]*(?:rwf|frw|frs)?$/i.test(q)) {
+    return { mode: "amount", amount: q.replace(/\D/g, "") };
+  }
+
+  // Explicit separator: "to", "-", "→", ">", "/"
+  const separatorMatch = q.match(/^(.+?)\s*(?:\bto\b|[-→>/])\s*(.+)$/i);
+  if (separatorMatch) {
+    const [, left, right] = separatorMatch;
+    return {
+      mode: "from-to",
+      from: left.trim().toLowerCase(),
+      to: right.trim().toLowerCase(),
+    };
+  }
+
+  // Two or more words without separator → treat first half as "from" hint,
+  // second half as "to" hint (most natural: "Muhanga Karuma")
+  const words = q.split(/\s+/);
+  if (words.length >= 2) {
+    // If the query contains a digit, fall through to keyword
+    if (!/\d/.test(q)) {
+      // Try splitting at every position and use the best one
+      // For simplicity: first word = from hint, rest = to hint
+      const [first, ...rest] = words;
+      return {
+        mode: "from-to",
+        from: first.toLowerCase(),
+        to: rest.join(" ").toLowerCase(),
+      };
+    }
+  }
+
+  // Fallback: plain keyword search
+  return { mode: "keyword", keyword: q.toLowerCase() };
+}
+
+/** Score 0–3: how well a route matches a from-to query (higher = better). */
+function scoreFromTo(route: FlatRoute, from: string, to: string): number {
+  const rFrom = route.from.toLowerCase();
+  const rTo = route.to.toLowerCase();
+  const rLoc = route.location.toLowerCase();
+
+  // Exact direction
+  if (rFrom.includes(from) && rTo.includes(to)) return 3;
+  // Reverse direction still relevant
+  if (rFrom.includes(to) && rTo.includes(from)) return 2;
+  // Only one side matches
+  if (
+    rFrom.includes(from) ||
+    rTo.includes(to) ||
+    rFrom.includes(to) ||
+    rTo.includes(from)
+  )
+    return 1;
+  // Zone/location matches one side
+  if (rLoc.includes(from) || rLoc.includes(to)) return 1;
+  return 0;
+}
+
+/** Returns true if the route matches the parsed query. */
+function matchRoute(route: FlatRoute, parsed: ParsedQuery): boolean {
+  if (parsed.mode === "amount") {
+    const digits = route.amount.replace(/\D/g, "");
+    return digits.includes(parsed.amount!);
+  }
+  if (parsed.mode === "from-to") {
+    return scoreFromTo(route, parsed.from!, parsed.to!) > 0;
+  }
+  // keyword: match any field
+  const kw = parsed.keyword!;
+  return (
+    route.from.toLowerCase().includes(kw) ||
+    route.to.toLowerCase().includes(kw) ||
+    route.location.toLowerCase().includes(kw) ||
+    route.amount.toLowerCase().includes(kw)
+  );
+}
+
+/** Filter + rank routes. Best matches come first. */
+function searchRoutes(routes: FlatRoute[], raw: string): FlatRoute[] {
+  const parsed = parseQuery(raw);
+  if (!parsed) return routes;
+
+  const matched = routes.filter((r) => matchRoute(r, parsed));
+
+  if (parsed.mode === "from-to") {
+    // Sort by score descending so exact matches surface first
+    return matched.sort(
+      (a, b) =>
+        scoreFromTo(b, parsed.from!, parsed.to!) -
+        scoreFromTo(a, parsed.from!, parsed.to!),
+    );
+  }
+
+  return matched;
+}
+
+// ─── Data helpers ─────────────────────────────────────────────────────────────
 function flattenLocations(data: Location[]): FlatRoute[] {
   return data.flatMap((loc) =>
     loc.destion.map((d, i) => ({
@@ -98,9 +219,6 @@ function RouteCard({
           {route.from} <span className="text-gray-400 font-normal">→</span>{" "}
           {route.to}
         </p>
-        <p className="text-[13px] text-gray-500 mt-0.5 truncate">
-          {route.location}
-        </p>
       </div>
 
       <div className="flex-shrink-0 text-right">
@@ -134,18 +252,9 @@ export default function PickupLocation() {
     setRecent(getRecent());
   }, []);
 
-  // Filter routes by query (location, from, to, amount)
-  const filtered = query.trim()
-    ? allRoutes.filter((r) => {
-        const q = query.toLowerCase();
-        return (
-          r.location.toLowerCase().includes(q) ||
-          r.from.toLowerCase().includes(q) ||
-          r.to.toLowerCase().includes(q) ||
-          r.amount.toLowerCase().includes(q)
-        );
-      })
-    : allRoutes;
+  // Smart search
+  const parsed = parseQuery(query);
+  const filtered = query.trim() ? searchRoutes(allRoutes, query) : allRoutes;
 
   // Group filtered routes by location
   const grouped = filtered.reduce<Record<string, FlatRoute[]>>((acc, r) => {
@@ -198,7 +307,7 @@ export default function PickupLocation() {
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by location, route or fare…"
+            placeholder="e.g. Muhanga to Karuma, Kigali, 500…"
             className="pl-9 pr-9 h-11 bg-gray-50 border-gray-200 rounded-xl text-[15px] placeholder:text-gray-400 focus-visible:ring-emerald-500"
           />
           {query && (
@@ -211,6 +320,46 @@ export default function PickupLocation() {
             </button>
           )}
         </div>
+
+        {/* Search interpretation hint */}
+        {parsed && query.trim() ? (
+          <div className="flex flex-wrap items-center gap-1.5 mt-2 px-1 min-h-[24px]">
+            {parsed.mode === "from-to" && (
+              <>
+                <span className="text-[12px] text-gray-400">Searching</span>
+                <span className="text-[12px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full capitalize">
+                  {parsed.from}
+                </span>
+                <span className="text-[12px] text-gray-400">→</span>
+                <span className="text-[12px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full capitalize">
+                  {parsed.to}
+                </span>
+                <span className="text-[12px] text-gray-400 ml-0.5">
+                  · {filtered.length} result{filtered.length !== 1 ? "s" : ""}
+                </span>
+              </>
+            )}
+            {parsed.mode === "keyword" && (
+              <span className="text-[12px] text-gray-400">
+                {filtered.length} result{filtered.length !== 1 ? "s" : ""} for
+                &ldquo;{parsed.keyword}&rdquo;
+              </span>
+            )}
+            {parsed.mode === "amount" && (
+              <span className="text-[12px] text-gray-400">
+                {filtered.length} route{filtered.length !== 1 ? "s" : ""}{" "}
+                matching fare &ldquo;{parsed.amount}&rdquo;
+              </span>
+            )}
+          </div>
+        ) : (
+          <div className="mt-2 min-h-[24px] px-1">
+            <p className="text-[12px] text-gray-400">
+              Try: &ldquo;Muhanga to Karuma&rdquo;, &ldquo;Kigali&rdquo;,
+              &ldquo;500 RWF&rdquo;
+            </p>
+          </div>
+        )}
       </div>
 
       {/* ── Scrollable Body ─────────────────────────────── */}

@@ -5,7 +5,7 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaReceipt } from "react-icons/fa6";
-import { FiMove } from "react-icons/fi";
+import { IoCloudOfflineOutline } from "react-icons/io5";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +14,7 @@ const NavigationBar: NextPage = () => {
   const navItems = [
     { name: "Home", icon: Home, href: "/app" },
     { name: "Bookings", icon: FaReceipt, href: "/app/bookings" },
+    { name: "SSD offline", icon: IoCloudOfflineOutline, href: "/app/ssd" },
     // { name: "Movement", icon: FiMove, href: "/app/movement" },
     { name: "Profile", icon: User, href: "/app/profile" },
   ];
