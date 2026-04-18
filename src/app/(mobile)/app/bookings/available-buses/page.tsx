@@ -27,7 +27,7 @@ type FilterType = "all" | "earliest" | "late";
 const allBuses = [
   {
     id: 1,
-    plateNumber: "KI-58-B-0271",
+    plateNumber: "RW892F",
     agency: "Volcano express",
     delay: "Delayed: 10 min",
     seats: "20",
@@ -38,7 +38,7 @@ const allBuses = [
   },
   {
     id: 2,
-    plateNumber: "KI-42-A-1234",
+    plateNumber: "RW892F",
     agency: "Horizon express",
     delay: "On time",
     seats: "4",
@@ -49,7 +49,7 @@ const allBuses = [
   },
   {
     id: 3,
-    plateNumber: "KI-67-C-5678",
+    plateNumber: "RW892F",
     agency: "Kivu belt",
     delay: "On time",
     seats: "15",
@@ -60,7 +60,7 @@ const allBuses = [
   },
   {
     id: 4,
-    plateNumber: "KI-89-D-9012",
+    plateNumber: "RW892F",
     agency: "Express Rwanda",
     delay: "Delayed: 25 min",
     seats: "8",
@@ -71,7 +71,7 @@ const allBuses = [
   },
   {
     id: 5,
-    plateNumber: "KI-23-E-3456",
+    plateNumber: "RW892F",
     agency: "Swift Transport",
     delay: "Delayed: 5 min",
     seats: "12",
@@ -275,7 +275,6 @@ export default function AvailableBuses() {
                   {agency}
                 </button>
               ))}
-              
             </div>
 
             <Button
@@ -312,7 +311,7 @@ function BusResultCard({
   price: string;
 }) {
   return (
-    <Card className=" shadow-none">
+    <Card className=" shadow-none py-4">
       <CardHeader className="flex justify-between items-start mb-4">
         <div>
           <p className="font-bold text-[15px]">{plateNumber}</p>
