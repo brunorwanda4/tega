@@ -11,12 +11,12 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: {
-    default: "Tega – Smart Bus Transport in Rwanda",
+    default: "Tega - Bus Booking and Tracking MVP for Rwanda",
     template: "%s | Tega",
   },
 
   description:
-    "Tega is a smart transport app in Rwanda that helps you find available buses, request pickups, track routes, and pay for your ride directly from your phone.",
+    "Tega helps passengers in Rwanda find buses, book seats, pay, receive digital tickets, and track bus status through a PWA or USSD.",
 
   applicationName: "Tega",
 
@@ -47,9 +47,9 @@ export const metadata: Metadata = {
   ],
 
   openGraph: {
-    title: "Tega – Smart Bus Transport in Rwanda",
+    title: "Tega - Bus Booking and Tracking MVP for Rwanda",
     description:
-      "Find buses, request pickup, track routes, and pay for transport easily using Tega.",
+      "Find buses, book seats, pay, receive digital tickets, and track bus status through a PWA or USSD.",
     url: "https://tega.app",
     siteName: "Tega",
     locale: "en_US",
@@ -66,9 +66,9 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Tega – Smart Bus Transport in Rwanda",
+    title: "Tega - Bus Booking and Tracking MVP for Rwanda",
     description:
-      "The easy way to find buses, request rides, and pay for transport in Rwanda.",
+      "The easy way to book and track buses in Rwanda through a PWA or USSD.",
     images: ["/og-image.png"],
   },
 

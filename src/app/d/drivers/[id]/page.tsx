@@ -2,11 +2,10 @@
 
 import {
   AlertCircle,
-  ChevronDown,
+  CalendarDays,
   ChevronLeft,
   ChevronRight,
   Download,
-  ExternalLink,
   MapPin,
   MessageSquare,
   Phone,
@@ -14,11 +13,19 @@ import {
   Star,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import type { ReactNode } from "react";
+import { useMemo, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -29,385 +36,642 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-interface Booking {
+type DriverStatus = "Available" | "Busy";
+
+type Driver = {
   id: number;
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  rating: number;
+  trips: number;
+  status: DriverStatus;
+  createdOn: string;
+  avatar: string;
+  clientsReached: number;
+  reports: number;
+  distanceKm: number;
+};
+
+type Booking = {
+  id: number;
+  driverId: number;
   client: string;
   dateTime: string;
   pickup: string;
   destination: string;
-  payment: string;
+  payment: number;
   receipt: string;
-}
+  status: "Completed" | "Upcoming" | "Cancelled";
+};
 
-// ── Data ──────────────────────────────────────────────────────────────────────
-const ALL_BOOKINGS: Booking[] = Array.from({ length: 24 }, (_, i) => ({
-  id: i + 1,
-  client: i === 0 ? "Andy Melvin" : "John Nathanael Donath",
-  dateTime: "04-11-2024, 14:00",
-  pickup: "Kigali International Airport",
-  destination: "Mariot Hotel Kigali",
-  payment: "3000 FRW",
-  receipt: `#3453${i + 1}`,
-}));
+const drivers: Driver[] = [
+  {
+    id: 1,
+    name: "Alex Parker",
+    email: "alex@gmail.com",
+    phone: "+250 784 45 343",
+    company: "Volcano Express",
+    rating: 5,
+    trips: 128,
+    status: "Available",
+    createdOn: "2024-07-22",
+    avatar: "https://i.pravatar.cc/150?u=801",
+    clientsReached: 340,
+    reports: 1,
+    distanceKm: 15000,
+  },
+  {
+    id: 2,
+    name: "Jean Claude",
+    email: "jean@gmail.com",
+    phone: "+250 788 123 456",
+    company: "Kigali Transit",
+    rating: 4,
+    trips: 92,
+    status: "Busy",
+    createdOn: "2024-08-03",
+    avatar: "https://i.pravatar.cc/150?u=802",
+    clientsReached: 216,
+    reports: 3,
+    distanceKm: 9800,
+  },
+  {
+    id: 3,
+    name: "Eric Mutoni",
+    email: "eric@gmail.com",
+    phone: "+250 789 654 321",
+    company: "Rwanda Moves",
+    rating: 5,
+    trips: 140,
+    status: "Available",
+    createdOn: "2024-06-18",
+    avatar: "https://i.pravatar.cc/150?u=803",
+    clientsReached: 390,
+    reports: 0,
+    distanceKm: 17240,
+  },
+  {
+    id: 4,
+    name: "Patrick Niyonsaba",
+    email: "patrick@gmail.com",
+    phone: "+250 783 222 111",
+    company: "City Riders",
+    rating: 3,
+    trips: 63,
+    status: "Available",
+    createdOn: "2024-09-10",
+    avatar: "https://i.pravatar.cc/150?u=804",
+    clientsReached: 144,
+    reports: 2,
+    distanceKm: 6400,
+  },
+  {
+    id: 5,
+    name: "Marie Uwera",
+    email: "marie@drivers.rw",
+    phone: "+250 781 900 225",
+    company: "Horizon Express",
+    rating: 5,
+    trips: 156,
+    status: "Busy",
+    createdOn: "2024-05-04",
+    avatar: "https://i.pravatar.cc/150?u=805",
+    clientsReached: 420,
+    reports: 1,
+    distanceKm: 20100,
+  },
+  {
+    id: 6,
+    name: "Bruno Kabaka",
+    email: "bruno@drivers.rw",
+    phone: "+250 786 982 445",
+    company: "Virunga Coach",
+    rating: 4,
+    trips: 87,
+    status: "Available",
+    createdOn: "2024-10-12",
+    avatar: "https://i.pravatar.cc/150?u=806",
+    clientsReached: 198,
+    reports: 1,
+    distanceKm: 8700,
+  },
+];
+
+const bookings: Booking[] = [
+  {
+    id: 1,
+    driverId: 1,
+    client: "Andy Melvin",
+    dateTime: "2026-05-05T14:00:00",
+    pickup: "Kigali International Airport",
+    destination: "Marriott Hotel Kigali",
+    payment: 3000,
+    receipt: "#34531",
+    status: "Completed",
+  },
+  {
+    id: 2,
+    driverId: 1,
+    client: "Beatrice Carrot",
+    dateTime: "2026-05-04T09:30:00",
+    pickup: "Nyabugogo Bus Park",
+    destination: "Muhanga Bus Park",
+    payment: 1500,
+    receipt: "#34532",
+    status: "Completed",
+  },
+  {
+    id: 3,
+    driverId: 2,
+    client: "John Nathanael",
+    dateTime: "2026-05-05T11:15:00",
+    pickup: "Kimironko Terminal",
+    destination: "Rubavu Station",
+    payment: 4500,
+    receipt: "#34533",
+    status: "Upcoming",
+  },
+  {
+    id: 4,
+    driverId: 3,
+    client: "Iradukunda Marie",
+    dateTime: "2026-05-04T16:45:00",
+    pickup: "Huye Bus Park",
+    destination: "Kigali City",
+    payment: 2800,
+    receipt: "#34534",
+    status: "Completed",
+  },
+  {
+    id: 5,
+    driverId: 4,
+    client: "Mugisha Rwanda",
+    dateTime: "2026-05-03T07:20:00",
+    pickup: "Remera",
+    destination: "Rwamagana",
+    payment: 1800,
+    receipt: "#34535",
+    status: "Cancelled",
+  },
+  {
+    id: 6,
+    driverId: 5,
+    client: "Alex Mugabe",
+    dateTime: "2026-05-02T18:10:00",
+    pickup: "Musanze Terminal",
+    destination: "Rubavu",
+    payment: 2200,
+    receipt: "#34536",
+    status: "Completed",
+  },
+  {
+    id: 7,
+    driverId: 6,
+    client: "Jean Claude",
+    dateTime: "2026-05-01T12:30:00",
+    pickup: "Kigali City",
+    destination: "Nyagatare",
+    payment: 5200,
+    receipt: "#34537",
+    status: "Completed",
+  },
+  {
+    id: 8,
+    driverId: 1,
+    client: "Bruno Kabaka",
+    dateTime: "2026-04-30T08:00:00",
+    pickup: "Muhanga Bus Park",
+    destination: "Kigali City",
+    payment: 1500,
+    receipt: "#34538",
+    status: "Completed",
+  },
+];
 
 const PER_PAGE = 5;
-const TOTAL_PAGES = Math.ceil(ALL_BOOKINGS.length / PER_PAGE);
+const STAR_KEYS = ["one", "two", "three", "four", "five"];
 
-// ── Star Rating ───────────────────────────────────────────────────────────────
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("en", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
+}
+
+function formatCurrency(value: number) {
+  return `${new Intl.NumberFormat("en").format(value)} FRW`;
+}
+
 function StarRating({ rating, max = 5 }: { rating: number; max?: number }) {
   return (
     <div className="flex items-center gap-0.5">
-      {Array.from({ length: max }, (_, i) => (
+      {STAR_KEYS.slice(0, max).map((key, index) => (
         <Star
-          key={i}
-          className={`h-4 w-4 ${i < Math.floor(rating) ? "fill-amber-400 text-amber-400" : "fill-zinc-200 text-zinc-200"}`}
+          key={key}
+          className={
+            index < Math.floor(rating)
+              ? "fill-amber-400 text-amber-400"
+              : "fill-muted text-muted"
+          }
         />
       ))}
     </div>
   );
 }
 
-// ── Mini Calendar ─────────────────────────────────────────────────────────────
-const DAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-function getDaysInMonth(y: number, m: number) {
-  return new Date(y, m + 1, 0).getDate();
-}
-function getFirstDay(y: number, m: number) {
-  return (new Date(y, m, 1).getDay() + 6) % 7;
-}
-
-function MiniCalendar() {
-  const today = new Date();
-  const [cur, setCur] = useState({
-    y: today.getFullYear(),
-    m: today.getMonth(),
-  });
-  const [sel, setSel] = useState<number[]>([11, 12, 14, 21]);
-
-  const { y, m } = cur;
-  const dim = getDaysInMonth(y, m);
-  const fd = getFirstDay(y, m);
-
-  const cells: (number | null)[] = [
-    ...Array(fd).fill(null),
-    ...Array.from({ length: dim }, (_, i) => i + 1),
-  ];
-  while (cells.length % 7 !== 0) cells.push(null);
-  const rows: (number | null)[][] = [];
-  for (let i = 0; i < cells.length; i += 7) rows.push(cells.slice(i, i + 7));
-
-  const getWeekNum = (ri: number) => {
-    const first = new Date(y, 0, 1);
-    const mon = new Date(first);
-    mon.setDate(first.getDate() + ((8 - first.getDay()) % 7));
-    const d = new Date(y, m, (rows[ri].find(Boolean) as number) || 1);
-    return Math.max(
-      1,
-      Math.ceil((d.getTime() - mon.getTime()) / (7 * 86400000)) + 1,
-    );
-  };
-
-  const isToday = (d: number | null) =>
-    d === today.getDate() &&
-    m === today.getMonth() &&
-    y === today.getFullYear();
-  const isSelected = (d: number | null) => d !== null && sel.includes(d);
-  const isWeekend = (ci: number) => ci >= 5;
-
-  const toggle = (d: number | null) => {
-    if (!d) return;
-    setSel((prev) =>
-      prev.includes(d) ? prev.filter((x) => x !== d) : [...prev, d],
-    );
-  };
-
-  return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7"
-          onClick={() =>
-            setCur(({ y, m }) =>
-              m === 0 ? { y: y - 1, m: 11 } : { y, m: m - 1 },
-            )
-          }
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <span className="text-sm font-semibold">{MONTHS[m]}</span>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7"
-          onClick={() =>
-            setCur(({ y, m }) =>
-              m === 11 ? { y: y + 1, m: 0 } : { y, m: m + 1 },
-            )
-          }
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
-      <table className="w-full text-xs border-collapse">
-        <thead>
-          <tr>
-            <th className="w-5 pb-2 text-zinc-400 font-normal" />
-            {DAYS.map((d, i) => (
-              <th
-                key={d}
-                className={`pb-2 text-center font-medium ${isWeekend(i) ? "text-black" : "text-zinc-500"}`}
-              >
-                {d}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, ri) => (
-            <tr key={ri}>
-              <td className="text-zinc-400 text-center pr-1 text-[10px]">
-                {getWeekNum(ri)}
-              </td>
-              {row.map((d, ci) => (
-                <td key={ci} className="text-center p-0.5">
-                  {d ? (
-                    <button
-                      type="button"
-                      onClick={() => toggle(d)}
-                      className={`w-7 h-7 rounded-full flex items-center justify-center mx-auto transition-colors font-normal
-                        ${
-                          isToday(d) && !isSelected(d)
-                            ? "bg-black text-white font-semibold"
-                            : isSelected(d)
-                              ? "bg-black text-white font-semibold"
-                              : isWeekend(ci)
-                                ? "text-black hover:bg-zinc-100"
-                                : "text-zinc-700 hover:bg-zinc-100"
-                        }`}
-                    >
-                      {d}
-                    </button>
-                  ) : null}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-// ── Stat Card ─────────────────────────────────────────────────────────────────
 function StatCard({
   icon,
   value,
   label,
   sub,
-  subColor = "text-emerald-600",
 }: {
-  icon: React.ReactNode;
+  icon: ReactNode;
   value: string;
   label: string;
   sub: string;
-  subColor?: string;
 }) {
   return (
-    <Card className="border border-zinc-200 shadow-none flex-1">
-      <CardContent className="p-4 flex flex-col gap-1">
-        <div className="flex items-start gap-3">
-          <div className="mt-0.5 text-zinc-400">{icon}</div>
-          <div>
-            <p className="text-xl font-bold text-black leading-tight">
-              {value}
-            </p>
-            <p className="text-[11px] text-zinc-500">{label}</p>
-            <p className={`text-[10px] font-medium mt-0.5 ${subColor}`}>
-              {sub}
-            </p>
-          </div>
+    <Card className="shadow-none">
+      <CardContent className="flex items-start gap-3 p-4">
+        <div className="mt-0.5 text-muted-foreground">{icon}</div>
+        <div className="min-w-0">
+          <p className="font-bold text-xl leading-tight">{value}</p>
+          <p className="text-muted-foreground text-xs">{label}</p>
+          <p className="mt-1 text-muted-foreground text-xs">{sub}</p>
         </div>
       </CardContent>
     </Card>
   );
 }
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
-export default function DriverProfilePage() {
-  const [page, setPage] = useState(1);
-  const pageLogs = ALL_BOOKINGS.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+function BookingsCalendar({ activeDays }: { activeDays: number[] }) {
+  const today = new Date();
+  const [month, setMonth] = useState({
+    year: today.getFullYear(),
+    month: today.getMonth(),
+  });
+
+  const firstDay = (new Date(month.year, month.month, 1).getDay() + 6) % 7;
+  const daysInMonth = new Date(month.year, month.month + 1, 0).getDate();
+  const cells: (number | null)[] = [
+    ...Array(firstDay).fill(null),
+    ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
+  ];
+
+  while (cells.length % 7 !== 0) cells.push(null);
+
+  const goPrev = () =>
+    setMonth((current) =>
+      current.month === 0
+        ? { year: current.year - 1, month: 11 }
+        : { ...current, month: current.month - 1 },
+    );
+
+  const goNext = () =>
+    setMonth((current) =>
+      current.month === 11
+        ? { year: current.year + 1, month: 0 }
+        : { ...current, month: current.month + 1 },
+    );
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <Card className="shadow-sm">
+      <CardContent className="p-4">
+        <div className="mb-4 flex items-center justify-between">
+          <Button variant="ghost" size="icon" onClick={goPrev}>
+            <ChevronLeft />
+          </Button>
+          <div className="text-center">
+            <p className="font-semibold text-sm">
+              {new Intl.DateTimeFormat("en", { month: "long" }).format(
+                new Date(month.year, month.month),
+              )}
+            </p>
+            <p className="text-muted-foreground text-xs">{month.year}</p>
+          </div>
+          <Button variant="ghost" size="icon" onClick={goNext}>
+            <ChevronRight />
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-7 gap-1 text-center text-xs">
+          {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day) => (
+            <span key={day} className="text-muted-foreground">
+              {day}
+            </span>
+          ))}
+          {cells.map((day, index) => {
+            const isActive = Boolean(day && activeDays.includes(day));
+            const isToday =
+              day === today.getDate() &&
+              month.month === today.getMonth() &&
+              month.year === today.getFullYear();
+
+            return (
+              <span
+                key={`${day ?? "empty"}-${index}`}
+                className={`flex aspect-square items-center justify-center rounded-full ${
+                  isActive
+                    ? "bg-base-content text-base-100"
+                    : isToday
+                      ? "bg-muted font-semibold"
+                      : "text-base-content"
+                }`}
+              >
+                {day}
+              </span>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function DriverProfilePage() {
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const driverId = Number(params.id);
+  const driver = drivers.find((item) => item.id === driverId);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+
+  const driverBookings = useMemo(() => {
+    if (!driver) return [];
+    const query = search.trim().toLowerCase();
+
+    return bookings.filter((booking) => {
+      const belongsToDriver = booking.driverId === driver.id;
+      const matchesSearch =
+        !query ||
+        [
+          booking.client,
+          booking.pickup,
+          booking.destination,
+          booking.receipt,
+          booking.status,
+          formatCurrency(booking.payment),
+          formatDate(booking.dateTime),
+        ]
+          .join(" ")
+          .toLowerCase()
+          .includes(query);
+
+      return belongsToDriver && matchesSearch;
+    });
+  }, [driver, search]);
+
+  const totalPages = Math.max(1, Math.ceil(driverBookings.length / PER_PAGE));
+  const pageLogs = driverBookings.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+  const activeDays = driverBookings.map((booking) =>
+    new Date(booking.dateTime).getDate(),
+  );
+
+  if (!driver) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
+            <AlertCircle className="text-muted-foreground" />
+            <h1 className="font-semibold text-xl">Driver not found</h1>
+            <p className="text-muted-foreground text-sm">
+              The selected driver does not exist in this MVP dataset.
+            </p>
+            <Button
+              className="rounded-md"
+              onClick={() => router.push("/d/drivers")}
+            >
+              Back to drivers
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const exportProfile = () => {
+    const rows = [
+      ["Name", driver.name],
+      ["Email", driver.email],
+      ["Phone", driver.phone],
+      ["Company", driver.company],
+      ["Rating", `${driver.rating}/5`],
+      ["Trips", `${driver.trips}`],
+      ["Status", driver.status],
+    ];
+    const csv = rows.map((row) => row.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${driver.name.toLowerCase().replaceAll(" ", "-")}-profile.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const callDriver = () => {
+    window.location.href = `tel:${driver.phone.replaceAll(" ", "")}`;
+  };
+
+  return (
+    <div className="min-h-screen bg-base-100 font-sans">
       {/* Top bar */}
-      <div className="flex flex-col gap-3 border-zinc-100 border-b px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <div className="relative w-full sm:w-56">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400" />
+      <div className="flex flex-col gap-3 border-b px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div className="relative w-full sm:w-72">
+          <Search className="-translate-y-1/2 absolute top-1/2 left-3 text-muted-foreground" />
           <Input
-            placeholder="Search a driver"
-            className="pl-9 h-9 text-sm border-zinc-200 bg-zinc-50 focus-visible:ring-0"
+            placeholder="Search transport history"
+            value={search}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setPage(1);
+            }}
+            className="h-9 pl-9 text-sm"
           />
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
-            className="h-9 text-sm border-zinc-300 gap-2"
+            className="gap-2 rounded-md"
+            onClick={exportProfile}
           >
-            <Download className="h-4 w-4" /> Export CV
+            <Download /> Export profile
           </Button>
-          <Button className="h-9 text-sm bg-black hover:bg-zinc-800 text-white gap-1">
-            All drivers <ChevronDown className="h-4 w-4" />
+          <Button
+            variant="outline"
+            className="gap-2 rounded-md"
+            onClick={() => router.push(`/d/communications?driver=${driver.id}`)}
+          >
+            <MessageSquare /> Message
+          </Button>
+          <Button
+            className="gap-2 rounded-md"
+            onClick={() => router.push("/d/drivers")}
+          >
+            All drivers
           </Button>
         </div>
       </div>
 
       {/* Page content */}
-      <div className="mx-auto max-w-5xl space-y-6 px-4 py-6 sm:px-6">
-        {/* Back */}
+      <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6">
         <button
           type="button"
-          className="flex items-center gap-1 text-sm text-zinc-500 hover:text-black transition-colors"
+          onClick={() => router.push("/d/drivers")}
+          className="flex items-center gap-1 text-muted-foreground text-sm transition-colors hover:text-base-content"
         >
-          <ChevronLeft className="h-4 w-4" /> Back
+          <ChevronLeft /> Back
         </button>
 
         {/* Profile + Calendar row */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6">
-          {/* Profile card */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="space-y-5">
-            {/* Driver info */}
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
-              <Avatar className="size-20 flex-shrink-0 border-2 border-zinc-100">
-                <AvatarImage src={`https://i.pravatar.cc/150?u=980`} />
-                <AvatarFallback className="bg-zinc-200 text-zinc-600 text-xl font-semibold">
-                  VH
-                </AvatarFallback>
-              </Avatar>
+            <Card className="shadow-sm">
+              <CardContent className="p-5">
+                <div className="flex flex-col gap-5 md:flex-row md:items-start">
+                  <Avatar className="size-24 flex-shrink-0 border">
+                    <AvatarImage src={driver.avatar} alt={driver.name} />
+                    <AvatarFallback className="text-xl font-semibold">
+                      {getInitials(driver.name)}
+                    </AvatarFallback>
+                  </Avatar>
 
-              <div className="flex min-w-0 flex-1 flex-col gap-5 lg:flex-row lg:gap-x-8">
-                {/* Name + actions */}
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="mb-1 flex flex-wrap items-center gap-2">
-                    <h1 className="text-2xl font-bold text-black">
-                      Victor Hugo
-                    </h1>
-                    <button
-                      type="button"
-                      className="text-zinc-400 hover:text-black transition-colors"
-                    >
-                      <MessageSquare className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      className="text-zinc-400 hover:text-black transition-colors"
-                    >
-                      <Phone className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-black">
-                      3.0
-                    </span>
-                    <StarRating rating={3} />
-                  </div>
-                  <div className="mt-3 space-y-0.5">
-                    <p className="text-[11px] text-zinc-500 font-medium uppercase tracking-wide">
-                      Email
-                    </p>
-                    <p className="break-all text-sm text-zinc-700">
-                      alexparker@gmail.com
-                    </p>
-                  </div>
-                  <div className="mt-2 space-y-0.5">
-                    <p className="text-[11px] text-zinc-500 font-medium uppercase tracking-wide">
-                      Telephone
-                    </p>
-                    <p className="text-sm text-zinc-700">(+250)789-324-56-34</p>
+                  <div className="min-w-0 flex-1 space-y-5">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h1 className="font-bold text-2xl">{driver.name}</h1>
+                          <Badge
+                            variant={
+                              driver.status === "Available"
+                                ? "secondary"
+                                : "outline"
+                            }
+                          >
+                            {driver.status}
+                          </Badge>
+                        </div>
+                        <div className="mt-2 flex items-center gap-2">
+                          <span className="font-semibold text-sm">
+                            {driver.rating.toFixed(1)}
+                          </span>
+                          <StarRating rating={driver.rating} />
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="rounded-md"
+                          onClick={() =>
+                            router.push(`/d/communications?driver=${driver.id}`)
+                          }
+                        >
+                          <MessageSquare /> Message
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="rounded-md"
+                          onClick={callDriver}
+                        >
+                          <Phone /> Call
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                      <div>
+                        <p className="text-muted-foreground text-xs uppercase">
+                          Email
+                        </p>
+                        <p className="break-all font-medium text-sm">
+                          {driver.email}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground text-xs uppercase">
+                          Telephone
+                        </p>
+                        <p className="font-medium text-sm">{driver.phone}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground text-xs uppercase">
+                          Company
+                        </p>
+                        <p className="font-medium text-sm">{driver.company}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground text-xs uppercase">
+                          Created on
+                        </p>
+                        <p className="font-medium text-sm">
+                          {new Intl.DateTimeFormat("en", {
+                            dateStyle: "medium",
+                          }).format(new Date(driver.createdOn))}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                {/* Company + created */}
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-[11px] text-zinc-500 font-medium uppercase tracking-wide">
-                      Company
-                    </p>
-                    <p className="text-sm text-zinc-800 font-medium">
-                      Move Volkswagen
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] text-zinc-500 font-medium uppercase tracking-wide">
-                      Created on
-                    </p>
-                    <p className="text-sm text-zinc-800">22-07-2024</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Stats row */}
             <div className="grid gap-3 sm:grid-cols-3">
               <StatCard
-                icon={<Users className="h-4 w-4" />}
-                value="34"
+                icon={<Users />}
+                value={driver.clientsReached.toString()}
                 label="Clients reached"
-                sub="↑ 2.5% increase"
+                sub={`${driver.trips} completed trips`}
               />
               <StatCard
-                icon={<AlertCircle className="h-4 w-4" />}
-                value="2"
+                icon={<AlertCircle />}
+                value={driver.reports.toString()}
                 label="Client reports"
-                sub="last updated 23/07/2021"
-                subColor="text-zinc-400"
+                sub={
+                  driver.reports === 0 ? "No active reports" : "Needs review"
+                }
               />
               <StatCard
-                icon={<MapPin className="h-4 w-4" />}
-                value="15,000 km"
-                label="Total distances travelled"
-                sub="↑ 8% increase"
+                icon={<MapPin />}
+                value={`${new Intl.NumberFormat("en").format(driver.distanceKm)} km`}
+                label="Distance travelled"
+                sub={`${driver.company} fleet record`}
               />
             </div>
           </div>
 
-          {/* Calendar */}
-          <Card className="border border-zinc-200 shadow-sm">
-            <CardContent className="p-4">
-              <h2 className="text-sm font-semibold mb-3 text-center">
-                Driver&apos;s bookings
-              </h2>
-              <MiniCalendar />
-            </CardContent>
-          </Card>
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <CalendarDays />
+              <h2 className="font-semibold text-sm">Driver bookings</h2>
+            </div>
+            <BookingsCalendar activeDays={activeDays} />
+          </div>
         </div>
 
         {/* Transport history */}
         <div>
-          <h2 className="text-base font-semibold mb-3">Transport history</h2>
+          <h2 className="mb-3 font-semibold text-base">Transport history</h2>
 
-          <Card className="border border-zinc-200 shadow-sm overflow-hidden py-0">
+          <Card className="overflow-hidden py-0 shadow-sm">
             <div className="overflow-x-auto">
               <Table className="min-w-[980px]">
                 <TableHeader>
-                  <TableRow className="bg-black hover:bg-black">
+                  <TableRow className="bg-base-content hover:bg-base-content">
                     {[
                       "Client names",
                       "Date & Time",
@@ -415,131 +679,181 @@ export default function DriverProfilePage() {
                       "Destination",
                       "Payment",
                       "Receipt",
+                      "Status",
                       "Details",
-                    ].map((h) => (
+                    ].map((heading) => (
                       <TableHead
-                        key={h}
-                        className="text-white text-xs font-semibold py-3"
+                        key={heading}
+                        className="py-3 font-semibold text-base-100 text-xs"
                       >
-                        {h}
+                        {heading}
                       </TableHead>
                     ))}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {pageLogs.map((b, i) => (
-                    <TableRow
-                      key={b.id}
-                      className="hover:bg-zinc-50 border-zinc-100"
-                    >
+                  {pageLogs.map((booking) => (
+                    <TableRow key={booking.id}>
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <Avatar className="h-7 w-7 border border-zinc-200">
-                            <AvatarImage
-                              src={`https://i.pravatar.cc/150?u=${i + 900}`}
-                            />
-                            <AvatarFallback className="bg-zinc-100 text-zinc-600 text-xs font-medium">
-                              {b.client
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
+                          <Avatar className="size-7 border">
+                            <AvatarFallback className="text-xs">
+                              {getInitials(booking.client)}
                             </AvatarFallback>
                           </Avatar>
-                          <span className="text-xs font-medium text-black whitespace-nowrap">
-                            {b.client}
+                          <span className="whitespace-nowrap font-medium text-xs">
+                            {booking.client}
                           </span>
-                          <ExternalLink className="h-3 w-3 text-zinc-400 flex-shrink-0" />
                         </div>
                       </TableCell>
-                      <TableCell className="text-xs text-zinc-600 whitespace-nowrap">
-                        {b.dateTime}
+                      <TableCell className="whitespace-nowrap text-xs">
+                        {formatDate(booking.dateTime)}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-xs">
+                        {booking.pickup}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-xs">
+                        {booking.destination}
+                      </TableCell>
+                      <TableCell className="font-bold text-xs">
+                        {formatCurrency(booking.payment)}
+                      </TableCell>
+                      <TableCell className="text-xs">
+                        {booking.receipt}
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1 text-xs text-zinc-600 whitespace-nowrap">
-                          {b.pickup}
-                          <ExternalLink className="h-3 w-3 text-zinc-400 flex-shrink-0" />
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1 text-xs text-zinc-600 whitespace-nowrap">
-                          {b.destination}
-                          <ExternalLink className="h-3 w-3 text-zinc-400 flex-shrink-0" />
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs font-bold text-black">
-                          {b.payment}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1 text-xs text-zinc-600">
-                          {b.receipt}
-                          <ExternalLink className="h-3 w-3 text-zinc-400" />
-                        </div>
+                        <Badge
+                          variant={
+                            booking.status === "Completed"
+                              ? "secondary"
+                              : "outline"
+                          }
+                        >
+                          {booking.status}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         <Button
                           variant="outline"
                           size="sm"
-                          className="h-7 text-xs border-zinc-300 px-3 rounded-full hover:bg-zinc-50"
+                          className="rounded-full"
+                          onClick={() => setSelectedBooking(booking)}
                         >
                           View
                         </Button>
                       </TableCell>
                     </TableRow>
                   ))}
+
+                  {pageLogs.length === 0 && (
+                    <TableRow>
+                      <TableCell
+                        colSpan={8}
+                        className="py-8 text-center text-muted-foreground"
+                      >
+                        No transport history matches your search.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </div>
           </Card>
 
-          {/* Pagination */}
           <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <span className="text-xs text-zinc-500">
-              Page <strong className="text-black">{page}</strong> of{" "}
-              {TOTAL_PAGES}
+            <span className="text-muted-foreground text-xs">
+              Page <strong className="text-base-content">{page}</strong> of{" "}
+              {totalPages}
             </span>
             <div className="flex flex-wrap items-center gap-1">
               <Button
                 variant="outline"
                 size="icon"
-                className="h-7 w-7 border-zinc-300 rounded-full"
+                className="rounded-full"
                 disabled={page === 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                onClick={() => setPage((current) => Math.max(1, current - 1))}
               >
-                <ChevronLeft className="h-3.5 w-3.5" />
+                <ChevronLeft />
               </Button>
-              {Array.from(
-                { length: Math.min(TOTAL_PAGES, 5) },
-                (_, i) => i + 1,
-              ).map((p) => (
-                <Button
-                  key={p}
-                  variant={p === page ? "default" : "outline"}
-                  size="icon"
-                  className={`h-7 w-7 text-xs rounded-full ${
-                    p === page
-                      ? "bg-black text-white border-black hover:bg-zinc-800"
-                      : "border-zinc-300 text-zinc-600 hover:bg-zinc-100"
-                  }`}
-                  onClick={() => setPage(p)}
-                >
-                  {p}
-                </Button>
-              ))}
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+                (pageNumber) => (
+                  <Button
+                    key={pageNumber}
+                    variant={pageNumber === page ? "default" : "outline"}
+                    size="icon"
+                    className="rounded-full"
+                    onClick={() => setPage(pageNumber)}
+                  >
+                    {pageNumber}
+                  </Button>
+                ),
+              )}
               <Button
                 variant="outline"
                 size="icon"
-                className="h-7 w-7 border-zinc-300 rounded-full"
-                disabled={page === TOTAL_PAGES}
-                onClick={() => setPage((p) => Math.min(TOTAL_PAGES, p + 1))}
+                className="rounded-full"
+                disabled={page === totalPages}
+                onClick={() =>
+                  setPage((current) => Math.min(totalPages, current + 1))
+                }
               >
-                <ChevronRight className="h-3.5 w-3.5" />
+                <ChevronRight />
               </Button>
             </div>
           </div>
         </div>
       </div>
+
+      <Dialog
+        open={Boolean(selectedBooking)}
+        onOpenChange={() => setSelectedBooking(null)}
+      >
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Transport details</DialogTitle>
+          </DialogHeader>
+          {selectedBooking && (
+            <div className="grid gap-4 text-sm">
+              <div className="rounded-lg bg-base-200 p-4">
+                <p className="text-muted-foreground text-xs">Receipt</p>
+                <p className="font-semibold text-lg">
+                  {selectedBooking.receipt}
+                </p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <p className="text-muted-foreground text-xs">Client</p>
+                  <p className="font-medium">{selectedBooking.client}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Status</p>
+                  <p className="font-medium">{selectedBooking.status}</p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Date & Time</p>
+                  <p className="font-medium">
+                    {formatDate(selectedBooking.dateTime)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground text-xs">Payment</p>
+                  <p className="font-medium">
+                    {formatCurrency(selectedBooking.payment)}
+                  </p>
+                </div>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Pickup</p>
+                <p className="font-medium">{selectedBooking.pickup}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Destination</p>
+                <p className="font-medium">{selectedBooking.destination}</p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
