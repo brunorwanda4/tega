@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, ExternalLink, Bus } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -27,12 +27,48 @@ interface TravelLog {
 
 // ── Sample data ──────────────────────────────────────────────────────────────
 const ALL_LOGS: TravelLog[] = [
-  { id: 1, driver: { name: "Alex Parker" }, dateTime: "04-11-2024, 14:00", from: "Muhanga bus park", to: "Kigali city, Nyabugogo" },
-  { id: 2, driver: { name: "Sarah Uwera" }, dateTime: "04-11-2024, 09:30", from: "Kigali city, Nyabugogo", to: "Huye bus park" },
-  { id: 3, driver: { name: "James Nkurunziza" }, dateTime: "04-11-2024, 07:15", from: "Rubavu, Gisenyi", to: "Kigali city, Nyabugogo" },
-  { id: 4, driver: { name: "Marie Iradukunda" }, dateTime: "04-10-2024, 16:45", from: "Kigali city, Nyabugogo", to: "Musanze bus park" },
-  { id: 5, driver: { name: "Emmanuel Habimana" }, dateTime: "04-10-2024, 11:00", from: "Muhanga bus park", to: "Huye bus park" },
-  { id: 6, driver: { name: "Alice Mutesi" }, dateTime: "04-09-2024, 08:20", from: "Nyagatare bus park", to: "Kigali city, Nyabugogo" },
+  {
+    id: 1,
+    driver: { name: "Alex Parker" },
+    dateTime: "04-11-2024, 14:00",
+    from: "Muhanga bus park",
+    to: "Kigali city, Nyabugogo",
+  },
+  {
+    id: 2,
+    driver: { name: "Sarah Uwera" },
+    dateTime: "04-11-2024, 09:30",
+    from: "Kigali city, Nyabugogo",
+    to: "Huye bus park",
+  },
+  {
+    id: 3,
+    driver: { name: "James Nkurunziza" },
+    dateTime: "04-11-2024, 07:15",
+    from: "Rubavu, Gisenyi",
+    to: "Kigali city, Nyabugogo",
+  },
+  {
+    id: 4,
+    driver: { name: "Marie Iradukunda" },
+    dateTime: "04-10-2024, 16:45",
+    from: "Kigali city, Nyabugogo",
+    to: "Musanze bus park",
+  },
+  {
+    id: 5,
+    driver: { name: "Emmanuel Habimana" },
+    dateTime: "04-10-2024, 11:00",
+    from: "Muhanga bus park",
+    to: "Huye bus park",
+  },
+  {
+    id: 6,
+    driver: { name: "Alice Mutesi" },
+    dateTime: "04-09-2024, 08:20",
+    from: "Nyagatare bus park",
+    to: "Kigali city, Nyabugogo",
+  },
 ];
 
 const LOGS_PER_PAGE = 4;
@@ -40,7 +76,20 @@ const TOTAL_PAGES = Math.ceil(ALL_LOGS.length / LOGS_PER_PAGE);
 
 // ── Mini Calendar ─────────────────────────────────────────────────────────────
 const DAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate();
@@ -53,7 +102,10 @@ function getFirstDayOfMonth(year: number, month: number) {
 
 function MiniCalendar() {
   const today = new Date();
-  const [current, setCurrent] = useState({ year: today.getFullYear(), month: today.getMonth() });
+  const [current, setCurrent] = useState({
+    year: today.getFullYear(),
+    month: today.getMonth(),
+  });
   const [selected, setSelected] = useState(today.getDate());
 
   const { year, month } = current;
@@ -62,11 +114,11 @@ function MiniCalendar() {
 
   const prev = () =>
     setCurrent(({ year, month }) =>
-      month === 0 ? { year: year - 1, month: 11 } : { year, month: month - 1 }
+      month === 0 ? { year: year - 1, month: 11 } : { year, month: month - 1 },
     );
   const next = () =>
     setCurrent(({ year, month }) =>
-      month === 11 ? { year: year + 1, month: 0 } : { year, month: month + 1 }
+      month === 11 ? { year: year + 1, month: 0 } : { year, month: month + 1 },
     );
 
   // Build grid: leading week number + 7 day cells per row
@@ -84,28 +136,44 @@ function MiniCalendar() {
   const getWeekNum = (rowIdx: number) => {
     const firstDayOfYear = new Date(year, 0, 1);
     const firstMonday = new Date(firstDayOfYear);
-    firstMonday.setDate(firstDayOfYear.getDate() + ((8 - firstDayOfYear.getDay()) % 7));
+    firstMonday.setDate(
+      firstDayOfYear.getDate() + ((8 - firstDayOfYear.getDay()) % 7),
+    );
     const dayNum = new Date(year, month, (cells[rowIdx * 7] as number) || 1);
-    const diff = Math.ceil((dayNum.getTime() - firstMonday.getTime()) / (7 * 86400000));
+    const diff = Math.ceil(
+      (dayNum.getTime() - firstMonday.getTime()) / (7 * 86400000),
+    );
     return Math.max(1, diff + 1);
   };
 
   const isWeekend = (colIdx: number) => colIdx === 5 || colIdx === 6;
   const isToday = (d: number | null) =>
-    d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+    d === today.getDate() &&
+    month === today.getMonth() &&
+    year === today.getFullYear();
 
   return (
     <Card className="border border-zinc-200 shadow-sm">
       <CardContent className="p-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={prev}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={prev}
+          >
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <span className="text-sm font-semibold tracking-wide">
             {MONTHS[month]}
           </span>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={next}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={next}
+          >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
@@ -147,10 +215,10 @@ function MiniCalendar() {
                             isToday(d)
                               ? "bg-black text-white font-semibold"
                               : selected === d && month === today.getMonth()
-                              ? "bg-zinc-200 text-black font-semibold"
-                              : isWeekend(ci)
-                              ? "text-black hover:bg-zinc-100"
-                              : "text-zinc-700 hover:bg-zinc-100"
+                                ? "bg-zinc-200 text-black font-semibold"
+                                : isWeekend(ci)
+                                  ? "text-black hover:bg-zinc-100"
+                                  : "text-zinc-700 hover:bg-zinc-100"
                           }
                         `}
                       >
@@ -172,12 +240,14 @@ function MiniCalendar() {
 export default function VehicleLogsPage() {
   const [page, setPage] = useState(1);
 
-  const pageLogs = ALL_LOGS.slice((page - 1) * LOGS_PER_PAGE, page * LOGS_PER_PAGE);
+  const pageLogs = ALL_LOGS.slice(
+    (page - 1) * LOGS_PER_PAGE,
+    page * LOGS_PER_PAGE,
+  );
 
   return (
     <div className="min-h-screen bg-zinc-50 font-sans">
-      <div className="max-w-5xl mx-auto px-4 py-6">
-
+      <div className="mx-auto max-w-5xl px-0 py-4 sm:px-4 sm:py-6">
         {/* Back */}
         <button className="flex items-center gap-1 text-sm text-zinc-500 hover:text-black mb-6 transition-colors">
           <ChevronLeft className="h-4 w-4" />
@@ -185,11 +255,10 @@ export default function VehicleLogsPage() {
         </button>
 
         {/* Two-column layout */}
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_260px] gap-6">
-
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_260px]">
           {/* LEFT: Vehicle image */}
           <div className="space-y-6">
-            <div className="relative  rounded-xl overflow-hidden bg-zinc-200 aspect-[16/9] md:aspect-[4/3] max-h-80 w-140">
+            <div className="relative aspect-[16/9] max-h-80 w-full overflow-hidden rounded-xl bg-zinc-200 md:aspect-[4/3]">
               {/* Replace src with your actual bus image */}
               <Image
                 src="/images/bus.jpg"
@@ -203,40 +272,70 @@ export default function VehicleLogsPage() {
             {/* Travel Logs section */}
             <div>
               <h2 className="text-base font-semibold mb-3">Travel logs</h2>
-                <Table className=" border">
+              <div className="overflow-x-auto rounded-lg border">
+                <Table className="min-w-[720px]">
                   <TableHeader>
                     <TableRow className="bg-black hover:bg-black">
-                      <TableHead className="text-white text-xs font-semibold rounded-tl-lg">Driver names</TableHead>
-                      <TableHead className="text-white text-xs font-semibold">Date &amp; Time</TableHead>
-                      <TableHead className="text-white text-xs font-semibold">From location</TableHead>
-                      <TableHead className="text-white text-xs font-semibold rounded-tr-lg">To location</TableHead>
+                      <TableHead className="text-white text-xs font-semibold rounded-tl-lg">
+                        Driver names
+                      </TableHead>
+                      <TableHead className="text-white text-xs font-semibold">
+                        Date &amp; Time
+                      </TableHead>
+                      <TableHead className="text-white text-xs font-semibold">
+                        From location
+                      </TableHead>
+                      <TableHead className="text-white text-xs font-semibold rounded-tr-lg">
+                        To location
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {pageLogs.map((log, i) => (
-                      <TableRow key={log.id} className="hover:bg-zinc-50 border-zinc-100">
+                      <TableRow
+                        key={log.id}
+                        className="hover:bg-zinc-50 border-zinc-100"
+                      >
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Avatar className=" border border-zinc-200">
-                              <AvatarImage src={`https://i.pravatar.cc/150?u=${i + 200}`} />
+                              <AvatarImage
+                                src={`https://i.pravatar.cc/150?u=${i + 200}`}
+                              />
                               <AvatarFallback className="bg-zinc-100 text-zinc-600 text-xs font-medium">
-                                {log.driver.name.split(" ").map((n) => n[0]).join("")}
+                                {log.driver.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")}
                               </AvatarFallback>
                             </Avatar>
-                            <span className="text-xs font-medium text-black">{log.driver.name}</span>
+                            <span className="text-xs font-medium text-black">
+                              {log.driver.name}
+                            </span>
                             <ExternalLink className="h-3 w-3 text-zinc-400 flex-shrink-0" />
                           </div>
                         </TableCell>
-                        <TableCell className="text-xs text-zinc-600">{log.dateTime}</TableCell>
-                        <TableCell className="text-xs text-zinc-600">{log.from}</TableCell>
-                        <TableCell className="text-xs text-zinc-600">{log.to}</TableCell>
+                        <TableCell className="text-xs text-zinc-600">
+                          {log.dateTime}
+                        </TableCell>
+                        <TableCell className="text-xs text-zinc-600">
+                          {log.from}
+                        </TableCell>
+                        <TableCell className="text-xs text-zinc-600">
+                          {log.to}
+                        </TableCell>
                       </TableRow>
                     ))}
 
                     {/* Empty skeleton rows */}
                     {pageLogs.length < LOGS_PER_PAGE &&
-                      Array.from({ length: LOGS_PER_PAGE - pageLogs.length }).map((_, i) => (
-                        <TableRow key={`empty-${i}`} className="border-zinc-100">
+                      Array.from({
+                        length: LOGS_PER_PAGE - pageLogs.length,
+                      }).map((_, i) => (
+                        <TableRow
+                          key={`empty-${i}`}
+                          className="border-zinc-100"
+                        >
                           <TableCell colSpan={4}>
                             <div className="h-4 rounded bg-zinc-100 w-3/4" />
                           </TableCell>
@@ -244,14 +343,16 @@ export default function VehicleLogsPage() {
                       ))}
                   </TableBody>
                 </Table>
+              </div>
 
               {/* Pagination */}
-              <div className="flex items-center justify-between mt-4">
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <span className="text-xs text-zinc-500">
-                  Page <strong className="text-black">{page}</strong> of {TOTAL_PAGES}
+                  Page <strong className="text-black">{page}</strong> of{" "}
+                  {TOTAL_PAGES}
                 </span>
 
-                <div className="flex items-center gap-1">
+                <div className="flex flex-wrap items-center gap-1">
                   <Button
                     variant="outline"
                     size="icon"
@@ -262,21 +363,23 @@ export default function VehicleLogsPage() {
                     <ChevronLeft className="h-3.5 w-3.5" />
                   </Button>
 
-                  {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((p) => (
-                    <Button
-                      key={p}
-                      variant={p === page ? "default" : "outline"}
-                      size="icon"
-                      className={`h-7 w-7 text-xs ${
-                        p === page
-                          ? "bg-black text-white border-black hover:bg-zinc-800"
-                          : "border-zinc-300 text-zinc-600 hover:bg-zinc-100"
-                      }`}
-                      onClick={() => setPage(p)}
-                    >
-                      {p}
-                    </Button>
-                  ))}
+                  {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map(
+                    (p) => (
+                      <Button
+                        key={p}
+                        variant={p === page ? "default" : "outline"}
+                        size="icon"
+                        className={`h-7 w-7 text-xs ${
+                          p === page
+                            ? "bg-black text-white border-black hover:bg-zinc-800"
+                            : "border-zinc-300 text-zinc-600 hover:bg-zinc-100"
+                        }`}
+                        onClick={() => setPage(p)}
+                      >
+                        {p}
+                      </Button>
+                    ),
+                  )}
 
                   <Button
                     variant="outline"
@@ -295,25 +398,44 @@ export default function VehicleLogsPage() {
           {/* RIGHT: Calendar */}
           <div className="space-y-3">
             <div>
-              <h2 className="text-base font-semibold mb-3">Vehicle&apos;s logs</h2>
+              <h2 className="text-base font-semibold mb-3">
+                Vehicle&apos;s logs
+              </h2>
               <MiniCalendar />
             </div>
 
             {/* Optional quick stats */}
             <Card className="border border-zinc-200 shadow-sm">
               <CardContent className="p-4 space-y-3">
-                <p className="text-xs text-zinc-500 font-medium uppercase tracking-wide">This month</p>
+                <p className="text-xs text-zinc-500 font-medium uppercase tracking-wide">
+                  This month
+                </p>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-zinc-600">Total trips</span>
-                  <Badge variant="secondary" className="bg-zinc-100 text-black text-xs font-semibold">24</Badge>
+                  <Badge
+                    variant="secondary"
+                    className="bg-zinc-100 text-black text-xs font-semibold"
+                  >
+                    24
+                  </Badge>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-zinc-600">Active drivers</span>
-                  <Badge variant="secondary" className="bg-zinc-100 text-black text-xs font-semibold">6</Badge>
+                  <Badge
+                    variant="secondary"
+                    className="bg-zinc-100 text-black text-xs font-semibold"
+                  >
+                    6
+                  </Badge>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-zinc-600">Routes covered</span>
-                  <Badge variant="secondary" className="bg-zinc-100 text-black text-xs font-semibold">8</Badge>
+                  <Badge
+                    variant="secondary"
+                    className="bg-zinc-100 text-black text-xs font-semibold"
+                  >
+                    8
+                  </Badge>
                 </div>
               </CardContent>
             </Card>

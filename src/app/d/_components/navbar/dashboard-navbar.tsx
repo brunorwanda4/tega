@@ -1,15 +1,13 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useSidebar } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import DashboardNavNotificationSheet from "./dashboard-nav-notfication-sheet";
 import DashboardNavProfile from "./dashboard-nav-profile";
 import DashboardSearch from "./dashboard-seach";
 
 const DashboardNavbar = () => {
   const pathname = usePathname();
-  const { open } = useSidebar();
   const getTitle = () => {
     const segments = pathname.split("/").filter(Boolean);
     if (segments.length <= 1) return "Dashboard";
@@ -21,16 +19,14 @@ const DashboardNavbar = () => {
   };
 
   return (
-    <header
-      className={cn(
-        " bg-base-100 fixed w-full h-16 pl-8 items-center pr-74 flex justify-between py-4 z-50",
-        !open && "pr-16",
-      )}
-    >
-      <div>
-        <h2 className="font-cal-sans text-xl">{getTitle()}</h2>
+    <header className="sticky top-0 z-50 flex min-h-16 w-full items-center justify-between gap-3 border-b bg-base-100 px-4 py-3 sm:px-6 lg:px-8">
+      <div className="flex min-w-0 items-center gap-2">
+        <SidebarTrigger className="md:hidden" />
+        <h2 className="truncate font-cal-sans text-lg sm:text-xl">
+          {getTitle()}
+        </h2>
       </div>
-      <nav className=" flex gap-4 items-center">
+      <nav className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-4">
         <DashboardSearch />
         <DashboardNavNotificationSheet />
         <DashboardNavProfile />

@@ -37,7 +37,7 @@ const AuditLogsPage = () => {
   const [date, setDate] = useState("");
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* HEADER */}
       <div>
         <h1 className="text-2xl font-semibold">Audit logs</h1>
@@ -48,11 +48,11 @@ const AuditLogsPage = () => {
 
       {/* FILTERS */}
       <Card>
-        <CardContent className="flex flex-wrap items-end gap-4 p-4">
-          <div className="space-y-1">
+        <CardContent className="grid gap-4 p-4 sm:grid-cols-2 xl:grid-cols-[180px_180px_220px_1fr] xl:items-end">
+          <div className="flex flex-col gap-1">
             <p className="text-sm">Action</p>
             <Select onValueChange={setAction}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select Action" />
               </SelectTrigger>
               <SelectContent>
@@ -63,10 +63,10 @@ const AuditLogsPage = () => {
             </Select>
           </div>
 
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
             <p className="text-sm">Select employee</p>
             <Select onValueChange={setEmployee}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select Employee" />
               </SelectTrigger>
               <SelectContent>
@@ -76,87 +76,91 @@ const AuditLogsPage = () => {
             </Select>
           </div>
 
-          <div className="space-y-1">
+          <div className="flex flex-col gap-1">
             <p className="text-sm">Select Date & Time</p>
             <Input
               type="datetime-local"
-              className="w-[220px]"
+              className="w-full"
               value={date}
               onChange={(e) => setDate(e.target.value)}
             />
           </div>
 
-          <Button className="ml-auto rounded-md">Apply changes</Button>
+          <Button className="rounded-md xl:ml-auto">Apply changes</Button>
         </CardContent>
       </Card>
 
       {/* TABLE */}
       <Card className=" py-0">
         <CardContent className="p-0">
-          {/* TABLE HEADER */}
-          <div className="grid grid-cols-6 bg-black text-white text-sm px-4 py-3 rounded-t-md">
-            <p>Full names</p>
-            <p>Email address</p>
-            <p>Action</p>
-            <p>Timestamp</p>
-            <p>IP Address</p>
-            <p></p>
-          </div>
+          <div className="overflow-x-auto">
+            <div className="min-w-[900px]">
+              {/* TABLE HEADER */}
+              <div className="grid grid-cols-6 bg-black text-white text-sm px-4 py-3 rounded-t-md">
+                <p>Full names</p>
+                <p>Email address</p>
+                <p>Action</p>
+                <p>Timestamp</p>
+                <p>IP Address</p>
+                <p></p>
+              </div>
 
-          {/* TABLE BODY */}
-          <div className="divide-y">
-            {logs.map((log) => (
-              <div
-                key={log.id}
-                className="grid grid-cols-6 items-center px-4 py-3 text-sm hover:bg-muted"
-              >
-                {/* NAME */}
-                <div className="flex items-center gap-2">
-                  <Avatar className="w-8 h-8">
-                    <AvatarFallback>BC</AvatarFallback>
-                  </Avatar>
-                  {log.name}
-                </div>
+              {/* TABLE BODY */}
+              <div className="divide-y">
+                {logs.map((log) => (
+                  <div
+                    key={log.id}
+                    className="grid grid-cols-6 items-center px-4 py-3 text-sm hover:bg-muted"
+                  >
+                    {/* NAME */}
+                    <div className="flex items-center gap-2">
+                      <Avatar className="size-8">
+                        <AvatarFallback>BC</AvatarFallback>
+                      </Avatar>
+                      {log.name}
+                    </div>
 
-                {/* EMAIL */}
-                <p className="truncate">{log.email}</p>
+                    {/* EMAIL */}
+                    <p className="truncate">{log.email}</p>
 
-                {/* ACTION */}
-                <p>{log.action}</p>
+                    {/* ACTION */}
+                    <p>{log.action}</p>
 
-                {/* TIME */}
-                <p>{log.timestamp}</p>
+                    {/* TIME */}
+                    <p>{log.timestamp}</p>
 
-                {/* IP */}
-                <p className="flex items-center gap-1">
-                  {log.ip}
-                  <span className="text-blue-500 cursor-pointer">↗</span>
-                </p>
+                    {/* IP */}
+                    <p className="flex items-center gap-1">
+                      {log.ip}
+                      <span className="text-blue-500 cursor-pointer">↗</span>
+                    </p>
 
-                {/* BUTTON */}
-                <div className="flex justify-end">
-                  <Button variant="outline" size="sm">
-                    View
-                  </Button>
+                    {/* BUTTON */}
+                    <div className="flex justify-end">
+                      <Button variant="outline" size="sm">
+                        View
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* PAGINATION */}
+              <div className="flex flex-col gap-3 p-4 text-sm sm:flex-row sm:items-center sm:justify-between">
+                <p>Page 1 of 12</p>
+
+                <div className="flex flex-wrap gap-2">
+                  {[1, 2, 3, 4, 5].map((p) => (
+                    <Button
+                      key={p}
+                      variant={p === 1 ? "default" : "outline"}
+                      size="icon"
+                    >
+                      {p}
+                    </Button>
+                  ))}
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* PAGINATION */}
-          <div className="flex items-center justify-between p-4 text-sm">
-            <p>Page 1 of 12</p>
-
-            <div className="flex gap-2">
-              {[1, 2, 3, 4, 5].map((p) => (
-                <Button
-                  key={p}
-                  variant={p === 1 ? "default" : "outline"}
-                  size="icon"
-                >
-                  {p}
-                </Button>
-              ))}
             </div>
           </div>
         </CardContent>

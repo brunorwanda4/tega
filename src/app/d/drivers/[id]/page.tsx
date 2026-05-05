@@ -258,15 +258,15 @@ export default function DriverProfilePage() {
   return (
     <div className="min-h-screen bg-white font-sans">
       {/* Top bar */}
-      <div className="border-b border-zinc-100 px-6 py-3 flex items-center justify-between">
-        <div className="relative w-56">
+      <div className="flex flex-col gap-3 border-zinc-100 border-b px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div className="relative w-full sm:w-56">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400" />
           <Input
             placeholder="Search a driver"
             className="pl-9 h-9 text-sm border-zinc-200 bg-zinc-50 focus-visible:ring-0"
           />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             className="h-9 text-sm border-zinc-300 gap-2"
@@ -280,7 +280,7 @@ export default function DriverProfilePage() {
       </div>
 
       {/* Page content */}
-      <div className="max-w-5xl mx-auto px-6 py-6 space-y-6">
+      <div className="mx-auto max-w-5xl space-y-6 px-4 py-6 sm:px-6">
         {/* Back */}
         <button
           type="button"
@@ -294,18 +294,18 @@ export default function DriverProfilePage() {
           {/* Profile card */}
           <div className="space-y-5">
             {/* Driver info */}
-            <div className="flex gap-5 items-start">
-              <Avatar className="h-20 w-20 border-2 border-zinc-100 flex-shrink-0">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+              <Avatar className="size-20 flex-shrink-0 border-2 border-zinc-100">
                 <AvatarImage src={`https://i.pravatar.cc/150?u=980`} />
                 <AvatarFallback className="bg-zinc-200 text-zinc-600 text-xl font-semibold">
                   VH
                 </AvatarFallback>
               </Avatar>
 
-              <div className="flex-1 flex sm:grid-cols-2 gap-x-8 gap-y-3">
+              <div className="flex min-w-0 flex-1 flex-col gap-5 lg:flex-row lg:gap-x-8">
                 {/* Name + actions */}
-                <div className=" grid grid-cols-2 gap-4 ">
-                  <div className="flex items-center gap-2 mb-1">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="mb-1 flex flex-wrap items-center gap-2">
                     <h1 className="text-2xl font-bold text-black">
                       Victor Hugo
                     </h1>
@@ -332,7 +332,7 @@ export default function DriverProfilePage() {
                     <p className="text-[11px] text-zinc-500 font-medium uppercase tracking-wide">
                       Email
                     </p>
-                    <p className="text-sm text-zinc-700">
+                    <p className="break-all text-sm text-zinc-700">
                       alexparker@gmail.com
                     </p>
                   </div>
@@ -365,7 +365,7 @@ export default function DriverProfilePage() {
             </div>
 
             {/* Stats row */}
-            <div className="flex gap-3">
+            <div className="grid gap-3 sm:grid-cols-3">
               <StatCard
                 icon={<Users className="h-4 w-4" />}
                 value="34"
@@ -404,100 +404,102 @@ export default function DriverProfilePage() {
           <h2 className="text-base font-semibold mb-3">Transport history</h2>
 
           <Card className="border border-zinc-200 shadow-sm overflow-hidden py-0">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-black hover:bg-black">
-                  {[
-                    "Client names",
-                    "Date & Time",
-                    "Pickup",
-                    "Destination",
-                    "Payment",
-                    "Receipt",
-                    "Details",
-                  ].map((h) => (
-                    <TableHead
-                      key={h}
-                      className="text-white text-xs font-semibold py-3"
-                    >
-                      {h}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pageLogs.map((b, i) => (
-                  <TableRow
-                    key={b.id}
-                    className="hover:bg-zinc-50 border-zinc-100"
-                  >
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-7 w-7 border border-zinc-200">
-                          <AvatarImage
-                            src={`https://i.pravatar.cc/150?u=${i + 900}`}
-                          />
-                          <AvatarFallback className="bg-zinc-100 text-zinc-600 text-xs font-medium">
-                            {b.client
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="text-xs font-medium text-black whitespace-nowrap">
-                          {b.client}
-                        </span>
-                        <ExternalLink className="h-3 w-3 text-zinc-400 flex-shrink-0" />
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-xs text-zinc-600 whitespace-nowrap">
-                      {b.dateTime}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-xs text-zinc-600 whitespace-nowrap">
-                        {b.pickup}
-                        <ExternalLink className="h-3 w-3 text-zinc-400 flex-shrink-0" />
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-xs text-zinc-600 whitespace-nowrap">
-                        {b.destination}
-                        <ExternalLink className="h-3 w-3 text-zinc-400 flex-shrink-0" />
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-xs font-bold text-black">
-                        {b.payment}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-xs text-zinc-600">
-                        {b.receipt}
-                        <ExternalLink className="h-3 w-3 text-zinc-400" />
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-7 text-xs border-zinc-300 px-3 rounded-full hover:bg-zinc-50"
+            <div className="overflow-x-auto">
+              <Table className="min-w-[980px]">
+                <TableHeader>
+                  <TableRow className="bg-black hover:bg-black">
+                    {[
+                      "Client names",
+                      "Date & Time",
+                      "Pickup",
+                      "Destination",
+                      "Payment",
+                      "Receipt",
+                      "Details",
+                    ].map((h) => (
+                      <TableHead
+                        key={h}
+                        className="text-white text-xs font-semibold py-3"
                       >
-                        View
-                      </Button>
-                    </TableCell>
+                        {h}
+                      </TableHead>
+                    ))}
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {pageLogs.map((b, i) => (
+                    <TableRow
+                      key={b.id}
+                      className="hover:bg-zinc-50 border-zinc-100"
+                    >
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-7 w-7 border border-zinc-200">
+                            <AvatarImage
+                              src={`https://i.pravatar.cc/150?u=${i + 900}`}
+                            />
+                            <AvatarFallback className="bg-zinc-100 text-zinc-600 text-xs font-medium">
+                              {b.client
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-xs font-medium text-black whitespace-nowrap">
+                            {b.client}
+                          </span>
+                          <ExternalLink className="h-3 w-3 text-zinc-400 flex-shrink-0" />
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-xs text-zinc-600 whitespace-nowrap">
+                        {b.dateTime}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1 text-xs text-zinc-600 whitespace-nowrap">
+                          {b.pickup}
+                          <ExternalLink className="h-3 w-3 text-zinc-400 flex-shrink-0" />
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1 text-xs text-zinc-600 whitespace-nowrap">
+                          {b.destination}
+                          <ExternalLink className="h-3 w-3 text-zinc-400 flex-shrink-0" />
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-xs font-bold text-black">
+                          {b.payment}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1 text-xs text-zinc-600">
+                          {b.receipt}
+                          <ExternalLink className="h-3 w-3 text-zinc-400" />
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-7 text-xs border-zinc-300 px-3 rounded-full hover:bg-zinc-50"
+                        >
+                          View
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </Card>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between mt-4">
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs text-zinc-500">
               Page <strong className="text-black">{page}</strong> of{" "}
               {TOTAL_PAGES}
             </span>
-            <div className="flex items-center gap-1">
+            <div className="flex flex-wrap items-center gap-1">
               <Button
                 variant="outline"
                 size="icon"

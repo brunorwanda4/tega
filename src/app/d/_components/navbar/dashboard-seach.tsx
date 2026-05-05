@@ -118,10 +118,21 @@ const DashboardSearch = () => {
 
   return (
     <>
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className="sm:hidden"
+        onClick={() => setIsOpen(true)}
+      >
+        <FiSearch />
+        <span className="sr-only">Search</span>
+      </Button>
+
       {/* Trigger Input — click or focus opens the dialog */}
       <button
         type="button"
-        className="relative w-70  cursor-pointer"
+        className="relative hidden w-48 cursor-pointer sm:block lg:w-70"
         onClick={() => setIsOpen(true)}
       >
         <FiSearch size={20} className="absolute left-2 top-3 text-neutral" />
@@ -138,7 +149,7 @@ const DashboardSearch = () => {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent
           showCloseButton={false}
-          className="sm:max-w-2xl max-h-[95vh] min-h-80"
+          className="max-h-[95vh] min-h-80 w-[calc(100vw-2rem)] sm:max-w-2xl"
         >
           <div className="flex flex-col gap-4">
             <SearchBox autoFocus onSearch={setSearchQuery} />

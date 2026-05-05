@@ -13,7 +13,6 @@ import {
   LuLoaderCircle,
   LuMessageSquare,
   LuPhone,
-
 } from "react-icons/lu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -40,15 +39,15 @@ export default function ClientDetailsPage() {
   return (
     <div className="">
       {/* 1. Top Action Bar */}
-      <div className="flex justify-between items-center mb-10">
-        <div className="relative w-72">
+      <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full sm:w-72">
           <input
             type="text"
             placeholder="Search a driver"
             className="w-full h-11 pl-4 pr-10 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-1 focus:ring-gray-300"
           />
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           <Button
             variant="outline"
             className="h-11 px-5 border-gray-900 text-gray-900 font-bold flex gap-2 rounded-xl"
@@ -70,23 +69,23 @@ export default function ClientDetailsPage() {
             <LuChevronLeft className="size-5" /> Back
           </button>
 
-          <div className=" flex items-center gap-6">
-            <Avatar className="size-32">
+          <div className="flex flex-col gap-6 xl:flex-row xl:items-center">
+            <Avatar className="size-24 sm:size-32">
               <AvatarImage src={`https://i.pravatar.cc/150?u=45`} />
               <AvatarFallback>JD</AvatarFallback>
             </Avatar>
 
-            <div className=" flex flex-col gap-2">
-              <div className="flex  gap-4">
+            <div className="flex min-w-0 flex-1 flex-col gap-2">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold text-[#1F1F24] mb-1">
+                  <h1 className="mb-1 text-2xl font-bold text-[#1F1F24] sm:text-3xl">
                     {clientData.name}
                   </h1>
                   <p className="text-gray-400 text-sm font-medium">
                     Joined {clientData.joined}
                   </p>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-2">
                   <Button variant="ghost">
                     <LuMessageSquare className="size-5 text-[#1F1F24]" />
                   </Button>
@@ -97,12 +96,15 @@ export default function ClientDetailsPage() {
               </div>
               {/*contacts*/}
 
-              <div className="grid grid-cols-3 gap-4 pt-2">
+              <div className="grid gap-4 pt-2 sm:grid-cols-3">
                 <div>
                   <p className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-1">
                     Email
                   </p>
-                  <p title={ clientData.email} className="text-[#1F1F24] font-medium line-clamp-1">
+                  <p
+                    title={clientData.email}
+                    className="text-[#1F1F24] font-medium line-clamp-1"
+                  >
                     {clientData.email}
                   </p>
                 </div>
@@ -110,7 +112,10 @@ export default function ClientDetailsPage() {
                   <p className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-1">
                     Telephone
                   </p>
-                  <p title={ clientData.phone}  className="text-[#1F1F24] font-medium line-clamp-1">
+                  <p
+                    title={clientData.phone}
+                    className="text-[#1F1F24] font-medium line-clamp-1"
+                  >
                     {clientData.phone}
                   </p>
                 </div>
@@ -118,14 +123,17 @@ export default function ClientDetailsPage() {
                   <p className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-1">
                     Country
                   </p>
-                  <p title={ clientData.country}  className="text-[#1F1F24] font-medium">
+                  <p
+                    title={clientData.country}
+                    className="text-[#1F1F24] font-medium"
+                  >
                     {clientData.country}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="flex gap-4">
-              <div className="bg-white border border-gray-100 rounded-2xl p-4 flex gap-4 shadow-sm">
+            <div className="grid w-full gap-4 sm:grid-cols-2 xl:w-auto">
+              <div className="flex gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
                 <div className="size-12 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100">
                   <LuHistory className="size-6 text-gray-400" />
                 </div>
@@ -142,7 +150,7 @@ export default function ClientDetailsPage() {
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-100 rounded-2xl p-4 flex gap-4  shadow-sm">
+              <div className="flex gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
                 <div className="size-12 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100">
                   <BiMessageAltError className="size-6 text-gray-400" />
                 </div>
@@ -161,13 +169,12 @@ export default function ClientDetailsPage() {
             </div>
           </div>
 
-
           {/* 4. Travel History Table */}
           <div className="space-y-6 mt-12">
             <h2 className="text-xl font-bold text-[#1F1F24]">Travel history</h2>
 
-            <div className="rounded-2xl overflow-hidden border border-gray-100">
-              <table className="w-full text-left border-collapse">
+            <div className="overflow-x-auto rounded-2xl border border-gray-100">
+              <table className="min-w-[980px] w-full border-collapse text-left">
                 <thead className="bg-[#1F1F24] text-white text-sm font-medium">
                   <tr>
                     <th className="p-5">Driver names</th>
@@ -185,11 +192,13 @@ export default function ClientDetailsPage() {
                       key={index}
                       className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"} border-b border-gray-100`}
                     >
-                      <td className="p-5 flex items-center gap-3"> <Avatar>
-                          <AvatarImage src={`https://i.pravatar.cc/150?u=${index + 100}`} />
-                          <AvatarFallback>
-                            AP
-                          </AvatarFallback>
+                      <td className="p-5 flex items-center gap-3">
+                        {" "}
+                        <Avatar>
+                          <AvatarImage
+                            src={`https://i.pravatar.cc/150?u=${index + 100}`}
+                          />
+                          <AvatarFallback>AP</AvatarFallback>
                         </Avatar>
                         <span className="font-bold text-gray-900">
                           Alex Parker
@@ -226,11 +235,11 @@ export default function ClientDetailsPage() {
             </div>
 
             {/* 5. Pagination */}
-            <div className="flex justify-between items-center pt-4">
+            <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm text-gray-500 font-bold">
                 Page <span className="text-gray-900">1</span> of 6
               </p>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   className="size-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"

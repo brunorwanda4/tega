@@ -114,15 +114,15 @@ const CommunicationPage = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-64px)] -mx-8 -mt-4 ">
+    <div className="flex h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-xl lg:flex-row">
       {/* LEFT PANEL */}
-      <div className="w-[320px] border-r p-4 flex flex-col gap-4 bg-base-100">
+      <div className="flex max-h-72 w-full flex-col gap-4 border-b bg-base-100 p-4 lg:max-h-none lg:w-[320px] lg:border-r lg:border-b-0">
         {/* SEARCH */}
         <Input placeholder="Search a driver or client" />
 
         {/* ACCOUNTS */}
         <div>
-          <div className="flex justify-between text-sm mb-2">
+          <div className="mb-2 flex justify-between text-sm">
             <p className="font-medium">Accounts</p>
             <span className="text-muted-foreground cursor-pointer text-xs">
               See all
@@ -151,10 +151,10 @@ const CommunicationPage = () => {
           </div>
         </div>
         <div className=" my-2">
-          <h3 className=" font-medium text-xl">Charts</h3>
+          <h3 className="font-medium text-xl">Charts</h3>
         </div>
         {/* CHAT LIST */}
-        <div className="flex-1 overflow-y-auto space-y-2 divide-y">
+        <div className="min-h-0 flex-1 divide-y overflow-y-auto">
           {chats.map((chat) => (
             <div
               key={chat.id}
@@ -186,9 +186,9 @@ const CommunicationPage = () => {
       </div>
 
       {/* RIGHT CHAT */}
-      <div className="flex-1 flex flex-col bg-base-100">
+      <div className="flex min-h-0 flex-1 flex-col bg-base-100">
         {/* HEADER */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between gap-3 border-b p-4">
           <div className="flex items-center gap-3">
             <Avatar>
               <AvatarImage src={selectedChat.avatar} />
@@ -200,7 +200,7 @@ const CommunicationPage = () => {
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex shrink-0 gap-3">
             <Phone className="cursor-pointer" />
             <Video className="cursor-pointer" />
           </div>
@@ -217,7 +217,7 @@ const CommunicationPage = () => {
             >
               <div>
                 <div
-                  className={`px-3 py-2 rounded-lg text-sm max-w-[300px] ${
+                  className={`max-w-[75vw] rounded-lg px-3 py-2 text-sm sm:max-w-[300px] ${
                     msg.sender === "me" ? "bg-black text-white" : "bg-muted"
                   }`}
                 >
@@ -230,7 +230,7 @@ const CommunicationPage = () => {
         </div>
 
         {/* INPUT */}
-        <div className="p-4 border-t flex gap-2">
+        <div className="flex gap-2 border-t p-4">
           <Input
             placeholder="Type a message ..."
             value={message}

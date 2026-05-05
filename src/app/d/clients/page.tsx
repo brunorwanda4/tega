@@ -68,10 +68,10 @@ const ClientsPage = () => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="p-6 space-y-6 min-h-screen"
+      className="min-h-screen space-y-6"
     >
       {/* Header Actions */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="flex flex-col items-stretch justify-between gap-4 md:flex-row md:items-center">
         <div className="relative w-full max-w-sm">
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/50" />
           <Input
@@ -80,15 +80,15 @@ const ClientsPage = () => {
           />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {/* New Client Dialog */}
           <Dialog>
             <DialogTrigger asChild>
-              <Button className="btn btn-ghost border-base-300 flex gap-2">
+              <Button className="btn btn-ghost flex gap-2 border-base-300">
                 <FiPlus /> New Client
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-base-100 border-base-300">
+            <DialogContent className="w-[calc(100vw-2rem)] border-base-300 bg-base-100 sm:max-w-lg">
               <DialogHeader>
                 <DialogTitle>Add New Client</DialogTitle>
               </DialogHeader>
@@ -137,8 +137,8 @@ const ClientsPage = () => {
       </div>
 
       {/* Main Table */}
-      <div className="rounded-xl border border-base-300 overflow-hidden shadow-sm">
-        <Table>
+      <div className="overflow-x-auto rounded-xl border border-base-300 shadow-sm">
+        <Table className="min-w-[820px]">
           <TableHeader className="bg-primary text-primary-content">
             <TableRow className="hover:bg-transparent border-none">
               <TableHead className="text-primary-content">
@@ -166,7 +166,7 @@ const ClientsPage = () => {
                     href={`/d/clients/${i + 1}`}
                     className="flex items-center gap-3"
                   >
-                    <Avatar className="h-8 w-8">
+                    <Avatar className="size-8">
                       <AvatarImage src={`https://i.pravatar.cc/150?u=${i}`} />
                       <AvatarFallback>BC</AvatarFallback>
                     </Avatar>
@@ -195,11 +195,11 @@ const ClientsPage = () => {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-between items-center pt-4">
+      <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm font-medium">
           Page <span className="text-primary">1</span> of 12
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             size="icon"

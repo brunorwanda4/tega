@@ -280,9 +280,9 @@ export default function BusDashboard() {
   const driver = activeBus.driverDetail;
 
   return (
-    <div className="flex h-screen bg-gray-100 font-sans overflow-hidden -mx-8 -mt-8 -mb-4">
+    <div className="flex min-h-[calc(100vh-8rem)] flex-col overflow-hidden rounded-xl bg-gray-100 font-sans lg:flex-row">
       {/* ── Sidebar ── */}
-      <aside className="w-60 bg-white flex flex-col border-r border-gray-200 flex-shrink-0">
+      <aside className="flex max-h-80 w-full flex-shrink-0 flex-col border-gray-200 border-b bg-white lg:max-h-none lg:w-64 lg:border-r lg:border-b-0">
         <div className="px-4 pt-5 pb-3">
           <p className="font-semibold text-gray-800 text-base mb-3">
             All buses
@@ -344,9 +344,9 @@ export default function BusDashboard() {
       {/* ── Center ── */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Driver header */}
-        <div className=" flex">
-          <div className="bg-white px-6 py-4 border-b border-gray-200 w-2/3">
-            <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col xl:flex-row">
+          <div className="w-full border-gray-200 border-b bg-white px-4 py-4 sm:px-6 xl:w-2/3">
+            <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
                 <Avatar size="lg">
                   <AvatarImage src={driver.avatar} alt={driver.name} />
@@ -376,7 +376,7 @@ export default function BusDashboard() {
             </div>
 
             {/* Trip info row */}
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid gap-6 sm:grid-cols-3">
               {/* Route */}
               <div>
                 <p className="text-[11px] text-gray-400 font-medium mb-2 uppercase tracking-wide">
@@ -446,7 +446,7 @@ export default function BusDashboard() {
             </div>
           </div>
 
-          <aside className="w-1/3 bg-white  p-4 shrink-0">
+          <aside className="w-full shrink-0 bg-white p-4 xl:w-1/3">
             <p className="font-semibold text-gray-800 text-base mb-4">
               Activity
             </p>
@@ -469,7 +469,7 @@ export default function BusDashboard() {
 
         {/* Map area */}
         <div className="flex-1 relative overflow-hidden">
-          <div className=" relative w-full h-[80vh]">
+          <div className="relative h-[50vh] w-full lg:h-[70vh]">
             <Image
               src={"/png/map-2.png"}
               alt="map image"

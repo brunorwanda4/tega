@@ -3,7 +3,6 @@
 import { FiSearch } from "react-icons/fi";
 import { TfiExport } from "react-icons/tfi";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   InputGroup,
   InputGroupAddon,
@@ -42,22 +41,22 @@ const PaymentsPage = () => {
   return (
     <div className="space-y-6">
       {/* TOP BAR */}
-      <div className="flex justify-between items-center">
-        <InputGroup className="max-w-xs">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <InputGroup className="w-full sm:max-w-xs">
           <InputGroupInput placeholder="Search..." />
           <InputGroupAddon>
             <FiSearch />
           </InputGroupAddon>
         </InputGroup>
 
-        <Button className="rounded-md gap-2">
+        <Button className="gap-2 rounded-md">
           <TfiExport /> <span>Export</span>
         </Button>
       </div>
 
       {/* TABLE */}
-      <div className="rounded-md border overflow-hidden">
-        <Table className="bg-base-100">
+      <div className="overflow-x-auto rounded-md border">
+        <Table className="min-w-[920px] bg-base-100">
           {/* HEADER */}
           <TableHeader className="bg-black">
             <TableRow>
@@ -112,10 +111,10 @@ const PaymentsPage = () => {
       </div>
 
       {/* PAGINATION */}
-      <div className="flex items-center justify-between text-sm">
+      <div className="flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:justify-between">
         <p>Page 1 of 12</p>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {[1, 2, 3, 4, 5].map((p) => (
             <Button
               key={p}

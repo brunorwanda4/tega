@@ -7,14 +7,17 @@ const ComponentName = (props: LayoutProps<"/d">) => {
   return (
     <SidebarProvider>
       <DashboardSidebar />
-      <main className="bg-base-200 w-full relative font-inter">
+      <main className="bg-base-200 relative flex min-w-0 flex-1 flex-col font-inter">
         <DashboardNavbar />
-        <div className="pt-20 px-8 font-inter flex-1 min-h-screen">
+        <div className="min-h-screen min-w-0 flex-1 px-4 py-4 font-inter sm:px-6 lg:px-8">
           <TooltipProvider>{props.children}</TooltipProvider>
         </div>
-        <footer className="  bg-base-100  flex justify-between p-4 text-sm opacity-70  w-full mt-8">
-          <p><span className="font-medium">Tega company</span>  solution of transport in Rwanda</p>
-          <span className=" font-semibold">MVP 1.0</span>
+        <footer className="mt-8 flex w-full flex-col gap-2 bg-base-100 p-4 text-sm opacity-70 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            <span className="font-medium">Tega company</span> solution of
+            transport in Rwanda
+          </p>
+          <span className="font-semibold">MVP 1.0</span>
         </footer>
       </main>
     </SidebarProvider>

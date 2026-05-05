@@ -71,18 +71,20 @@ const DriversPage = () => {
   );
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* TOP BAR */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full max-w-sm">
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/50" />
           <Input
             placeholder="Search a driver"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             className="pl-10 bg-base-100 border-base-300 focus:ring-primary"
           />
         </div>
 
-        <div className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded cursor-pointer">
+        <div className="flex w-full cursor-pointer items-center justify-center gap-2 rounded bg-black px-4 py-2 text-white sm:w-auto">
           All drivers <FiChevronDown />
         </div>
       </div>
@@ -97,8 +99,8 @@ const DriversPage = () => {
           >
             <CardContent className="p-4 space-y-3">
               {/* TOP */}
-              <div className="flex justify-between items-center">
-                <div className="flex gap-3 items-center">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 gap-3">
                   <Avatar size="lg">
                     <AvatarImage
                       src={`https://i.pravatar.cc/150?u=${i + 800}`}
@@ -106,19 +108,19 @@ const DriversPage = () => {
                     <AvatarFallback>DR</AvatarFallback>
                   </Avatar>
 
-                  <div>
-                    <p className="font-medium">{driver.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{driver.name}</p>
+                    <p className="truncate text-xs text-muted-foreground">
                       {driver.email}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="truncate text-xs text-muted-foreground">
                       {driver.phone}
                     </p>
                   </div>
                 </div>
 
                 {/* ICONS */}
-                <div className="flex gap-2 text-lg">
+                <div className="flex shrink-0 gap-2 text-lg">
                   <FiMessageSquare className="cursor-pointer" />
                   <FiPhone className="cursor-pointer" />
                 </div>

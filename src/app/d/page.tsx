@@ -88,24 +88,24 @@ export default function TegaDashboard() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="min-h-screen  space-y-8 font-sans text-base-content">
+    <div className="min-h-screen space-y-8 font-sans text-base-content">
       {/* Quick Stats Section */}
       <section>
         <h2 className="text-xl font-bold mb-4">Quick stats</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
           {stats.map((stat, idx) => {
             const hasSlash = stat.value.includes("/");
             const [mainValue, denominator] = stat.value.split("/");
             return (
               <Card
                 key={idx}
-                className="border-none bg-base-100 shadow-sm rounded-xl py-0"
+                className="rounded-xl border-none bg-base-100 py-0 shadow-sm"
               >
-                <CardContent className="p-5 space-y-2">
+                <CardContent className="space-y-2 p-5">
                   <p className="text-sm text-base-content/70 font-medium">
                     {stat.title}
                   </p>
-                  <p className="text-3xl font-bold">
+                  <p className="text-2xl font-bold sm:text-3xl">
                     {mainValue}
                     {hasSlash && (
                       <span className="text-base-content/50 ">
@@ -119,7 +119,7 @@ export default function TegaDashboard() {
                     </p>
                   )}
                   {stat.trend && (
-                    <div className="flex items-center gap-1 text-[10px] text-success bg-success/10 w-fit px-2 py-0.5 rounded-full">
+                    <div className="flex w-fit items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-[10px] text-success">
                       <IoTrendingUpOutline />
                       <span>{stat.trend}</span>
                     </div>
@@ -139,7 +139,7 @@ export default function TegaDashboard() {
         </div>
 
         {/* Toolbar */}
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative w-full max-w-md">
             <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/50" />
             <Input
@@ -151,15 +151,14 @@ export default function TegaDashboard() {
               <span>K</span>
             </div>
           </div>
-
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-              <Button className=" rounded-md">
+              <Button className="w-full rounded-md sm:w-auto">
                 <IoAdd className="text-xl" />
                 Add booking
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] bg-base-100 max-h-[90vh] overflow-y-scroll ">
+            <DialogContent className="max-h-[90vh] w-[calc(100vw-2rem)] overflow-y-auto bg-base-100 sm:max-w-[500px]">
               <DialogHeader>
                 <DialogTitle className="text-center text-xl font-bold">
                   Book a ticket
@@ -230,12 +229,12 @@ export default function TegaDashboard() {
                 </Button>
               </DialogFooter>
             </DialogContent>
-          </Dialog>
+          </Dialog>{" "}
         </div>
 
         {/* Shadcn Table */}
-        <div className=" overflow-hidden ">
-          <table className="table bg-base-100 table-zebra">
+        <div className="overflow-x-auto rounded-lg">
+          <table className="table table-zebra min-w-[760px] bg-base-100">
             {/* head */}
             <thead className="bg-primary text-primary-content">
               <tr>
@@ -272,11 +271,11 @@ export default function TegaDashboard() {
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between pt-4">
+        <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm font-medium">
             Page <span className="font-bold">1</span> of 6
           </p>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               variant="outline"
               size="icon"

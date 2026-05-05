@@ -79,9 +79,9 @@ export default function AdminBusesPage() {
   return (
     <div className="">
       {/* 1. Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
+      <div className="mb-10 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h1 className="text-[28px] font-extrabold text-[#1F1F24]">
+          <h1 className="text-2xl font-extrabold text-[#1F1F24] sm:text-[28px]">
             Bus Fleet Management
           </h1>
           <p className="text-gray-500 text-sm">
@@ -89,7 +89,7 @@ export default function AdminBusesPage() {
           </p>
         </div>
         <Button
-          className="bg-[#1F1F24] text-white rounded-xl h-12 px-6 font-bold flex gap-2 shadow-lg"
+          className="flex h-12 w-full gap-2 rounded-xl bg-[#1F1F24] px-6 font-bold text-white shadow-lg sm:w-auto"
           onClick={() => router.push("/admin/buses/add")}
         >
           <LuPlus className="size-5" /> Add New Bus
@@ -97,7 +97,7 @@ export default function AdminBusesPage() {
       </div>
 
       {/* 2. Filters and Search */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-8 bg-white p-4 rounded-[20px] border border-gray-100 shadow-sm">
+      <div className="mb-8 flex flex-col gap-4 rounded-[20px] border border-gray-100 bg-white p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
         <div className="relative w-full md:w-96">
           <LuSearch className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-gray-400" />
           <Input
@@ -106,14 +106,14 @@ export default function AdminBusesPage() {
           />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex w-full flex-wrap items-center gap-3 lg:w-auto">
           <Button
             variant="outline"
-            className="h-12 px-4 rounded-xl border-gray-200 flex gap-2 font-bold"
+            className="flex h-12 flex-1 gap-2 rounded-xl border-gray-200 px-4 font-bold sm:flex-none"
           >
             <LuFilter className="size-5" /> Filter
           </Button>
-          <div className="flex border border-gray-200 rounded-xl overflow-hidden">
+          <div className="flex overflow-hidden rounded-xl border border-gray-200">
             <Button
               variant="ghost"
               className="h-12 px-4 rounded-none bg-gray-100 text-[#1F1F24]"
@@ -135,7 +135,7 @@ export default function AdminBusesPage() {
         {buses.map((bus) => (
           <Card key={bus.id} className="pt-0">
             {/* Image Section */}
-            <div className="relative w-full h-48">
+            <div className="relative h-48 w-full overflow-hidden rounded-t-xl">
               <Image
                 src="/images/bus.jpg"
                 alt={bus.name}
