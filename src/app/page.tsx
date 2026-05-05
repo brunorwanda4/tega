@@ -78,33 +78,48 @@ const floatingBadges = [
 
 const flowSteps = [
   {
+    step: "01",
     title: "Choose route",
     label: "Kigali -> Musanze",
     meta: "Today, 10:40",
+    description:
+      "Passenger searches origin, destination, date, and available departure windows.",
     icon: Search,
   },
   {
+    step: "02",
     title: "Select operator",
     label: "Volcano Express",
     meta: "Verified route",
+    description:
+      "Available buses are grouped by operator, time, seats, and route confidence.",
     icon: Building2,
   },
   {
+    step: "03",
     title: "Pay",
     label: "Mobile payment",
     meta: "Secure checkout",
+    description:
+      "Passenger pays through mobile money or card and gets immediate confirmation.",
     icon: CreditCard,
   },
   {
+    step: "04",
     title: "Get ticket",
     label: "Seat 12A",
     meta: "QR confirmed",
+    description:
+      "A digital ticket is issued with seat, receipt, and boarding information.",
     icon: TicketCheck,
   },
   {
+    step: "05",
     title: "Track bus",
     label: "Near Rulindo",
     meta: "28 min ETA",
+    description:
+      "Passenger follows bus status and receives clear updates before departure.",
     icon: Navigation,
   },
 ];
@@ -602,8 +617,8 @@ function ProductFlowSection({ spotlight = false }: { spotlight?: boolean }) {
     <VisualSection
       id="flow"
       eyebrow="Product flow"
-      title="From search to ticket in minutes."
-      description="Tega turns a scattered transport process into one connected passenger journey."
+      title="A guided booking journey from route search to bus tracking."
+      description="Each step has one clear passenger action and one clear system response, so the MVP feels predictable from first search to boarding."
       surface
       spotlight={spotlight}
     >
@@ -614,15 +629,43 @@ function ProductFlowSection({ spotlight = false }: { spotlight?: boolean }) {
         viewport={{ once: true, amount: 0.18 }}
         className="relative"
       >
-        <div className="absolute left-8 top-8 hidden h-px w-[calc(100%-4rem)] bg-[#BFEFFF] lg:block" />
-        <div className="grid gap-4 lg:grid-cols-5">
+        <div className="mb-6 grid gap-3 rounded-[1.75rem] border border-border bg-background p-4 shadow-sm sm:grid-cols-3 lg:grid-cols-5">
           {flowSteps.map((step, index) => (
-            <FlowCard
-              key={step.title}
-              {...step}
-              showArrow={index < flowSteps.length - 1}
-            />
+            <motion.div
+              key={step.step}
+              variants={fadeUp}
+              className="flex items-center gap-3 rounded-[1.1rem] bg-accent/60 px-3 py-3"
+            >
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                {step.step}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-foreground">
+                  {step.title}
+                </p>
+                <p className="truncate text-xs font-medium text-muted-foreground">
+                  {step.meta}
+                </p>
+              </div>
+              {index < flowSteps.length - 1 ? (
+                <ArrowRight className="ml-auto hidden text-primary lg:block" />
+              ) : null}
+            </motion.div>
           ))}
+        </div>
+
+        <div className="relative">
+          <div className="absolute left-6 top-0 hidden h-full w-px bg-[#BFEFFF] sm:block lg:left-0 lg:top-12 lg:h-px lg:w-full" />
+          <div className="grid gap-4 lg:grid-cols-5">
+            {flowSteps.map((step, index) => (
+              <FlowCard
+                key={step.title}
+                {...step}
+                isLast={index === flowSteps.length - 1}
+                showArrow={index < flowSteps.length - 1}
+              />
+            ))}
+          </div>
         </div>
       </motion.div>
     </VisualSection>
@@ -1248,16 +1291,22 @@ function AccessVisual() {
 }
 
 function FlowCard({
+  step,
   title,
   label,
   meta,
+  description,
   icon: Icon,
+  isLast,
   showArrow,
 }: {
+  step: string;
   title: string;
   label: string;
   meta: string;
+  description: string;
   icon: LucideIcon;
+  isLast: boolean;
   showArrow: boolean;
 }) {
   return (
@@ -1266,18 +1315,32 @@ function FlowCard({
       whileHover={{ y: -5 }}
       className="relative rounded-[1.5rem] border border-border bg-background p-4 shadow-sm"
     >
-      <div className="mb-5 flex h-16 items-center justify-between rounded-[1.15rem] bg-white px-4 shadow-sm">
-        <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent text-primary">
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <span className="relative z-10 flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
           <Icon className="h-5 w-5" />
         </span>
+        <span className="rounded-full bg-accent px-3 py-1 text-xs font-bold text-primary">
+          Step {step}
+        </span>
         {showArrow ? (
-          <span className="hidden h-8 w-8 translate-x-8 items-center justify-center rounded-full border border-[#BFEFFF] bg-white text-primary shadow-sm lg:flex">
+          <span className="absolute -right-5 top-7 z-10 hidden size-10 items-center justify-center rounded-full border border-[#BFEFFF] bg-white text-primary shadow-sm lg:flex">
             <ArrowRight className="h-4 w-4" />
           </span>
         ) : null}
       </div>
-      <h3 className="text-lg font-semibold text-foreground">{title}</h3>
-      <div className="mt-4 rounded-[1.1rem] border border-border bg-white p-4">
+      <div className="flex items-start gap-3 lg:block">
+        <div className="mt-1 hidden flex-col items-center sm:flex lg:hidden">
+          <span className="size-3 rounded-full bg-primary" />
+          {!isLast ? <span className="mt-2 h-16 w-px bg-[#BFEFFF]" /> : null}
+        </div>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            {description}
+          </p>
+        </div>
+      </div>
+      <div className="mt-5 rounded-[1.1rem] border border-border bg-white p-4">
         <p className="text-sm font-bold text-foreground">{label}</p>
         <p className="mt-1 text-xs font-medium text-muted-foreground">{meta}</p>
       </div>
