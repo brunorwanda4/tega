@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
+import { useEffect, useState } from "react";
 import {
   LuChevronRight,
   LuCreditCard,
@@ -14,11 +14,36 @@ import {
   LuTicket,
   LuUser,
 } from "react-icons/lu";
+import type { RegisterType } from "@/app/(mobile)/auth/register/_schema/register-schema";
 import { Button } from "@/components/ui/button";
-import AppGoBackButton from "../_components/common/go-back-button";
+
+const defaultProfile = {
+  name: "Allen Mugisha",
+  email: "Mugisha@tega.rw",
+};
 
 export default function ProfilePage() {
   const router = useRouter();
+  const [profile, setProfile] = useState(defaultProfile);
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("tega_register_data");
+
+    if (!storedData) {
+      return;
+    }
+
+    try {
+      const parsedData = JSON.parse(storedData) as Partial<RegisterType>;
+
+      setProfile({
+        name: parsedData.name || defaultProfile.name,
+        email: parsedData.email || defaultProfile.email,
+      });
+    } catch (err) {
+      console.warn("Unable to read registration data from localStorage", err);
+    }
+  }, []);
 
   const menuItems = [
     { icon: LuUser, label: "Edit Profile", link: "/profile/edit" },
@@ -46,14 +71,14 @@ export default function ProfilePage() {
             <div className="relative size-20 rounded-full overflow-hidden border-4 border-[#F3F4F6]">
               <Image
                 src="/images/reponce.jpg"
-                alt="Rwanda Mugisha"
+                alt={profile.name}
                 fill
                 className="object-cover"
               />
             </div>
             <div className="flex-1">
               <h2 className="text-lg font-bold text-[#1F1F24]">
-                Allen Mugisha
+                {profile.name}
               </h2>
               <div className="flex flex-wrap items-center gap-2">
                 <p className="text-[14px] text-[#828282]">
@@ -81,7 +106,7 @@ export default function ProfilePage() {
             <div>
               <p className="text-[12px] text-[#828282]">Email Address</p>
               <p className="text-[15px] font-semibold text-[#1F1F24]">
-                Mugisha@tega.rw
+                {profile.email}
               </p>
             </div>
           </div>
@@ -103,7 +128,7 @@ export default function ProfilePage() {
           {menuItems.map((item, index) => (
             <button
               type="button"
-              key={index}
+              key={item.label}
               // onClick={() => router.push(item.link)}
               className={`w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors ${
                 index !== menuItems.length - 1

@@ -22,19 +22,22 @@ import { type LoginType, loginSchema } from "../_schema/login-schema";
 
 const LoginForm = () => {
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [email, setEmail] = useState<string | null>(null);
-  const [password, setPassword] = useState<string | null>(null);
+  const [registeredUser, setRegisteredUser] = useState<RegisterType | null>(
+    null,
+  );
   const router = useRouter();
 
   useEffect(() => {
     const storedData = localStorage.getItem("tega_register_data");
 
     if (storedData) {
-      const parsedData = JSON.parse(storedData) as RegisterType;
-      setEmail(parsedData.email);
-      setPassword(parsedData.password);
+      try {
+        const parsedData = JSON.parse(storedData) as RegisterType;
+        setRegisteredUser(parsedData);
+      } catch (err) {
+        console.warn("Unable to read registration data from localStorage", err);
+      }
     }
   }, []);
 
@@ -49,10 +52,17 @@ const LoginForm = () => {
 
   const onSubmit = (data: LoginType) => {
     setError(null);
-    setSuccess(null);
     startTransition(() => {
+      if (
+        registeredUser?.email === data.email &&
+        registeredUser.password === data.password
+      ) {
+        router.push("/app");
+        return;
+      }
+
       const user = users.find(
-        (u) => u.email === data.email && u.password === data.password
+        (u) => u.email === data.email && u.password === data.password,
       );
 
       if (user) {
