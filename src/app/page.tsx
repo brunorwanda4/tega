@@ -356,9 +356,9 @@ function Header({
 
 function HeroSection() {
   return (
-    <section className="relative flex flex-row  border-b border-border bg-[radial-gradient(circle_at_50%_0%,var(--accent)_0%,rgba(224,247,255,0.5)_30%,var(--background)_68%)] pb-16 pt-14 sm:pb-24 sm:pt-20">
+    <section className="relative flex md:flex-row flex-col  border-b border-border bg-[radial-gradient(circle_at_50%_0%,var(--accent)_0%,rgba(224,247,255,0.5)_30%,var(--background)_68%)] pb-16 pt-14 sm:pb-24 sm:pt-20">
       <div className="absolute inset-0 grid-bg opacity-80" />
-      <div className=" px-8 relative w-1/2 flex flex-col justify-start items-start">
+      <div className=" px-8 relative md:w-1/2 flex flex-col justify-start items-start">
         <motion.div
           initial="hidden"
           animate="visible"
