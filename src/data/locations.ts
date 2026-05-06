@@ -4,10 +4,16 @@ export interface Location {
     from: string;
     to: string;
     amount: string;
+    code: string;
   }[];
 }
 
-export const ruraTariffApril2026: Location[] = [
+type LocationWithoutCodes = {
+  location: string;
+  destion: Omit<Location["destion"][number], "code">[];
+};
+
+const ruraTariffApril2026Raw: LocationWithoutCodes[] = [
   {
     location: "ICYEREKEZO 1: NYABUGOGO-KAYONZA-NYAGATARE",
     destion: [
@@ -586,3 +592,15 @@ export const ruraTariffApril2026: Location[] = [
     ],
   },
 ];
+
+let destinationCode = 0;
+
+export const ruraTariffApril2026: Location[] = ruraTariffApril2026Raw.map(
+  (location) => ({
+    ...location,
+    destion: location.destion.map((destination) => ({
+      ...destination,
+      code: String(++destinationCode),
+    })),
+  }),
+);

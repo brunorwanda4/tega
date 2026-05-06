@@ -1,36 +1,15 @@
 "use client";
 
-import {
-  ArrowRight,
-  Bus,
-  Check,
-  CheckCircle2,
-  ChevronRight,
-  Circle,
-  Clock,
-  Loader2,
-  MapPin,
-  Minus,
-  Plus,
-  Search,
-  Smartphone,
-  X,
-} from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ruraTariffApril2026 } from "@/data/locations";
+import { type Location, ruraTariffApril2026 } from "@/data/locations";
 import { cn } from "@/lib/utils";
 import AppGoBackButton from "../_components/common/go-back-button";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-interface Location {
-  location: string;
-  destion: { from: string; to: string; amount: string }[];
-}
-
 interface FlatRoute {
   id: string;
+  code: string;
   location: string;
   from: string;
   to: string;
@@ -43,887 +22,615 @@ interface BusOption {
   agency: string;
   seats: number;
   departureTime: string;
-  color: string;
   status: "ontime" | "delayed";
   delayMinutes?: number;
 }
 
-type Step = "route" | "buses" | "seats" | "payment" | "success";
+interface AgencyOption {
+  code: string;
+  agency: string;
+  buses: BusOption[];
+}
 
-// ─── Static bus data ──────────────────────────────────────────────────────────
-const MOCK_BUSES: BusOption[] = [
+type Step = "dial" | "route" | "agency" | "time" | "payment" | "success";
+
+const USSD_CODE = "*786#";
+const ROUTES_PER_PAGE = 6;
+
+const BUS_OPTIONS: BusOption[] = [
   {
     id: 1,
     plateNumber: "RAC 892 F",
     agency: "Volcano Express",
     seats: 20,
     departureTime: "09:10 AM",
-    color: "bg-green-500",
     status: "ontime",
   },
   {
     id: 2,
+    plateNumber: "RAE 284 P",
+    agency: "Volcano Express",
+    seats: 12,
+    departureTime: "11:30 AM",
+    status: "ontime",
+  },
+  {
+    id: 3,
     plateNumber: "RAD 341 B",
     agency: "Horizon Express",
     seats: 4,
     departureTime: "08:30 AM",
-    color: "bg-red-500",
     status: "delayed",
     delayMinutes: 10,
   },
   {
-    id: 3,
+    id: 4,
+    plateNumber: "RAB 632 K",
+    agency: "Horizon Express",
+    seats: 16,
+    departureTime: "02:00 PM",
+    status: "ontime",
+  },
+  {
+    id: 5,
     plateNumber: "RAF 217 C",
     agency: "Kivu Belt",
     seats: 15,
     departureTime: "07:45 AM",
-    color: "bg-yellow-500",
     status: "ontime",
   },
   {
-    id: 4,
+    id: 6,
     plateNumber: "RAG 503 D",
     agency: "Express Rwanda",
     seats: 8,
     departureTime: "10:00 AM",
-    color: "bg-green-500",
     status: "delayed",
     delayMinutes: 25,
   },
   {
-    id: 5,
+    id: 7,
     plateNumber: "RAH 774 E",
     agency: "Swift Transport",
     seats: 12,
-    departureTime: "11:30 AM",
-    color: "bg-yellow-500",
+    departureTime: "06:20 AM",
+    status: "ontime",
+  },
+  {
+    id: 8,
+    plateNumber: "RAJ 105 Q",
+    agency: "Swift Transport",
+    seats: 18,
+    departureTime: "04:15 PM",
     status: "ontime",
   },
 ];
 
-// ─── Search helpers (reused from PickupLocation) ──────────────────────────────
+const KEYPAD = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"];
+
 function flattenLocations(data: Location[]): FlatRoute[] {
   return data.flatMap((loc) =>
-    loc.destion.map((d, i) => ({
-      id: `${loc.location}-${i}`,
+    loc.destion.map((destination) => ({
+      id: destination.code,
+      code: destination.code,
       location: loc.location,
-      from: d.from,
-      to: d.to,
-      amount: d.amount,
+      from: destination.from,
+      to: destination.to,
+      amount: destination.amount,
     })),
   );
 }
 
-function searchRoutes(routes: FlatRoute[], raw: string): FlatRoute[] {
-  const q = raw.trim().toLowerCase();
-  if (!q) return routes;
+function getAgencyOptions(): AgencyOption[] {
+  const agencies = Array.from(new Set(BUS_OPTIONS.map((bus) => bus.agency)));
 
-  const sepMatch = q.match(/^(.+?)\s*(?:\bto\b|[-→>/])\s*(.+)$/i);
-  if (sepMatch) {
-    const [, left, right] = sepMatch;
-    return routes
-      .filter(
-        (r) =>
-          (r.from.toLowerCase().includes(left) &&
-            r.to.toLowerCase().includes(right)) ||
-          (r.from.toLowerCase().includes(right) &&
-            r.to.toLowerCase().includes(left)) ||
-          r.from.toLowerCase().includes(left) ||
-          r.to.toLowerCase().includes(right),
-      )
-      .sort((a) =>
-        a.from.toLowerCase().includes(left) &&
-        a.to.toLowerCase().includes(right)
-          ? -1
-          : 1,
-      );
-  }
+  return agencies.map((agency, index) => ({
+    code: String(index + 1),
+    agency,
+    buses: BUS_OPTIONS.filter((bus) => bus.agency === agency).sort(
+      compareDepartureTime,
+    ),
+  }));
+}
 
-  return routes.filter(
-    (r) =>
-      r.from.toLowerCase().includes(q) ||
-      r.to.toLowerCase().includes(q) ||
-      r.location.toLowerCase().includes(q) ||
-      r.amount.toLowerCase().includes(q),
+function compareDepartureTime(a: BusOption, b: BusOption) {
+  return timeValue(a.departureTime) - timeValue(b.departureTime);
+}
+
+function timeValue(time: string) {
+  return new Date(`2000-01-01 ${time}`).getTime();
+}
+
+function fareValue(amount: string) {
+  return Number.parseInt(amount.replace(/\D/g, ""), 10) || 0;
+}
+
+function formatFare(amount: string) {
+  return `${fareValue(amount).toLocaleString()} RWF`;
+}
+
+function shortText(value: string, maxLength: number) {
+  if (value.length <= maxLength) return value;
+  return `${value.slice(0, maxLength - 1)}.`;
+}
+
+function routeLabel(route: FlatRoute) {
+  return `${route.from} - ${route.to}`;
+}
+
+function normalizeCode(value: string) {
+  const numeric = Number.parseInt(value, 10);
+  return Number.isNaN(numeric) ? "" : String(numeric);
+}
+
+function buildBookingRef(route: FlatRoute, bus: BusOption) {
+  const routeCode = route.code.padStart(3, "0");
+  const busCode = String(bus.id).padStart(2, "0");
+  const timeCode = Date.now().toString().slice(-4);
+
+  return `TG${routeCode}${busCode}${timeCode}`;
+}
+
+function buildStepLabel(step: Step) {
+  if (step === "route") return "Step 1/4";
+  if (step === "agency") return "Step 2/4";
+  if (step === "time") return "Step 3/4";
+  if (step === "payment") return "Step 4/4";
+  if (step === "success") return "Done";
+  return "Dial";
+}
+
+function UssdScreen({
+  lines,
+  input,
+  error,
+  step,
+  disabled,
+  onInputChange,
+}: {
+  lines: string[];
+  input: string;
+  error: string;
+  step: Step;
+  disabled?: boolean;
+  onInputChange: (value: string) => void;
+}) {
+  return (
+    <div className="flex h-[360px] flex-col gap-3 rounded-lg border border-base-300 bg-base-100 p-3 text-base-content shadow-inner">
+      <div className="flex items-center justify-between border-b border-base-300 pb-2 font-mono text-[11px] font-semibold uppercase">
+        <span>TEGA</span>
+        <span>{buildStepLabel(step)}</span>
+      </div>
+
+      <pre className="min-h-0 flex-1 overflow-y-auto whitespace-pre-wrap break-words font-mono text-[12px] leading-5">
+        {lines.join("\n")}
+      </pre>
+
+      {error ? (
+        <p className="rounded-md bg-destructive/10 px-2 py-1 font-mono text-[11px] text-destructive">
+          {error}
+        </p>
+      ) : null}
+
+      <Input
+        value={input}
+        onChange={(event) => onInputChange(event.target.value)}
+        disabled={disabled}
+        inputMode={step === "dial" ? "text" : "numeric"}
+        aria-label="USSD input"
+        className="h-10 rounded-md border-base-300 bg-base-200 px-3 font-mono text-[15px] tracking-wider"
+      />
+    </div>
   );
 }
 
-// ─── Step indicator ───────────────────────────────────────────────────────────
-const STEPS: { key: Step; label: string }[] = [
-  { key: "route", label: "Route" },
-  { key: "buses", label: "Buses" },
-  { key: "seats", label: "Seats" },
-  { key: "payment", label: "Pay" },
-];
-
-function StepBar({ current }: { current: Step }) {
-  const idx = STEPS.findIndex((s) => s.key === current);
-  if (current === "success") return null;
+function PhoneKeypad({
+  step,
+  onPress,
+}: {
+  step: Step;
+  onPress: (value: string) => void;
+}) {
   return (
-    <div className="flex items-center gap-0 px-4 py-3 bg-white border-b border-gray-100">
-      {STEPS.map((s, i) => {
-        const done = i < idx;
-        const active = i === idx;
+    <div className="grid grid-cols-3 gap-2">
+      {KEYPAD.map((key) => {
+        const disabled = step !== "dial" && (key === "*" || key === "#");
+
         return (
-          <div key={s.key} className="flex items-center flex-1 last:flex-none">
-            <div className="flex flex-col items-center gap-1">
-              <div
-                className={cn(
-                  "w-7 h-7 rounded-full flex items-center justify-center text-[12px] font-bold transition-all",
-                  done && "bg-emerald-500 text-white",
-                  active && "bg-gray-900 text-white ring-4 ring-gray-900/10",
-                  !done && !active && "bg-gray-100 text-gray-400",
-                )}
-              >
-                {done ? <Check className="w-3.5 h-3.5" /> : i + 1}
-              </div>
-              <span
-                className={cn(
-                  "text-[10px] font-medium",
-                  active ? "text-gray-900" : "text-gray-400",
-                )}
-              >
-                {s.label}
-              </span>
-            </div>
-            {i < STEPS.length - 1 && (
-              <div
-                className={cn(
-                  "flex-1 h-px mx-1 mb-4",
-                  i < idx ? "bg-emerald-400" : "bg-gray-200",
-                )}
-              />
+          <button
+            key={key}
+            type="button"
+            disabled={disabled}
+            onClick={() => onPress(key)}
+            className={cn(
+              "h-11 rounded-lg border border-base-300 bg-base-100 font-mono text-[16px] font-bold text-base-content shadow-sm transition active:translate-y-px disabled:opacity-30",
+              key === "0" && "text-primary",
             )}
-          </div>
+          >
+            {key}
+          </button>
         );
       })}
     </div>
   );
 }
 
-// ─── Step 1: Route selector ───────────────────────────────────────────────────
-function RouteStep({ onSelect }: { onSelect: (r: FlatRoute) => void }) {
-  const [query, setQuery] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-  const allRoutes = flattenLocations(ruraTariffApril2026 as Location[]);
-  const results = searchRoutes(allRoutes, query);
-
-  const grouped = results.reduce<Record<string, FlatRoute[]>>((acc, r) => {
-    if (!acc[r.location]) acc[r.location] = [];
-    acc[r.location].push(r);
-    return acc;
-  }, {});
-
-  return (
-    <div className="flex flex-col flex-1 overflow-hidden">
-      <div className="px-4 pt-4 pb-3 space-y-3">
-        <div>
-          <p className="text-[17px] font-bold text-gray-900">
-            Where are you going?
-          </p>
-          <p className="text-[13px] text-gray-400 mt-0.5">
-            Select your departure → destination
-          </p>
-        </div>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-          <Input
-            ref={inputRef}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder='e.g. "Nyabungogo to Muhanga"'
-            className="pl-9 pr-9 h-11 bg-gray-50 border-gray-200 rounded-xl text-[15px]"
-            autoFocus
-          />
-          {query && (
-            <button
-              onClick={() => setQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-        {query && (
-          <p className="text-[12px] text-gray-400 px-1">
-            {results.length} route{results.length !== 1 ? "s" : ""} found
-          </p>
-        )}
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-4 pb-8">
-        {Object.entries(grouped).map(([zone, routes]) => (
-          <div key={zone}>
-            <p className="text-[10px] font-bold tracking-widest uppercase text-gray-400 mt-4 mb-1">
-              {zone}
-            </p>
-            {routes.map((r) => (
-              <button
-                key={r.id}
-                type="button"
-                onClick={() => onSelect(r)}
-                className="w-full flex items-center gap-3 py-3.5 border-b border-gray-100 hover:bg-gray-50 active:bg-gray-100 transition-colors text-left"
-              >
-                <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-                  <MapPin className="w-4 h-4 text-gray-500" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-semibold text-gray-900">
-                    {r.from}{" "}
-                    <span className="text-gray-400 font-normal">→</span> {r.to}
-                  </p>
-                </div>
-                <span className="text-[13px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full shrink-0">
-                  {r.amount} RWF
-                </span>
-                <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
-              </button>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── Step 2: Available buses ──────────────────────────────────────────────────
-function BusesStep({
-  route,
-  onSelect,
-}: {
-  route: FlatRoute;
-  onSelect: (bus: BusOption) => void;
-}) {
-  const sorted = [...MOCK_BUSES].sort((a, b) => {
-    const tA = new Date(`2000-01-01 ${a.departureTime}`).getTime();
-    const tB = new Date(`2000-01-01 ${b.departureTime}`).getTime();
-    return tA - tB;
-  });
-
-  return (
-    <div className="flex flex-col flex-1 overflow-hidden">
-      {/* Route summary */}
-      <div className="mx-4 mt-4 p-3 bg-gray-50 rounded-xl flex items-center gap-2 border border-gray-100">
-        <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
-        <p className="text-[14px] font-semibold text-gray-800 truncate">
-          {route.from} <span className="text-gray-400 font-normal">→</span>{" "}
-          {route.to}
-        </p>
-        <span className="ml-auto text-[13px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0">
-          {route.amount} RWF
-        </span>
-      </div>
-
-      <p className="text-[13px] text-gray-400 px-4 mt-3 mb-2">
-        {sorted.length} buses available · tap to select
-      </p>
-
-      <div className="flex-1 overflow-y-auto px-4 pb-8 space-y-3">
-        {sorted.map((bus) => (
-          <button
-            key={bus.id}
-            type="button"
-            onClick={() => onSelect(bus)}
-            className="w-full text-left"
-          >
-            <div className="border border-gray-100 rounded-2xl p-4 bg-white shadow-sm hover:shadow-md active:bg-gray-50 transition-all">
-              {/* Top row */}
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <p className="text-[14px] font-bold text-gray-900">
-                    {bus.agency}
-                  </p>
-                  <p className="text-[12px] text-gray-400 font-mono">
-                    {bus.plateNumber}
-                  </p>
-                </div>
-                <span
-                  className={cn(
-                    "text-[11px] font-bold px-2 py-0.5 rounded-full",
-                    bus.status === "ontime"
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "bg-red-50 text-red-600",
-                  )}
-                >
-                  {bus.status === "ontime"
-                    ? "On time"
-                    : `Delayed ${bus.delayMinutes}min`}
-                </span>
-              </div>
-
-              {/* Timeline */}
-              <div className="flex items-center gap-2 mb-3">
-                <div className="text-center">
-                  <p className="text-[15px] font-bold text-gray-900">
-                    {bus.departureTime}
-                  </p>
-                  <p className="text-[10px] text-gray-400">Departure</p>
-                </div>
-                <div className="flex-1 flex items-center gap-1">
-                  <Circle className="w-1.5 h-1.5 fill-gray-400 text-gray-400 shrink-0" />
-                  <div className="flex-1 border-t-2 border-dashed border-gray-200 relative">
-                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white border border-gray-200 rounded-full px-2 py-0.5 text-[9px] font-bold text-gray-500 whitespace-nowrap">
-                      ~2h 15min
-                    </span>
-                  </div>
-                  <Circle className="w-1.5 h-1.5 fill-gray-400 text-gray-400 shrink-0" />
-                </div>
-                <div className="text-center">
-                  <p className="text-[15px] font-bold text-gray-900">
-                    {route.to}
-                  </p>
-                  <p className="text-[10px] text-gray-400">Arrival</p>
-                </div>
-              </div>
-
-              {/* Seats bar */}
-              <div className="flex items-center gap-2">
-                <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className={cn("h-full rounded-full", bus.color)}
-                    style={{ width: `${(bus.seats / 30) * 100}%` }}
-                  />
-                </div>
-                <p className="text-[11px] text-gray-500 shrink-0">
-                  <span className="font-bold text-gray-800">{bus.seats}</span>
-                  /30 seats
-                </p>
-              </div>
-            </div>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── Step 3: Seat & agency confirm ────────────────────────────────────────────
-function SeatsStep({
-  route,
-  bus,
-  seats,
-  onSeatsChange,
-  onConfirm,
-}: {
-  route: FlatRoute;
-  bus: BusOption;
-  seats: number;
-  onSeatsChange: (n: number) => void;
-  onConfirm: () => void;
-}) {
-  // Parse amount for multiplication (remove non-numeric)
-  const unitAmount = parseInt(route.amount.replace(/\D/g, ""), 10) || 0;
-  const total = unitAmount * seats;
-
-  return (
-    <div className="flex flex-col flex-1 px-4 py-4 overflow-y-auto">
-      {/* Bus summary card */}
-      <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 mb-6">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center">
-            <Bus className="w-5 h-5 text-gray-600" />
-          </div>
-          <div>
-            <p className="text-[15px] font-bold text-gray-900">{bus.agency}</p>
-            <p className="text-[12px] text-gray-400 font-mono">
-              {bus.plateNumber}
-            </p>
-          </div>
-          <div className="ml-auto flex items-center gap-1 text-gray-500">
-            <Clock className="w-3.5 h-3.5" />
-            <span className="text-[13px] font-semibold">
-              {bus.departureTime}
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 text-[13px] text-gray-500">
-          <MapPin className="w-3.5 h-3.5 shrink-0" />
-          <span className="font-medium text-gray-800">{route.from}</span>
-          <ArrowRight className="w-3 h-3" />
-          <span className="font-medium text-gray-800">{route.to}</span>
-        </div>
-      </div>
-
-      {/* Seat selector */}
-      <p className="text-[16px] font-bold text-gray-900 mb-1">
-        How many seats?
-      </p>
-      <p className="text-[13px] text-gray-400 mb-5">
-        {bus.seats} seats available on this bus
-      </p>
-
-      <div className="flex items-center justify-center gap-8 mb-8">
-        <button
-          type="button"
-          onClick={() => onSeatsChange(Math.max(1, seats - 1))}
-          className="w-12 h-12 rounded-full border-2 border-gray-200 flex items-center justify-center hover:border-gray-400 active:bg-gray-100 transition-all"
-        >
-          <Minus className="w-5 h-5" />
-        </button>
-        <div className="text-center">
-          <span className="text-[48px] font-bold text-gray-900 leading-none">
-            {seats}
-          </span>
-          <p className="text-[12px] text-gray-400 mt-1">
-            seat{seats !== 1 ? "s" : ""}
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => onSeatsChange(Math.min(bus.seats, seats + 1))}
-          className="w-12 h-12 rounded-full bg-gray-900 text-white flex items-center justify-center hover:bg-gray-700 active:bg-gray-600 transition-all"
-        >
-          <Plus className="w-5 h-5" />
-        </button>
-      </div>
-
-      {/* Price breakdown */}
-      <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden mb-6">
-        <div className="flex justify-between items-center px-4 py-3 border-b border-gray-50">
-          <span className="text-[13px] text-gray-500">Fare per seat</span>
-          <span className="text-[13px] font-semibold text-gray-800">
-            {route.amount}
-          </span>
-        </div>
-        <div className="flex justify-between items-center px-4 py-3 border-b border-gray-50">
-          <span className="text-[13px] text-gray-500">Seats</span>
-          <span className="text-[13px] font-semibold text-gray-800">
-            × {seats}
-          </span>
-        </div>
-        <div className="flex justify-between items-center px-4 py-3 bg-gray-50">
-          <span className="text-[14px] font-bold text-gray-900">Total</span>
-          <span className="text-[16px] font-bold text-emerald-700">
-            {total.toLocaleString()} RWF
-          </span>
-        </div>
-      </div>
-
-      <Button
-        size="lg"
-        className="w-full rounded-xl text-[15px] font-bold"
-        onClick={onConfirm}
-      >
-        Continue to Payment
-      </Button>
-    </div>
-  );
-}
-
-// ─── Step 4: MTN MoMo payment ─────────────────────────────────────────────────
-type PayState = "idle" | "processing" | "confirming";
-
-function PaymentStep({
-  route,
-  bus,
-  seats,
-  onSuccess,
-}: {
-  route: FlatRoute;
-  bus: BusOption;
-  seats: number;
-  onSuccess: (ref: string) => void;
-}) {
-  const [phone, setPhone] = useState("07");
-  const [payState, setPayState] = useState<PayState>("idle");
-  const unitAmount = parseInt(route.amount.replace(/\D/g, ""), 10) || 0;
-  const total = unitAmount * seats;
-
-  const isPhoneValid = /^07[2389]\d{7}$/.test(phone);
-
-  const handlePay = () => {
-    if (!isPhoneValid) return;
-    setPayState("processing");
-    // Simulate MoMo push notification → user confirms on phone
-    setTimeout(() => setPayState("confirming"), 2200);
-    // Simulate auto-success after confirm screen
-    setTimeout(() => {
-      const ref = `BK${Date.now().toString().slice(-8)}`;
-      onSuccess(ref);
-    }, 6000);
-  };
-
-  return (
-    <div className="flex flex-col flex-1 px-4 py-4 overflow-y-auto">
-      {/* Order summary */}
-      <div className="rounded-2xl border border-gray-100 overflow-hidden mb-6">
-        <div className="bg-gray-900 text-white px-4 py-3 flex items-center gap-2">
-          <Bus className="w-4 h-4 opacity-70" />
-          <span className="text-[13px] font-semibold">
-            {bus.agency} · {bus.plateNumber}
-          </span>
-        </div>
-        <div className="px-4 py-3 space-y-2">
-          <div className="flex justify-between text-[13px]">
-            <span className="text-gray-500">Route</span>
-            <span className="font-semibold text-gray-800">
-              {route.from} → {route.to}
-            </span>
-          </div>
-          <div className="flex justify-between text-[13px]">
-            <span className="text-gray-500">Departure</span>
-            <span className="font-semibold text-gray-800">
-              {bus.departureTime}
-            </span>
-          </div>
-          <div className="flex justify-between text-[13px]">
-            <span className="text-gray-500">Seats</span>
-            <span className="font-semibold text-gray-800">{seats}</span>
-          </div>
-          <div className="flex justify-between text-[14px] pt-2 border-t border-gray-100">
-            <span className="font-bold text-gray-900">Total</span>
-            <span className="font-bold text-emerald-700">
-              {total.toLocaleString()} RWF
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* MTN MoMo card */}
-      <div className="rounded-2xl border-2 border-[#FFCC00] overflow-hidden mb-6 shadow-sm">
-        {/* MTN header */}
-        <div className="bg-[#FFCC00] px-4 py-3 flex items-center gap-3">
-          <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-            <Smartphone className="w-4 h-4 text-[#FFCC00]" />
-          </div>
-          <div>
-            <p className="text-[14px] font-black text-black leading-tight">
-              MTN Mobile Money
-            </p>
-            <p className="text-[11px] text-black/60 font-medium">MoMo Pay</p>
-          </div>
-          <span className="ml-auto text-[11px] font-bold text-black/50 bg-black/10 px-2 py-0.5 rounded-full">
-            RWF
-          </span>
-        </div>
-
-        <div className="bg-white px-4 py-4 space-y-4">
-          <div>
-            <label className="text-[12px] font-semibold text-gray-500 uppercase tracking-wide mb-1.5 block">
-              MoMo Phone Number
-            </label>
-            <div className="flex items-center gap-2">
-              <span className="text-[14px] font-bold text-gray-500 bg-gray-50 border border-gray-200 rounded-lg px-3 h-11 flex items-center shrink-0">
-                +250
-              </span>
-              <Input
-                value={phone}
-                onChange={(e) => {
-                  const v = e.target.value.replace(/\D/g, "");
-                  if (v.length <= 10) setPhone(v);
-                }}
-                placeholder="0788 000 000"
-                inputMode="tel"
-                className="h-11 text-[15px] font-mono tracking-widest border-gray-200"
-                disabled={payState !== "idle"}
-              />
-            </div>
-            {phone.length >= 10 && !isPhoneValid && (
-              <p className="text-[12px] text-red-500 mt-1">
-                Enter a valid MTN number (072, 073, 078, 079)
-              </p>
-            )}
-          </div>
-
-          <div className="bg-[#FFCC00]/10 rounded-xl p-3 border border-[#FFCC00]/30">
-            <p className="text-[12px] text-gray-500 mb-0.5">Amount to pay</p>
-            <p className="text-[24px] font-black text-gray-900">
-              {total.toLocaleString()}
-              <span className="text-[14px] font-semibold text-gray-500 ml-1">
-                RWF
-              </span>
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Pay button / states */}
-      {payState === "idle" && (
-        <Button
-          size="lg"
-          className={cn(
-            "w-full rounded-xl text-[15px] font-bold transition-all",
-            isPhoneValid
-              ? "bg-[#FFCC00] hover:bg-[#f0c000] text-black"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed",
-          )}
-          onClick={handlePay}
-          disabled={!isPhoneValid}
-        >
-          Pay {total.toLocaleString()} RWF with MoMo
-        </Button>
-      )}
-
-      {payState === "processing" && (
-        <div className="flex flex-col items-center gap-3 py-6">
-          <div className="w-14 h-14 rounded-full bg-[#FFCC00]/20 border-2 border-[#FFCC00] flex items-center justify-center">
-            <Loader2 className="w-6 h-6 text-[#FFCC00] animate-spin" />
-          </div>
-          <p className="text-[15px] font-semibold text-gray-800">
-            Sending request…
-          </p>
-          <p className="text-[13px] text-gray-400 text-center">
-            A push notification is being sent to <br />
-            <span className="font-mono font-bold text-gray-700">
-              +250 {phone}
-            </span>
-          </p>
-        </div>
-      )}
-
-      {payState === "confirming" && (
-        <div className="rounded-2xl border-2 border-[#FFCC00] bg-[#FFCC00]/5 p-5 flex flex-col items-center gap-3">
-          <div className="w-14 h-14 rounded-full bg-[#FFCC00] flex items-center justify-center">
-            <Smartphone className="w-6 h-6 text-black" />
-          </div>
-          <p className="text-[16px] font-bold text-gray-900 text-center">
-            Check your phone!
-          </p>
-          <p className="text-[13px] text-gray-500 text-center leading-relaxed">
-            MTN has sent a payment prompt to your phone.
-            <br />
-            Enter your <span className="font-bold text-gray-800">MoMo PIN</span>{" "}
-            to confirm.
-          </p>
-          <div className="flex items-center gap-2 mt-1">
-            <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-            <span className="text-[12px] text-gray-400">
-              Waiting for confirmation…
-            </span>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Step 5: Success ──────────────────────────────────────────────────────────
-function SuccessStep({
-  route,
-  bus,
-  seats,
-  ref: bookingRef,
-}: {
-  route: FlatRoute;
-  bus: BusOption;
-  seats: number;
-  ref: string;
-}) {
-  const unitAmount = parseInt(route.amount.replace(/\D/g, ""), 10) || 0;
-  const total = unitAmount * seats;
-
-  return (
-    <div className="flex flex-col items-center px-4 py-8 flex-1 overflow-y-auto">
-      {/* Success icon */}
-      <div className="relative mb-6">
-        <div className="w-24 h-24 rounded-full bg-emerald-50 flex items-center justify-center">
-          <CheckCircle2
-            className="w-12 h-12 text-emerald-500"
-            strokeWidth={1.5}
-          />
-        </div>
-        <div className="absolute -top-1 -right-1 w-8 h-8 rounded-full bg-[#FFCC00] flex items-center justify-center shadow">
-          <Smartphone className="w-4 h-4 text-black" />
-        </div>
-      </div>
-
-      <p className="text-[22px] font-black text-gray-900 text-center mb-1">
-        Booking Confirmed!
-      </p>
-      <p className="text-[14px] text-gray-400 text-center mb-6">
-        Your seats have been reserved. Safe journey!
-      </p>
-
-      {/* Ticket card */}
-      <div className="w-full border border-gray-100 rounded-3xl overflow-hidden shadow-sm mb-6">
-        {/* Ticket header */}
-        <div className="bg-gray-900 text-white px-5 py-4">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-[11px] text-gray-400 uppercase tracking-widest">
-                Booking ref
-              </p>
-              <p className="text-[18px] font-black font-mono tracking-widest text-[#FFCC00]">
-                {bookingRef}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-[11px] text-gray-400 uppercase tracking-widest">
-                Seats
-              </p>
-              <p className="text-[18px] font-black">{seats}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Dotted divider */}
-        <div className="flex items-center">
-          <div className="w-4 h-4 -ml-2 rounded-full bg-gray-50 border border-gray-100" />
-          <div className="flex-1 border-t-2 border-dashed border-gray-200" />
-          <div className="w-4 h-4 -mr-2 rounded-full bg-gray-50 border border-gray-100" />
-        </div>
-
-        {/* Ticket body */}
-        <div className="px-5 py-4 space-y-3">
-          <div className="flex items-center gap-3">
-            <Circle className="w-2 h-2 fill-gray-400 shrink-0" />
-            <div className="flex-1 border-t border-dashed border-gray-200" />
-            <Circle className="w-2 h-2 fill-gray-400 shrink-0" />
-          </div>
-          <div className="flex justify-between">
-            <div>
-              <p className="text-[11px] text-gray-400">From</p>
-              <p className="text-[15px] font-bold text-gray-900">
-                {route.from}
-              </p>
-            </div>
-            <ArrowRight className="w-4 h-4 text-gray-300 mt-4" />
-            <div className="text-right">
-              <p className="text-[11px] text-gray-400">To</p>
-              <p className="text-[15px] font-bold text-gray-900">{route.to}</p>
-            </div>
-          </div>
-          <div className="flex justify-between pt-2 border-t border-gray-50">
-            <div>
-              <p className="text-[11px] text-gray-400">Agency</p>
-              <p className="text-[13px] font-semibold text-gray-800">
-                {bus.agency}
-              </p>
-            </div>
-            <div className="text-center">
-              <p className="text-[11px] text-gray-400">Departure</p>
-              <p className="text-[13px] font-semibold text-gray-800">
-                {bus.departureTime}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-[11px] text-gray-400">Paid</p>
-              <p className="text-[13px] font-bold text-emerald-700">
-                {total.toLocaleString()} RWF
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <p className="text-[12px] text-gray-400 text-center leading-relaxed">
-        A confirmation SMS has been sent to your MTN number.
-        <br />
-        Show this reference at the bus park.
-      </p>
-    </div>
-  );
-}
-
-// ─── Root page ────────────────────────────────────────────────────────────────
 export default function SSDOffline() {
-  const [step, setStep] = useState<Step>("route");
-  const [selectedRoute, setRoute] = useState<FlatRoute | null>(null);
-  const [selectedBus, setBus] = useState<BusOption | null>(null);
-  const [seats, setSeats] = useState(1);
+  const routes = useMemo(() => flattenLocations(ruraTariffApril2026), []);
+  const agencies = useMemo(() => getAgencyOptions(), []);
+
+  const [step, setStep] = useState<Step>("dial");
+  const [input, setInput] = useState(USSD_CODE);
+  const [error, setError] = useState("");
+  const [routePage, setRoutePage] = useState(0);
+  const [selectedRoute, setSelectedRoute] = useState<FlatRoute | null>(null);
+  const [selectedAgency, setSelectedAgency] = useState<AgencyOption | null>(
+    null,
+  );
+  const [selectedBus, setSelectedBus] = useState<BusOption | null>(null);
   const [bookingRef, setBookingRef] = useState("");
 
-  const handleRouteSelect = (r: FlatRoute) => {
-    setRoute(r);
-    setStep("buses");
+  const routePageCount = Math.ceil(routes.length / ROUTES_PER_PAGE);
+  const routeStart = routePage * ROUTES_PER_PAGE;
+  const visibleRoutes = routes.slice(routeStart, routeStart + ROUTES_PER_PAGE);
+
+  const resetSession = () => {
+    setStep("dial");
+    setInput(USSD_CODE);
+    setError("");
+    setRoutePage(0);
+    setSelectedRoute(null);
+    setSelectedAgency(null);
+    setSelectedBus(null);
+    setBookingRef("");
   };
 
-  const handleBusSelect = (b: BusOption) => {
-    setBus(b);
-    setStep("seats");
+  const openRouteStep = () => {
+    setStep("route");
+    setInput("");
+    setError("");
+    setRoutePage(0);
+    setSelectedRoute(null);
+    setSelectedAgency(null);
+    setSelectedBus(null);
+    setBookingRef("");
   };
 
-  const handleSeatsConfirm = () => {
-    setStep("payment");
+  const handleInputChange = (value: string) => {
+    setError("");
+
+    if (step === "dial") {
+      setInput(value.replace(/[^0-9*#]/g, "").slice(0, 8));
+      return;
+    }
+
+    setInput(value.replace(/\D/g, "").slice(0, step === "payment" ? 10 : 4));
   };
 
-  const handlePaySuccess = (ref: string) => {
-    setBookingRef(ref);
-    setStep("success");
+  const handleKeyPress = (key: string) => {
+    if (step === "success") return;
+    setError("");
+
+    if (step !== "dial" && (key === "*" || key === "#")) return;
+
+    setInput((current) => {
+      const next = `${current}${key}`;
+      if (step === "dial") return next.replace(/[^0-9*#]/g, "").slice(0, 8);
+      return next.replace(/\D/g, "").slice(0, step === "payment" ? 10 : 4);
+    });
   };
 
-  const handleBack = () => {
-    if (step === "buses") {
+  const handleClear = () => {
+    if (step === "success") {
+      resetSession();
+      return;
+    }
+
+    setInput((current) => current.slice(0, -1));
+    setError("");
+  };
+
+  const handleCancel = () => {
+    setError("");
+
+    if (step === "dial") {
+      setInput("");
+      return;
+    }
+
+    if (step === "route") {
+      if (routePage > 0) {
+        setRoutePage((page) => page - 1);
+        setInput("");
+        return;
+      }
+      resetSession();
+      return;
+    }
+
+    if (step === "agency") {
       setStep("route");
-      setRoute(null);
+      setSelectedAgency(null);
+      setInput("");
+      return;
     }
-    if (step === "seats") {
-      setStep("buses");
-      setBus(null);
+
+    if (step === "time") {
+      setStep("agency");
+      setSelectedBus(null);
+      setInput("");
+      return;
     }
+
     if (step === "payment") {
-      setStep("seats");
+      setStep("time");
+      setInput("");
+      return;
     }
+
+    resetSession();
   };
+
+  const handleDialSubmit = () => {
+    if (input === USSD_CODE || input === "*786*" || input === "*786") {
+      openRouteStep();
+      return;
+    }
+
+    setError("Dial *786# to start.");
+  };
+
+  const handleRouteSubmit = () => {
+    if (input === "00") {
+      if (routePage < routePageCount - 1) {
+        setRoutePage((page) => page + 1);
+        setInput("");
+        return;
+      }
+
+      setError("No more destinations.");
+      return;
+    }
+
+    if (input === "0") {
+      handleCancel();
+      return;
+    }
+
+    const route = routes.find((item) => item.code === normalizeCode(input));
+
+    if (!route) {
+      setError("Invalid destination number.");
+      return;
+    }
+
+    setSelectedRoute(route);
+    setStep("agency");
+    setInput("");
+  };
+
+  const handleAgencySubmit = () => {
+    if (input === "0") {
+      handleCancel();
+      return;
+    }
+
+    const agency = agencies.find((item) => item.code === normalizeCode(input));
+
+    if (!agency) {
+      setError("Invalid agency number.");
+      return;
+    }
+
+    setSelectedAgency(agency);
+    setStep("time");
+    setInput("");
+  };
+
+  const handleTimeSubmit = () => {
+    if (input === "0") {
+      handleCancel();
+      return;
+    }
+
+    const buses = selectedAgency?.buses ?? [];
+    const busIndex = Number.parseInt(input, 10) - 1;
+    const bus = buses[busIndex];
+
+    if (!bus) {
+      setError("Invalid time number.");
+      return;
+    }
+
+    setSelectedBus(bus);
+    setStep("payment");
+    setInput("");
+  };
+
+  const handlePaymentSubmit = () => {
+    if (input === "0") {
+      handleCancel();
+      return;
+    }
+
+    if (!/^07[2389]\d{7}$/.test(input)) {
+      setError("Enter valid MTN phone: 07XXXXXXXX.");
+      return;
+    }
+
+    if (!selectedRoute || !selectedBus) return;
+
+    setBookingRef(buildBookingRef(selectedRoute, selectedBus));
+    setStep("success");
+    setInput("");
+  };
+
+  const handleSubmit = () => {
+    setError("");
+
+    if (step === "dial") handleDialSubmit();
+    if (step === "route") handleRouteSubmit();
+    if (step === "agency") handleAgencySubmit();
+    if (step === "time") handleTimeSubmit();
+    if (step === "payment") handlePaymentSubmit();
+    if (step === "success") resetSession();
+  };
+
+  const screenLines = (() => {
+    if (step === "dial") {
+      return [
+        "TEGA USSD",
+        "",
+        "Enter service code",
+        "",
+        `${USSD_CODE}`,
+        "",
+        "Press Call to continue.",
+      ];
+    }
+
+    if (step === "route") {
+      return [
+        "TEGA Transport",
+        "Select destination",
+        `Page ${routePage + 1}/${routePageCount}`,
+        "",
+        ...visibleRoutes.flatMap((route) => [
+          `${route.code}. ${shortText(route.from, 11)}-${shortText(
+            route.to,
+            14,
+          )}`,
+          `   ${formatFare(route.amount)}`,
+        ]),
+        "",
+        routePage < routePageCount - 1 ? "00. More" : "",
+        routePage > 0 ? "0. Previous" : "0. Exit",
+      ].filter(Boolean);
+    }
+
+    if (step === "agency" && selectedRoute) {
+      return [
+        "TEGA Transport",
+        `Route ${selectedRoute.code}`,
+        shortText(routeLabel(selectedRoute), 30),
+        `Fare: ${formatFare(selectedRoute.amount)}`,
+        "",
+        "Select agency",
+        ...agencies.map(
+          (agency) =>
+            `${agency.code}. ${agency.agency} (${agency.buses.length})`,
+        ),
+        "",
+        "0. Back",
+      ];
+    }
+
+    if (step === "time" && selectedRoute && selectedAgency) {
+      return [
+        "TEGA Transport",
+        selectedAgency.agency,
+        shortText(routeLabel(selectedRoute), 30),
+        "",
+        "Select time",
+        ...selectedAgency.buses.flatMap((bus, index) => [
+          `${index + 1}. ${bus.departureTime} ${bus.plateNumber}`,
+          `   ${bus.seats} seats ${
+            bus.status === "delayed" ? `delay ${bus.delayMinutes}m` : "on time"
+          }`,
+        ]),
+        "",
+        "0. Back",
+      ];
+    }
+
+    if (step === "payment" && selectedRoute && selectedAgency && selectedBus) {
+      return [
+        "TEGA Transport",
+        "Pay ticket",
+        "",
+        shortText(routeLabel(selectedRoute), 30),
+        `Agency: ${selectedAgency.agency}`,
+        `Time: ${selectedBus.departureTime}`,
+        `Car: ${selectedBus.plateNumber}`,
+        `Amount: ${formatFare(selectedRoute.amount)}`,
+        "",
+        "Enter MTN MoMo phone",
+        "0. Back",
+      ];
+    }
+
+    if (step === "success" && selectedRoute && selectedAgency && selectedBus) {
+      return [
+        "TEGA Transport",
+        "Payment request sent.",
+        "",
+        `Ref: ${bookingRef}`,
+        shortText(routeLabel(selectedRoute), 30),
+        `${selectedAgency.agency}`,
+        `${selectedBus.departureTime} ${selectedBus.plateNumber}`,
+        `Paid: ${formatFare(selectedRoute.amount)}`,
+        "",
+        "Ticket reserved.",
+        "Press OK for new booking.",
+      ];
+    }
+
+    return ["Session ended."];
+  })();
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      {/* ── Header ─────────────────────────────────── */}
-      <div className="bg-primary text-primary-content -mx-6 px-6 py-4 shrink-0">
-        <div className="flex items-center gap-4">
-          {step !== "success" && step !== "route" ? (
-            <button
-              type="button"
-              onClick={handleBack}
-              className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
-            >
-              <ArrowRight className="w-4 h-4 rotate-180" />
-            </button>
-          ) : (
-            <AppGoBackButton />
-          )}
-          <div>
-            <h1 className="text-[20px] font-semibold">Offline Booking</h1>
-            <p className="text-[13px] opacity-70">
-              {step === "route" && "Choose your route"}
-              {step === "buses" &&
-                `${selectedRoute?.from} → ${selectedRoute?.to}`}
-              {step === "seats" && `${selectedBus?.agency}`}
-              {step === "payment" && "MTN Mobile Money"}
-              {step === "success" && "Booking complete"}
-            </p>
-          </div>
+    <div className="-mx-6 flex min-h-screen flex-col bg-base-200 px-6 pb-8 text-base-content">
+      <div className="flex items-center gap-3 py-4">
+        <AppGoBackButton />
+        <div className="min-w-0">
+          <h1 className="text-[20px] font-semibold">USSD booking</h1>
+          <p className="truncate text-[13px] text-base-content/60">
+            Small phone flow with destination codes
+          </p>
         </div>
       </div>
 
-      {/* ── Step bar ───────────────────────────────── */}
-      <StepBar current={step} />
+      <div className="mx-auto flex w-full max-w-[330px] flex-1 flex-col rounded-[2rem] bg-neutral p-3 text-neutral-content shadow-xl">
+        <div className="mx-auto mb-3 h-1.5 w-16 rounded-full bg-neutral-content/25" />
 
-      {/* ── Step content ───────────────────────────── */}
-      <div className="flex flex-col flex-1 overflow-hidden">
-        {step === "route" && <RouteStep onSelect={handleRouteSelect} />}
+        <UssdScreen
+          lines={screenLines}
+          input={input}
+          error={error}
+          step={step}
+          disabled={step === "success"}
+          onInputChange={handleInputChange}
+        />
 
-        {step === "buses" && selectedRoute && (
-          <BusesStep route={selectedRoute} onSelect={handleBusSelect} />
-        )}
+        <div className="mt-3 flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            className="h-10 flex-1 rounded-lg border-neutral-content/20 bg-neutral-content/10 text-neutral-content hover:bg-neutral-content/15 hover:text-neutral-content"
+            onClick={handleCancel}
+          >
+            {step === "route" && routePage > 0 ? "Prev" : "Cancel"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="h-10 flex-1 rounded-lg border-neutral-content/20 bg-neutral-content/10 text-neutral-content hover:bg-neutral-content/15 hover:text-neutral-content"
+            onClick={handleClear}
+          >
+            {step === "success" ? "New" : "Clear"}
+          </Button>
+          <Button
+            type="button"
+            className="h-10 flex-1 rounded-lg bg-primary text-primary-content hover:bg-primary/90"
+            onClick={handleSubmit}
+          >
+            {step === "dial" ? "Call" : step === "success" ? "OK" : "Send"}
+          </Button>
+        </div>
 
-        {step === "seats" && selectedRoute && selectedBus && (
-          <SeatsStep
-            route={selectedRoute}
-            bus={selectedBus}
-            seats={seats}
-            onSeatsChange={setSeats}
-            onConfirm={handleSeatsConfirm}
-          />
-        )}
-
-        {step === "payment" && selectedRoute && selectedBus && (
-          <PaymentStep
-            route={selectedRoute}
-            bus={selectedBus}
-            seats={seats}
-            onSuccess={handlePaySuccess}
-          />
-        )}
-
-        {step === "success" && selectedRoute && selectedBus && (
-          <SuccessStep
-            route={selectedRoute}
-            bus={selectedBus}
-            seats={seats}
-            ref={bookingRef}
-          />
-        )}
+        <div className="mt-3">
+          <PhoneKeypad step={step} onPress={handleKeyPress} />
+        </div>
       </div>
     </div>
   );
