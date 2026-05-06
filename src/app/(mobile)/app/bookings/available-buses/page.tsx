@@ -75,6 +75,8 @@ const allBuses = [
   },
 ];
 
+type Bus = (typeof allBuses)[number];
+
 export default function AvailableBuses() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -86,6 +88,7 @@ export default function AvailableBuses() {
   const [isAgencySheetOpen, setIsAgencySheetOpen] = useState(false);
   const [selectedSeats, setSelectedSeats] = useState(2);
   const [selectedAgency, setSelectedAgency] = useState<string | null>(null);
+  const [selectedBus, setSelectedBus] = useState<Bus | null>(null);
 
   const agencies = Array.from(new Set(allBuses.map((bus) => bus.agency)));
 
@@ -106,13 +109,30 @@ export default function AvailableBuses() {
 
   const filteredBuses = getFilteredBuses();
 
-  const handleBusCardClick = () => {
+  const handleBusCardClick = (bus: Bus) => {
+    setSelectedBus(bus);
     setIsSeatsSheetOpen(true);
   };
 
   const handleSeatsApply = () => {
+    if (!selectedBus) return;
+
+    const fare = routeAmount ? `${routeAmount} RF` : selectedBus.price;
+    const params = new URLSearchParams({
+      location,
+      to: destination,
+      plateNumber: selectedBus.plateNumber,
+      agency: selectedBus.agency,
+      delay: selectedBus.delay,
+      seats: selectedBus.seats,
+      status: selectedBus.status,
+      departureTime: selectedBus.departureTime,
+      price: fare,
+      passengers: String(selectedSeats),
+    });
+
     setIsSeatsSheetOpen(false);
-    router.push("/app/bookings/bus-status");
+    router.push(`/app/bookings/bus-status?${params.toString()}`);
   };
 
   const handleAgencyApply = () => {
@@ -175,7 +195,7 @@ export default function AvailableBuses() {
             <button
               type="button"
               key={bus.id}
-              onClick={handleBusCardClick}
+              onClick={() => handleBusCardClick(bus)}
               className="cursor-pointer w-full text-left"
             >
               <BusResultCard

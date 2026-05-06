@@ -1,27 +1,30 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { useRouter, useSearchParams } from "next/navigation";
 import { FaCheck } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
+import { buildBookingHref } from "../_lib/booking-query";
 
 export default function PaymentSuccess() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   return (
     <div className="flex flex-col h-screen  items-center justify-center">
-
       {/* Success Icon Section */}
       <div className="flex flex-col items-center justify-center  space-y-8">
-           <div className="size-24 bg-[#1F1F24] rounded-full flex items-center justify-center ">
-              <FaCheck className="size-14 text-white" strokeWidth={2.5} />
-           </div>
+        <div className="size-24 bg-[#1F1F24] rounded-full flex items-center justify-center ">
+          <FaCheck className="size-14 text-white" strokeWidth={2.5} />
+        </div>
 
         {/* Text Content */}
         <div className="text-center space-y-4">
-          <h1 className="text-2xl font-bold text-[#1F1F24]">Payment Successful!</h1>
+          <h1 className="text-2xl font-bold text-[#1F1F24]">
+            Payment Successful!
+          </h1>
           <p className="text-sm text-[#828282] max-w-[280px] mx-auto leading-relaxed">
-            You will receive a confirmation message shortly for your booking details.
+            You will receive a confirmation message shortly for your booking
+            details.
           </p>
         </div>
       </div>
@@ -31,7 +34,11 @@ export default function PaymentSuccess() {
         <Button
           size="lg"
           className="w-full "
-          onClick={() => router.push('/app/bookings/e-receipt')}
+          onClick={() =>
+            router.push(
+              buildBookingHref("/app/bookings/e-receipt", searchParams),
+            )
+          }
         >
           View e-receipt
         </Button>
@@ -39,9 +46,8 @@ export default function PaymentSuccess() {
         <Button
           variant="outline"
           size="lg"
-
           className="w-full "
-          onClick={() => router.push('/app')}
+          onClick={() => router.push("/app")}
         >
           Back to home
         </Button>

@@ -3,13 +3,57 @@ import { MapPin, X } from "lucide-react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import AppHeader from "./_components/app-header";
 import { BookingCard } from "./_components/bookings/booking-card";
 
+type BookingFilter = "upcoming" | "delayed" | "cancelled";
+
+const bookingFilters: { label: string; value: BookingFilter }[] = [
+  { label: "Upcoming", value: "upcoming" },
+  { label: "Delayed", value: "delayed" },
+  { label: "Cancelled", value: "cancelled" },
+];
+
+const bookings = [
+  {
+    id: "booking-1",
+    date: "Feb 24, 2024-10:00 AM",
+    plateNumber: "RAC204B",
+    agency: "Volcano",
+    from: "Kigali city, Nyamirambo",
+    to: "Muhanga, Southern province",
+    status: "upcoming" as const,
+  },
+  {
+    id: "booking-2",
+    date: "Feb 24, 2024-09:10 AM",
+    plateNumber: "RW892F",
+    agency: "Horizon express",
+    from: "Nyabugogo",
+    to: "Kayonza",
+    status: "delayed" as const,
+  },
+  {
+    id: "booking-3",
+    date: "Feb 22, 2024-08:30 AM",
+    plateNumber: "RAE774K",
+    agency: "Kivu belt",
+    from: "Nyabugogo",
+    to: "Rubavu",
+    status: "cancelled" as const,
+  },
+];
+
 const AppLication: NextPage = () => {
+  const [activeFilter, setActiveFilter] = useState<BookingFilter>("upcoming");
+  const filteredBookings = bookings.filter(
+    (booking) => booking.status === activeFilter,
+  );
+
   return (
     <>
       <Head>
@@ -23,28 +67,56 @@ const AppLication: NextPage = () => {
           </h2>
 
           <div className="flex gap-2 mb-4">
-            <Button className=" rounded-full">Upcoming</Button>
-            <Button
-              className="bg-[#E5E7EB] text-[#555555] rounded-full h-[40px] px-[24px] text-[14px] hover:bg-[#E5E7EB]/80"
-              variant="secondary"
-            >
-              Delayed
-            </Button>
-            <Button
-              className="bg-[#E5E7EB] text-[#555555] rounded-full h-[40px] px-[24px] text-[14px] hover:bg-[#E5E7EB]/80"
-              variant="secondary"
-            >
-              Cancelled
-            </Button>
+            {bookingFilters.map((filter) => (
+              <Button
+                key={filter.value}
+                type="button"
+                onClick={() => setActiveFilter(filter.value)}
+                className={cn(
+                  "rounded-full h-[40px] px-[24px] text-[14px]",
+                  activeFilter === filter.value
+                    ? "bg-[#1F1F24] text-white hover:bg-[#1F1F24]/90"
+                    : "bg-[#E5E7EB] text-[#555555] hover:bg-[#E5E7EB]/80",
+                )}
+                variant={
+                  activeFilter === filter.value ? "default" : "secondary"
+                }
+              >
+                {filter.label}
+              </Button>
+            ))}
           </div>
 
-          <BookingCard />
+          <div className="space-y-6">
+            {filteredBookings.length > 0 ? (
+              filteredBookings.map((booking) => (
+                <BookingCard
+                  key={booking.id}
+                  date={booking.date}
+                  plateNumber={booking.plateNumber}
+                  agency={booking.agency}
+                  from={booking.from}
+                  to={booking.to}
+                  status={booking.status}
+                />
+              ))
+            ) : (
+              <div className="rounded-[16px] bg-[#F9FAFB] py-12 text-center">
+                <p className="text-[15px] font-medium text-[#6B7280]">
+                  No {activeFilter} bookings
+                </p>
+              </div>
+            )}
+          </div>
 
           {/* 5. Destination Input Section */}
           <section className="space-y-6 pt-4">
             {/* Starting Point Group */}
             <div>
-              <label className="block text-[16px] font-medium  mb-[12px]">
+              <label
+                htmlFor="home-starting-point"
+                className="block text-[16px] font-medium  mb-[12px]"
+              >
                 Starting point
               </label>
               <div className="flex gap-[12px] relative items-center">
@@ -60,6 +132,7 @@ const AppLication: NextPage = () => {
 
                 <div className="relative flex-grow">
                   <Input
+                    id="home-starting-point"
                     type="text"
                     placeholder="Where are you traveling from ?"
                     className="placeholder:text-[#9CA3AF]"
@@ -80,11 +153,15 @@ const AppLication: NextPage = () => {
             <div className="">
               {" "}
               {/* Match alignment relative to icons */}
-              <label className="block text-[16px] font-medium text-[#1F1F24] mb-[12px] ">
+              <label
+                htmlFor="home-destination"
+                className="block text-[16px] font-medium text-[#1F1F24] mb-[12px] "
+              >
                 Destination
               </label>
               <div className="relative flex-grow">
                 <Input
+                  id="home-destination"
                   type="text"
                   placeholder="Where are you going ?"
                   className=" placeholder:text-[#9CA3AF]"

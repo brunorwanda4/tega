@@ -1,13 +1,34 @@
 "use client";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { ArrowRight } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
-import React from "react";
 import { Button } from "@/components/ui/button";
 import AppGoBackButton from "../../_components/common/go-back-button";
+import {
+  formatRwf,
+  getBookingDetails,
+  parseMoney,
+} from "../_lib/booking-query";
 
 export default function BusTicket() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const booking = getBookingDetails(searchParams);
+  const passengerCount = Number(booking.passengers);
+  const total = booking.total
+    ? parseMoney(booking.total)
+    : parseMoney(booking.price) * passengerCount + 5;
+  const ticketCode =
+    `TEGA-${booking.plateNumber}-${booking.destination}`.replace(/\s+/g, "-");
+  const bookingDate = new Date().toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+  const bookingTime = new Date().toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-between py-6 ">
@@ -26,17 +47,17 @@ export default function BusTicket() {
           <div className="bg-[#1F1F24] rounded-t-2xl px-5 py-5 text-white">
             <div className="flex items-center justify-between">
               <div className="text-left">
-                <p className="text-xs text-gray-400">Kigali, Nyamirambo</p>
+                <p className="text-xs text-gray-400">{booking.location}</p>
                 <p className="text-sm font-bold uppercase">buspark</p>
               </div>
               <ArrowRight className="w-5 h-5 text-gray-400 mx-2 flex-shrink-0" />
               <div className="text-right">
-                <p className="text-xs text-gray-400">Muhanga, Cyakabiri</p>
+                <p className="text-xs text-gray-400">{booking.destination}</p>
                 <p className="text-sm font-bold uppercase">bus stop</p>
               </div>
             </div>
             <p className="text-center text-xs text-gray-400 mt-3">
-              Fri 18 Sept 2025
+              {bookingDate}
             </p>
           </div>
 
@@ -45,22 +66,26 @@ export default function BusTicket() {
             {/* Ticket ID */}
             <div className="flex justify-center mb-4">
               <span className="border border-gray-300 rounded-full px-5 py-1 text-xs font-medium text-[#1F1F24] tracking-wide">
-                RWF123D
+                {booking.plateNumber}
               </span>
             </div>
 
             {/* Name & Passengers */}
             <div className="flex items-center justify-between mb-4">
               <p className="text-base font-bold text-[#1F1F24]">John Doe</p>
-              <p className="text-sm text-gray-500">2 passengers</p>
+              <p className="text-sm text-gray-500">
+                {passengerCount} passenger{passengerCount === 1 ? "" : "s"}
+              </p>
             </div>
 
             {/* Time row */}
             <div className="flex items-center justify-between mb-1">
               <div>
-                <p className="text-lg font-bold text-[#1F1F24]">09:10 AM</p>
+                <p className="text-lg font-bold text-[#1F1F24]">
+                  {booking.departureTime}
+                </p>
                 <p className="text-xs text-gray-500 leading-tight">
-                  Kigali city, Nyamirambo
+                  {booking.location}
                   <br />
                   buspark
                 </p>
@@ -78,9 +103,11 @@ export default function BusTicket() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-lg font-bold text-[#1F1F24]">09:10 AM</p>
+                <p className="text-lg font-bold text-[#1F1F24]">
+                  {booking.departureTime}
+                </p>
                 <p className="text-xs text-gray-500 leading-tight text-right">
-                  Muhanga city, Cyakabiri
+                  {booking.destination}
                   <br />
                   bus stop
                 </p>
@@ -92,9 +119,11 @@ export default function BusTicket() {
               <div>
                 <p className="text-sm font-semibold text-[#1F1F24]">Thur</p>
                 <p className="text-sm font-semibold text-[#1F1F24]">
-                  27/8/2025,
+                  {bookingDate},
                 </p>
-                <p className="text-sm font-semibold text-[#1F1F24]">07:10 PM</p>
+                <p className="text-sm font-semibold text-[#1F1F24]">
+                  {bookingTime}
+                </p>
                 <p className="text-xs text-gray-400 mt-1">Booking time</p>
               </div>
               <div className="text-center">
@@ -102,7 +131,9 @@ export default function BusTicket() {
                 <p className="text-xs text-gray-400 mt-1">Scan remaining</p>
               </div>
               <div className="text-right">
-                <p className="text-xl font-bold text-[#1F1F24]">1,507 RF</p>
+                <p className="text-xl font-bold text-[#1F1F24]">
+                  {formatRwf(total)}
+                </p>
                 <p className="text-xs text-gray-400 mt-1">Fare fees</p>
               </div>
             </div>
@@ -137,7 +168,7 @@ export default function BusTicket() {
             <div className="flex justify-center mb-5">
               {/* Placeholder QR — replace with real <QRCode /> component */}
               <div className="">
-                <QRCodeSVG value="Tega-Ticket-KI58B0271" size={140} />
+                <QRCodeSVG value={ticketCode} size={140} />
               </div>
             </div>
 

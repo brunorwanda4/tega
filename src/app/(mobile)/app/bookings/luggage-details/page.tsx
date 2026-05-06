@@ -1,18 +1,30 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import AppGoBackButton from "../../_components/common/go-back-button";
-import { LuMinus, LuPlus, LuBackpack } from "react-icons/lu";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { BsSuitcase2 } from "react-icons/bs";
+import { LuBackpack, LuMinus, LuPlus } from "react-icons/lu";
+import { Button } from "@/components/ui/button";
+import AppGoBackButton from "../../_components/common/go-back-button";
+import { buildBookingHref, getBookingDetails } from "../_lib/booking-query";
 
 export default function LuggageDetails() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const booking = getBookingDetails(searchParams);
 
   // State for luggage counters
-  const [suitcases, setSuitcases] = useState(2);
-  const [carryons, setCarryons] = useState(0);
+  const [suitcases, setSuitcases] = useState(Number(booking.suitcases));
+  const [carryons, setCarryons] = useState(Number(booking.carryons));
+
+  const handleViewSummary = () => {
+    router.push(
+      buildBookingHref("/app/bookings/summary", searchParams, {
+        suitcases,
+        carryons,
+      }),
+    );
+  };
 
   return (
     <div className="space-y-8 pt-4">
@@ -20,14 +32,17 @@ export default function LuggageDetails() {
       <div className="flex items-center gap-4">
         <AppGoBackButton />
         <div>
-          <h1 className="text-[28px] font-bold text-[#1F1F24] leading-tight">Luggage details</h1>
-          <p className="text-[16px] text-[#828282] mt-[8px]">Do you have any luggages, if no proceed</p>
+          <h1 className="text-[28px] font-bold text-[#1F1F24] leading-tight">
+            Luggage details
+          </h1>
+          <p className="text-[16px] text-[#828282] mt-[8px]">
+            Do you have any luggages, if no proceed
+          </p>
         </div>
       </div>
 
       {/* Luggage Selectors */}
       <div className="space-y-[40px] flex-1">
-
         {/* Suitcase Row */}
         <div className="flex items-center justify-between">
           <div className="flex items-start gap-3">
@@ -41,16 +56,18 @@ export default function LuggageDetails() {
             <Button
               variant="outline"
               size="icon"
-              className='rounded-md'
+              className="rounded-md"
               onClick={() => suitcases > 0 && setSuitcases(suitcases - 1)}
             >
               <LuMinus className="size-5" />
             </Button>
-            <span className="text-[20px] font-bold w-[20px] text-center">{suitcases}</span>
+            <span className="text-[20px] font-bold w-[20px] text-center">
+              {suitcases}
+            </span>
             <Button
               variant="default"
               size="icon"
-              className='rounded-md '
+              className="rounded-md "
               onClick={() => setSuitcases(suitcases + 1)}
             >
               <LuPlus className="size-5" />
@@ -71,16 +88,18 @@ export default function LuggageDetails() {
             <Button
               variant="outline"
               size="icon"
-              className='rounded-md'
+              className="rounded-md"
               onClick={() => carryons > 0 && setCarryons(carryons - 1)}
             >
               <LuMinus className="size-5" />
             </Button>
-            <span className="text-[20px] font-bold w-[20px] text-center">{carryons}</span>
+            <span className="text-[20px] font-bold w-[20px] text-center">
+              {carryons}
+            </span>
             <Button
               variant="default"
               size="icon"
-              className='rounded-md '
+              className="rounded-md "
               onClick={() => setCarryons(carryons + 1)}
             >
               <LuPlus className="size-5" />
@@ -91,17 +110,10 @@ export default function LuggageDetails() {
 
       {/* Bottom Action Buttons */}
       <div className="space-y-[16px] flex flex-col mt-12">
-        <Button
-          size="lg"
-          onClick={() => router.push('/app/bookings/summary')}
-        >
+        <Button size="lg" onClick={handleViewSummary}>
           View summary
         </Button>
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={() => router.back()}
-        >
+        <Button variant="outline" size="lg" onClick={() => router.back()}>
           Cancel
         </Button>
       </div>

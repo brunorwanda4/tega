@@ -46,11 +46,15 @@ export default function ProfilePage() {
   }, []);
 
   const menuItems = [
-    { icon: LuUser, label: "Edit Profile", link: "/profile/edit" },
+    { icon: LuUser, label: "Edit Profile", link: "/app/profile/edit" },
     { icon: LuTicket, label: "My Bookings", link: "/app/bookings" },
-    { icon: LuCreditCard, label: "Payment Methods", link: "/profile/payments" },
-    { icon: LuShieldCheck, label: "Security", link: "/profile/security" },
-    { icon: LuSettings, label: "Settings", link: "/profile/settings" },
+    {
+      icon: LuCreditCard,
+      label: "Payment Methods",
+      link: "/app/profile/payments",
+    },
+    { icon: LuShieldCheck, label: "Security", link: "/app/profile/security" },
+    { icon: LuSettings, label: "Settings", link: "/app/profile/settings" },
   ];
 
   return (
@@ -129,7 +133,7 @@ export default function ProfilePage() {
             <button
               type="button"
               key={item.label}
-              // onClick={() => router.push(item.link)}
+              onClick={() => router.push(item.link)}
               className={`w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors ${
                 index !== menuItems.length - 1
                   ? "border-bottom border-gray-50"

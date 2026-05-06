@@ -1,15 +1,41 @@
-import { ArrowLeft, ArrowRight, Heart, MapPin, Navigation } from "lucide-react";
+"use client";
+
+import { ArrowRight, Heart, MapPin, Navigation } from "lucide-react";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { useSearchParams } from "next/navigation";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import AppGoBackButton from "../../_components/common/go-back-button";
+import {
+  buildBookingHref,
+  formatRwf,
+  getBookingDetails,
+} from "../_lib/booking-query";
 
 const BusStatusPage: NextPage = () => {
+  const searchParams = useSearchParams();
+  const {
+    location,
+    destination,
+    plateNumber,
+    agency,
+    delay,
+    seats,
+    status,
+    departureTime,
+    price,
+  } = getBookingDetails(searchParams);
+  const seatsRemaining = Number(seats);
+  const seatProgress = Number.isFinite(seatsRemaining)
+    ? (seatsRemaining / 30) * 100
+    : 0;
+  const statusLabel = status === "ontime" ? "On time" : delay;
+  const normalizedPrice = formatRwf(price);
+
   return (
     <>
       <Head>
@@ -26,9 +52,9 @@ const BusStatusPage: NextPage = () => {
             <div>
               <h1 className="text-[20px] font-semibold">Bus status</h1>
               <div className="flex items-center gap-2 text-[13px]">
-                <span className=" opacity-80">Kigali, Nyamirambo</span>
+                <span className=" opacity-80">{location}</span>
                 <ArrowRight className="size-3" />
-                <span className=" font-medium"> Muhanga, Cyakabiri</span>
+                <span className=" font-medium">{destination}</span>
               </div>
             </div>
           </div>
@@ -68,25 +94,23 @@ const BusStatusPage: NextPage = () => {
             <CardContent className="p-0 flex items-center justify-between gap-[16px]">
               <div>
                 <h3 className="text-[15px] text-sm font-semibold text-[#1F1F24]">
-                  RWF123D
+                  {plateNumber}
                 </h3>
-                <p className="text-[13px] text-sm text-[#828282]">
-                  Horizon express
-                </p>
+                <p className="text-[13px] text-sm text-[#828282]">{agency}</p>
               </div>
 
               {/* Specialized image for seats remaining display (red progress bar) */}
               <div className="flex-1 relative flex flex-col items-center justify-center">
                 <div className="flex-1 px-8 flex flex-col items-center">
                   <div className="mb-1 text-sm font-semibold ">
-                    <span className="text-red-500">10</span>
+                    <span className="text-red-500">{seats}</span>
                     <span className="text-gray-400">/30</span>
                   </div>
 
                   <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
                     <div
                       className="bg-red-500 h-full rounded-full transition-all duration-500"
-                      style={{ width: `${(13 / 30) * 100}%` }}
+                      style={{ width: `${seatProgress}%` }}
                     />
                   </div>
 
@@ -114,15 +138,22 @@ const BusStatusPage: NextPage = () => {
               </div>
               {/* Status card */}
               <div className=" flex flex-col items-center">
-                <p className="text-[20px] font-bold text-[#219653]">On time</p>
+                <p
+                  className={cn(
+                    "text-[20px] font-bold",
+                    status === "ontime" ? "text-[#219653]" : "text-red-500",
+                  )}
+                >
+                  {statusLabel}
+                </p>
                 <p className="text-[12px] text-[#828282] mt-[4px]">Status</p>
               </div>
               {/* Arrives At card */}
               <div>
-                <p className="text-[20px] font-bold text-[#1F1F24]">09:18 AM</p>
-                <p className="text-[12px] text-[#828282] mt-[4px]">
-                  Arrives at
+                <p className="text-[20px] font-bold text-[#1F1F24]">
+                  {departureTime}
                 </p>
+                <p className="text-[12px] text-[#828282] mt-[4px]">Departure</p>
               </div>
             </div>
             {/* Vehicle and Agency Details and Fare */}
@@ -143,22 +174,29 @@ const BusStatusPage: NextPage = () => {
                 <div className="space-y-[10px] text-right  ">
                   <div className="text-[12px] text-[#828282] flex items-center gap-4">
                     <span>Vehicle plate</span>
-                    <span className="text-[#1F1F24] font-medium">RAC204B</span>
+                    <span className="text-[#1F1F24] font-medium">
+                      {plateNumber}
+                    </span>
                   </div>
                   <div className="text-[12px] text-[#828282] flex gap-4">
                     <span>Agency</span>
-                    <span className="text-[#1F1F24] font-medium">Volcano</span>
+                    <span className="text-[#1F1F24] font-medium">{agency}</span>
                   </div>
                 </div>
               </div>
             </div>
             <div className="flex justify-end items-center ">
-              <p className="text-lg font-extrabold text-[#1F1F24]">1,507 RWF</p>
+              <p className="text-lg font-extrabold text-[#1F1F24]">
+                {normalizedPrice}
+              </p>
             </div>
           </div>
 
           <Link
-            href="/app/bookings/passenger-details"
+            href={buildBookingHref(
+              "/app/bookings/passenger-details",
+              searchParams,
+            )}
             className={cn(
               buttonVariants({ variant: "default", size: "lg" }),
               "w-full rounded-md mt-[24px]",

@@ -1,24 +1,59 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { LuCircle, LuMapPin, LuRadio } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-export const BookingCard = () => {
+type BookingStatus = "upcoming" | "delayed" | "cancelled";
+
+type BookingCardProps = {
+  date: string;
+  plateNumber: string;
+  agency: string;
+  from: string;
+  to: string;
+  status: BookingStatus;
+};
+
+const statusConfig = {
+  upcoming: {
+    label: "View ticket",
+    className: "text-[#219653]",
+    canTrack: true,
+  },
+  delayed: {
+    label: "Delayed",
+    className: "text-red-500",
+    canTrack: true,
+  },
+  cancelled: {
+    label: "Cancelled",
+    className: "text-[#828282]",
+    canTrack: false,
+  },
+};
+
+export const BookingCard = ({
+  date,
+  plateNumber,
+  agency,
+  from,
+  to,
+  status,
+}: BookingCardProps) => {
   const router = useRouter();
+  const config = statusConfig[status];
+
   return (
     <div className="w-full ">
       {/* Header: Date and Ticket Status */}
       <div className="flex justify-between items-center mb-4">
-        <span className="text-[16px] font-bold text-[#1F1F24]">
-          Feb 24, 2024-10:00 AM
-        </span>
+        <span className="text-[16px] font-bold text-[#1F1F24]">{date}</span>
         <div className="flex items-center gap-1.5 bg-[#F3F4F6] px-3 py-1 rounded-full text-[#555555] text-[12px] font-medium cursor-pointer">
-          <FaCheckCircle className="size-4 text-[#219653]" />
-          View ticket
+          <FaCheckCircle className={`size-4 ${config.className}`} />
+          {config.label}
         </div>
       </div>
 
@@ -43,11 +78,11 @@ export const BookingCard = () => {
         <div className="w-2/3 space-y-4">
           <div className="flex justify-between text-[13px]">
             <span className="text-[#828282]">Vehicle plate</span>
-            <span className="font-bold text-[#1F1F24]">RAC204B</span>
+            <span className="font-bold text-[#1F1F24]">{plateNumber}</span>
           </div>
           <div className="flex justify-between text-[13px]">
             <span className="text-[#828282]">Agency</span>
-            <span className="font-bold text-[#1F1F24]">Volcano</span>
+            <span className="font-bold text-[#1F1F24]">{agency}</span>
           </div>
 
           {/* Route Visualization */}
@@ -65,7 +100,7 @@ export const BookingCard = () => {
                 <span className="text-[11px] text-[#828282]">From</span>
               </div>
               <p className="text-[13px] font-bold text-[#1F1F24] pl-4">
-                Kigali city, Nyamirambo
+                {from}
               </p>
             </div>
 
@@ -74,9 +109,7 @@ export const BookingCard = () => {
                 <LuMapPin className="size-3 text-[#1F1F24] z-10" />
                 <span className="text-[11px] text-[#828282]">To</span>
               </div>
-              <p className="text-[13px] font-bold text-[#1F1F24] pl-4">
-                Muhanga, Sothern province
-              </p>
+              <p className="text-[13px] font-bold text-[#1F1F24] pl-4">{to}</p>
             </div>
           </div>
         </div>
@@ -85,10 +118,11 @@ export const BookingCard = () => {
       {/* Live Monitoring Button */}
       <Button
         onClick={() => router.push("/app/bookings/tracking")}
+        disabled={!config.canTrack}
         className=" w-full"
       >
         <LuRadio className="size-4 animate-pulse" />
-        Live monitoring
+        {config.canTrack ? "Live monitoring" : "Booking cancelled"}
       </Button>
     </div>
   );
