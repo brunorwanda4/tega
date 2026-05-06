@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  ArrowLeft,
-  ArrowRight,
-  Circle,
-  Minus,
-  Plus,
-  Settings2,
-} from "lucide-react";
+import { ArrowRight, Circle, Minus, Plus, Settings2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -85,7 +78,9 @@ const allBuses = [
 export default function AvailableBuses() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const location = searchParams.get("location") || "Muhanga, Cyakabiri";
+  const location = searchParams.get("location") || "Kigali, Nyamirambo";
+  const destination = searchParams.get("to") || "Muhanga, Cyakabiri";
+  const routeAmount = searchParams.get("amount");
   const [activeFilter, setActiveFilter] = useState<FilterType>("earliest");
   const [isSeatsSheetOpen, setIsSeatsSheetOpen] = useState(false);
   const [isAgencySheetOpen, setIsAgencySheetOpen] = useState(false);
@@ -104,7 +99,6 @@ export default function AvailableBuses() {
         });
       case "late":
         return allBuses.filter((bus) => bus.status === "delayed");
-      case "all":
       default:
         return allBuses;
     }
@@ -133,9 +127,9 @@ export default function AvailableBuses() {
           <div>
             <h1 className="text-[20px] font-semibold">Available buses</h1>
             <div className="flex items-center gap-2 text-[13px]">
-              <span className=" opacity-80">Kigali, Nyamirambo</span>
+              <span className=" opacity-80">{location}</span>
               <ArrowRight className="size-3" />
-              <span className=" font-medium">{location}</span>
+              <span className=" font-medium">{destination}</span>
             </div>
           </div>
         </div>
@@ -192,7 +186,7 @@ export default function AvailableBuses() {
                 color={bus.color}
                 status={bus.status}
                 departureTime={bus.departureTime}
-                price={bus.price}
+                price={routeAmount ? `${routeAmount} RF` : bus.price}
               />
             </button>
           ))}
