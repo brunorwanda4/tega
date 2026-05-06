@@ -67,7 +67,7 @@ const LoginForm = () => {
 
       if (user) {
         if (user.role === "admin") {
-          router.push("/admin");
+          router.push("/d");
         } else if (user.role === "manager") {
           router.push("/manager");
         } else {
