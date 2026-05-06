@@ -356,18 +356,18 @@ function Header({
 
 function HeroSection() {
   return (
-    <section className="relative border-b border-border bg-[radial-gradient(circle_at_50%_0%,var(--accent)_0%,rgba(224,247,255,0.5)_30%,var(--background)_68%)] pb-16 pt-14 sm:pb-24 sm:pt-20">
+    <section className="relative flex flex-row  border-b border-border bg-[radial-gradient(circle_at_50%_0%,var(--accent)_0%,rgba(224,247,255,0.5)_30%,var(--background)_68%)] pb-16 pt-14 sm:pb-24 sm:pt-20">
       <div className="absolute inset-0 grid-bg opacity-80" />
-      <div className="section-shell relative">
+      <div className=" px-8 relative w-1/2 flex flex-col justify-start items-start">
         <motion.div
           initial="hidden"
           animate="visible"
           variants={stagger}
-          className="mx-auto max-w-4xl text-center"
+          className="max-w-4xl text-start"
         >
           <motion.div
             variants={fadeUp}
-            className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-white/80 px-4 py-2 text-sm font-semibold text-primary shadow-sm backdrop-blur"
+            className=" mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-white/80 px-4 py-2 text-sm font-semibold text-primary shadow-sm backdrop-blur"
           >
             <span className="h-2 w-2 rounded-full bg-primary" />
             Built for Rwanda's bus booking reality
@@ -375,7 +375,7 @@ function HeroSection() {
 
           <motion.h1
             variants={fadeUp}
-            className="text-balance text-5xl font-semibold leading-[0.98] tracking-tight text-foreground sm:text-7xl lg:text-8xl"
+            className="text-balance text-5xl font-semibold leading-[0.98] tracking-tight text-foreground sm:text-7xl "
           >
             Know your bus before you reach the station.
           </motion.h1>
@@ -392,184 +392,27 @@ function HeroSection() {
             variants={fadeUp}
             className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"
           >
-            <ButtonLink href="/app">Try MVP</ButtonLink>
+            <ButtonLink href="/auth/login">Try MVP</ButtonLink>
             <ButtonLink href="#support" variant="secondary">
               Support Tega
             </ButtonLink>
           </motion.div>
         </motion.div>
 
-        <HeroProductStage />
+        {/*<HeroProductStage />*/}
+      </div>
+      <div className="">
+        <div className="relative h-[28rem] w-90 ml-12">
+          <Image
+            src={"/svg/bus.svg"}
+            alt="home page"
+            fill
+            priority
+            className=" object-contain rounded-2xl"
+          />
+        </div>
       </div>
     </section>
-  );
-}
-
-function HeroProductStage() {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 36, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-      className="relative mx-auto mt-14 max-w-6xl rounded-[2rem] border border-white/80 bg-white/50 p-4 shadow-[0_40px_120px_rgba(15,23,42,0.12)] backdrop-blur-xl sm:p-8 lg:p-12"
-    >
-      <div className="absolute inset-x-10 top-10 h-32 rounded-full bg-primary/20 blur-3xl" />
-      <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_auto_1fr]">
-        <StatusPanel />
-        <div className="relative mx-auto">
-          <PhoneMockup />
-          {floatingBadges.map((badge) => (
-            <FloatingBadge key={badge.label} {...badge} />
-          ))}
-        </div>
-        <RoutePreview />
-      </div>
-
-      <div className="relative mt-7 grid gap-3 sm:grid-cols-2 lg:hidden">
-        {floatingBadges.map((badge) => (
-          <FloatingBadge key={`mobile-${badge.label}`} {...badge} mobile />
-        ))}
-      </div>
-    </motion.div>
-  );
-}
-
-function StatusPanel() {
-  return (
-    <div className="glass-card hidden rounded-3xl p-5 lg:block">
-      <div className="mb-5 flex items-center justify-between">
-        <p className="text-sm font-semibold text-foreground">Before Tega</p>
-        <HelpCircle className="h-5 w-5 text-[#94A3B8]" />
-      </div>
-      <div className="space-y-3">
-        <MiniSignal label="Bus time" value="Unknown" tone="muted" />
-        <MiniSignal label="Seat" value="Not clear" tone="muted" />
-        <MiniSignal label="Ticket" value="Manual" tone="muted" />
-      </div>
-      <p className="mt-5 text-sm leading-6 text-muted-foreground">
-        The landing page shows the problem fast: passengers need confidence
-        before they spend time at the station.
-      </p>
-    </div>
-  );
-}
-
-function RoutePreview() {
-  return (
-    <div className="glass-card hidden rounded-3xl p-5 lg:block">
-      <div className="mb-5 flex items-center justify-between">
-        <p className="text-sm font-semibold text-foreground">After Tega</p>
-        <CheckCircle2 className="h-5 w-5 text-primary" />
-      </div>
-      <div className="rounded-2xl bg-background p-4">
-        <div className="flex items-center justify-between text-xs font-semibold text-muted-foreground">
-          <span>Kigali</span>
-          <span>Rulindo</span>
-          <span>Musanze</span>
-        </div>
-        <div className="relative mt-4 h-2 rounded-full bg-border">
-          <motion.div
-            initial={{ width: "18%" }}
-            animate={{ width: "74%" }}
-            transition={{ duration: 1.4, ease: "easeOut", delay: 0.35 }}
-            className="h-2 rounded-full bg-primary"
-          />
-          <motion.span
-            initial={{ left: "18%" }}
-            animate={{ left: "74%" }}
-            transition={{ duration: 1.4, ease: "easeOut", delay: 0.35 }}
-            className="absolute top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border-4 border-white bg-primary text-white shadow-lg"
-          >
-            <BusFront className="h-4 w-4" />
-          </motion.span>
-        </div>
-      </div>
-      <MiniSignal label="Status" value="Arriving in 8 min" tone="active" />
-    </div>
-  );
-}
-
-function PhoneMockup() {
-  return (
-    <div className="blue-glow relative mx-auto w-[285px] rounded-[2.7rem] border-[10px] border-foreground bg-foreground p-2 shadow-2xl sm:w-[330px]">
-      <div className="absolute left-1/2 top-3 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-foreground" />
-      <div className="min-h-[610px] overflow-hidden rounded-[2rem] bg-background">
-        <div className="bg-[linear-gradient(135deg,var(--primary),var(--primary))] px-5 pb-6 pt-10 text-white">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Image src={brand.logo} alt="" width={28} height={28} />
-              <span className="font-semibold">{brand.name}</span>
-            </div>
-            <RadioTower className="h-5 w-5 text-white/80" />
-          </div>
-          <p className="mt-8 text-sm text-white/75">Current trip</p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight">
-            Kigali to Musanze
-          </h2>
-        </div>
-
-        <div className="-mt-4 space-y-4 px-4 pb-5">
-          <div className="rounded-3xl border border-border bg-white p-4 shadow-sm">
-            <div className="grid grid-cols-2 gap-3">
-              <PhoneInfo label="From" value="Kigali" />
-              <PhoneInfo label="To" value="Musanze" />
-              <PhoneInfo label="Bus" value="Volcano Express" wide />
-              <PhoneInfo label="Seat" value="12A" />
-              <PhoneInfo label="Ticket" value="Confirmed" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-[0.85fr_1fr] gap-3">
-            <div className="rounded-3xl border border-border bg-white p-3">
-              <div className="mb-2 flex items-center justify-between">
-                <span className="text-xs font-semibold text-muted-foreground">
-                  QR ticket
-                </span>
-                <QrCode className="h-4 w-4 text-primary" />
-              </div>
-              <QrGrid />
-            </div>
-
-            <div className="rounded-3xl border border-[#CFF4FF] bg-accent p-4">
-              <div className="flex items-center gap-2">
-                <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-white text-primary">
-                  <BusFront className="h-5 w-5" />
-                </span>
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground">
-                    Bus status
-                  </p>
-                  <p className="text-sm font-bold text-primary">
-                    Arriving in 8 min
-                  </p>
-                </div>
-              </div>
-              <div className="mt-4 h-2 rounded-full bg-white">
-                <motion.div
-                  initial={{ width: "30%" }}
-                  animate={{ width: "82%" }}
-                  transition={{ duration: 1.4, ease: "easeOut", delay: 0.45 }}
-                  className="h-2 rounded-full bg-primary"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-border bg-white p-4">
-            <div className="mb-4 flex items-center justify-between">
-              <p className="text-sm font-semibold">Choose access</p>
-              <span className="rounded-full bg-[#F1F5F9] px-3 py-1 text-xs font-semibold text-muted-foreground">
-                PWA + USSD
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <AccessChip icon={Smartphone} label="Open PWA" active />
-              <AccessChip icon={Phone} label="Use USSD" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -593,19 +436,40 @@ function ProblemStorySection({ spotlight = false }: { spotlight?: boolean }) {
           title="Where is the bus?"
           text="Passengers often wait without knowing when the bus is coming."
         >
-          <WaitingVisual />
+          <div className="relative h-64 w-full ">
+            <Image
+              className=" object-cover"
+              src="/problems/waiting-bus-to-long.png"
+              alt="waiting-bus-to-long"
+              fill
+            />
+          </div>
         </ProblemCard>
         <ProblemCard
           title="Is there a seat?"
           text="Seat availability is not always clear before reaching the station."
         >
-          <SeatVisual />
+          <div className="relative h-64 w-full ">
+            <Image
+              className=" object-cover"
+              src="/problems/close-up-woman-holding-bus-bar.jpg"
+              alt="close-up-woman-holding-bus-bar"
+              fill
+            />
+          </div>
         </ProblemCard>
         <ProblemCard
           title="Who can book?"
           text="Many digital tools forget people with small phones."
         >
-          <AccessVisual />
+          <div className="relative h-64 w-full ">
+            <Image
+              className=" object-cover"
+              src="/problems/to-many-people-in-bus.jpg"
+              alt="to-many-people-in-bus"
+              fill
+            />
+          </div>
         </ProblemCard>
       </motion.div>
     </VisualSection>
@@ -629,31 +493,6 @@ function ProductFlowSection({ spotlight = false }: { spotlight?: boolean }) {
         viewport={{ once: true, amount: 0.18 }}
         className="relative"
       >
-        <div className="mb-6 grid gap-3 rounded-[1.75rem] border border-border bg-background p-4 shadow-sm sm:grid-cols-3 lg:grid-cols-5">
-          {flowSteps.map((step, index) => (
-            <motion.div
-              key={step.step}
-              variants={fadeUp}
-              className="flex items-center gap-3 rounded-[1.1rem] bg-accent/60 px-3 py-3"
-            >
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                {step.step}
-              </span>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-foreground">
-                  {step.title}
-                </p>
-                <p className="truncate text-xs font-medium text-muted-foreground">
-                  {step.meta}
-                </p>
-              </div>
-              {index < flowSteps.length - 1 ? (
-                <ArrowRight className="ml-auto hidden text-primary lg:block" />
-              ) : null}
-            </motion.div>
-          ))}
-        </div>
-
         <div className="relative">
           <div className="absolute left-6 top-0 hidden h-full w-px bg-[#BFEFFF] sm:block lg:left-0 lg:top-12 lg:h-px lg:w-full" />
           <div className="grid gap-4 lg:grid-cols-5">
@@ -917,7 +756,7 @@ function Footer() {
           <FooterLinkGroup
             title="Project"
             links={[
-              { label: "Try MVP", href: "/app" },
+              { label: "Try MVP", href: "/auth/login" },
               { label: "USSD concept", href: "/app/ssd" },
               { label: "MVP status", href: "#mvp" },
               { label: "Support", href: "#support" },
@@ -1047,44 +886,6 @@ function VisualSection({
   );
 }
 
-function FloatingBadge({
-  label,
-  detail,
-  icon: Icon,
-  className,
-  mobile = false,
-}: {
-  label: string;
-  detail: string;
-  icon: LucideIcon;
-  className: string;
-  mobile?: boolean;
-}) {
-  return (
-    <motion.div
-      initial={mobile ? false : { opacity: 0, y: 18, scale: 0.94 }}
-      animate={mobile ? undefined : { opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.65, ease: "easeOut", delay: 0.35 }}
-      whileHover={{ y: -4 }}
-      className={
-        mobile
-          ? "glass-card rounded-2xl p-4"
-          : `glass-card absolute hidden min-w-48 rounded-2xl p-4 lg:block ${className}`
-      }
-    >
-      <div className="flex items-center gap-3">
-        <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent text-primary">
-          <Icon className="h-5 w-5" />
-        </span>
-        <div>
-          <p className="text-sm font-bold text-foreground">{label}</p>
-          <p className="text-xs font-medium text-muted-foreground">{detail}</p>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
 function PhoneInfo({
   label,
   value,
@@ -1102,29 +903,6 @@ function PhoneInfo({
         {label}
       </p>
       <p className="mt-1 text-sm font-bold text-foreground">{value}</p>
-    </div>
-  );
-}
-
-function AccessChip({
-  icon: Icon,
-  label,
-  active = false,
-}: {
-  icon: LucideIcon;
-  label: string;
-  active?: boolean;
-}) {
-  return (
-    <div
-      className={`flex items-center gap-2 rounded-2xl border px-3 py-3 text-xs font-bold ${
-        active
-          ? "border-primary bg-accent text-primary"
-          : "border-border bg-white text-muted-foreground"
-      }`}
-    >
-      <Icon className="h-4 w-4" />
-      {label}
     </div>
   );
 }
@@ -1190,7 +968,7 @@ function ProblemCard({
       whileHover={{ y: -6 }}
       className="glass-card overflow-hidden rounded-[2rem] p-5 transition-shadow hover:shadow-[0_30px_90px_rgba(15,23,42,0.12)]"
     >
-      <div className="mb-5 min-h-64 rounded-[1.5rem] bg-background p-5">
+      <div className="mb-5 min-h-64 rounded-[1.5rem] bg-background -m-5">
         {children}
       </div>
       <h3 className="text-2xl font-semibold tracking-tight text-foreground">
@@ -1198,30 +976,6 @@ function ProblemCard({
       </h3>
       <p className="mt-3 text-base leading-7 text-muted-foreground">{text}</p>
     </motion.article>
-  );
-}
-
-function WaitingVisual() {
-  return (
-    <div className="relative h-56 overflow-hidden rounded-[1.25rem] bg-[linear-gradient(180deg,var(--accent),var(--card))]">
-      <div className="absolute bottom-8 left-5 right-5 h-3 rounded-full bg-[#CBD5E1]" />
-      <div className="absolute bottom-11 left-8 flex flex-col items-center">
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary shadow-sm">
-          <UserRound className="h-7 w-7" />
-        </span>
-        <span className="mt-2 h-16 w-8 rounded-t-full bg-primary" />
-      </div>
-      <div className="absolute bottom-16 right-7 rounded-[1.2rem] border border-border bg-white p-4 shadow-xl">
-        <BusFront className="h-12 w-12 text-[#CBD5E1]" />
-        <div className="mt-3 flex items-center gap-2 text-sm font-bold text-[#94A3B8]">
-          <HelpCircle className="h-4 w-4" />
-          Unknown
-        </div>
-      </div>
-      <div className="absolute left-6 top-6 rounded-full bg-white px-3 py-2 text-xs font-bold text-muted-foreground shadow-sm">
-        Waiting at station
-      </div>
-    </div>
   );
 }
 
