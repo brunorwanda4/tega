@@ -228,7 +228,7 @@ export default function NavigationPage() {
           <div className="h-px bg-gray-100 mb-4" />
 
           {/* Trip meta */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 ">
             <div>
               <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">
                 Agency
@@ -263,7 +263,7 @@ export default function NavigationPage() {
             </div>
           </div>
 
-          <div className="mt-5 grid gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4">
+          <div className="mt-5 grid gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4 mb-24">
             <div className="flex items-start gap-3">
               <div className="mt-1 flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-gray-900">
                 <FaBus className="text-[14px]" />

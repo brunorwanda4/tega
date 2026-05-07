@@ -45,6 +45,14 @@ export const BookingCard = ({
 }: BookingCardProps) => {
   const router = useRouter();
   const config = statusConfig[status];
+  const trackingUrl = `/app/bookings/tracking?${new URLSearchParams({
+    date,
+    plateNumber,
+    agency,
+    from,
+    to,
+    status,
+  }).toString()}`;
 
   return (
     <div className="w-full ">
@@ -117,7 +125,7 @@ export const BookingCard = ({
 
       {/* Live Monitoring Button */}
       <Button
-        onClick={() => router.push("/app/bookings/tracking")}
+        onClick={() => router.push(trackingUrl)}
         disabled={!config.canTrack}
         className=" w-full"
       >
