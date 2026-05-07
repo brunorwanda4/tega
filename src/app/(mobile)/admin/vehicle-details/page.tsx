@@ -36,7 +36,7 @@ const VehicleDetailRow: React.FC<{ label: string; value: string }> = ({
 );
 
 export default function VehicleDetailsPage() {
-  const router = useRouter();
+  const _router = useRouter();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Logic to handle carousel navigation

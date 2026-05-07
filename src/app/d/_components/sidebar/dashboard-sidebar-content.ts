@@ -6,7 +6,6 @@ import { FaRegComment } from "react-icons/fa6";
 import { HiOutlineCurrencyDollar } from "react-icons/hi2";
 import { ImLocation } from "react-icons/im";
 import { MdPerson4 } from "react-icons/md";
-import { RiCompassDiscoverLine } from "react-icons/ri";
 import { RxPeople } from "react-icons/rx";
 
 export type SidebarItem = {

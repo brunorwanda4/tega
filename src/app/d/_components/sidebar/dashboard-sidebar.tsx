@@ -2,13 +2,9 @@
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link, { useLinkStatus } from "next/link";
-import {
-  usePathname,
-  useRouter,
-  useSelectedLayoutSegment,
-} from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { SlLogout } from "react-icons/sl";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,

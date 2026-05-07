@@ -16,7 +16,7 @@ export default function CancelBookingPage() {
   const [file, setFile] = useState<File | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files?.[0]) {
       setFile(e.target.files[0]);
     }
   };
@@ -39,8 +39,11 @@ export default function CancelBookingPage() {
       {/* Form Section */}
       <div className="space-y-6 flex-1">
         <div className="space-y-2 flex flex-col">
-          <label className="text-[14px] font-bold ">Reason</label>
+          <label htmlFor="cancel-reason" className="text-[14px] font-bold ">
+            Reason
+          </label>
           <textarea
+            id="cancel-reason"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             placeholder="Enter your reason"

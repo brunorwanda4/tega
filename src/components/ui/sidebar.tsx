@@ -1,12 +1,13 @@
 "use client";
 
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 import { SidebarLeftIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot } from "radix-ui";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { mergeProps } from "@base-ui/react/merge-props";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -24,7 +25,6 @@ import {
 } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { useRender } from "@base-ui/react/use-render";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -91,7 +91,7 @@ function SidebarProvider({
 
   // Helper to toggle the sidebar.
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-    const toggleSidebar = React.useCallback(() => {
+  const toggleSidebar = React.useCallback(() => {
     return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
   }, [isMobile, setOpen, setOpenMobile]);
 
@@ -125,7 +125,7 @@ function SidebarProvider({
       setOpenMobile,
       toggleSidebar,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
+    [state, open, setOpen, isMobile, openMobile, toggleSidebar],
   );
 
   return (
@@ -494,7 +494,6 @@ const sidebarMenuButtonVariants = cva(
   },
 );
 
-
 function SidebarMenuButton({
   render,
   isActive = false,
@@ -548,7 +547,6 @@ function SidebarMenuButton({
     </Tooltip>
   );
 }
-
 
 function SidebarMenuAction({
   className,

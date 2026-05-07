@@ -8,22 +8,17 @@ import {
   Building2,
   BusFront,
   Check,
-  CheckCircle2,
   CircleDot,
   CreditCard,
   HandCoins,
-  HelpCircle,
   MapPin,
   MessageSquareText,
   Navigation,
   Phone,
-  QrCode,
-  RadioTower,
   Search,
   ShieldCheck,
   Smartphone,
   TicketCheck,
-  UserRound,
   UsersRound,
 } from "lucide-react";
 import Image from "next/image";
@@ -52,33 +47,6 @@ const navLinks = [
   { label: "Access", href: "#access" },
   { label: "Tracking", href: "#tracking" },
   { label: "Support", href: "#support" },
-];
-
-const floatingBadges = [
-  {
-    label: "Seat reserved",
-    detail: "12A locked",
-    icon: TicketCheck,
-    className: "lg:left-[4%] lg:top-[20%]",
-  },
-  {
-    label: "Bus arriving",
-    detail: "8 min",
-    icon: BusFront,
-    className: "lg:right-[8%] lg:top-[18%]",
-  },
-  {
-    label: "USSD supported",
-    detail: "*727# path",
-    icon: Phone,
-    className: "lg:bottom-[18%] lg:left-[10%]",
-  },
-  {
-    label: "Digital ticket ready",
-    detail: "QR confirmed",
-    icon: QrCode,
-    className: "lg:bottom-[16%] lg:right-[5%]",
-  },
 ];
 
 const flowSteps = [
@@ -215,21 +183,6 @@ const qrCells = [
   { id: "qr-34", filled: false },
   { id: "qr-35", filled: true },
   { id: "qr-36", filled: true },
-];
-
-const seats = [
-  { id: "seat-01", state: "booked" },
-  { id: "seat-02", state: "unknown" },
-  { id: "seat-03", state: "free" },
-  { id: "seat-04", state: "booked" },
-  { id: "seat-05", state: "free" },
-  { id: "seat-06", state: "unknown" },
-  { id: "seat-07", state: "free" },
-  { id: "seat-08", state: "booked" },
-  { id: "seat-09", state: "unknown" },
-  { id: "seat-10", state: "free" },
-  { id: "seat-11", state: "booked" },
-  { id: "seat-12", state: "unknown" },
 ];
 
 const fadeUp: Variants = {
@@ -1059,71 +1012,6 @@ function ProblemCard({
       </h3>
       <p className="mt-3 text-base leading-7 text-muted-foreground">{text}</p>
     </motion.article>
-  );
-}
-
-function SeatVisual() {
-  return (
-    <div className="rounded-[1.25rem] border border-border bg-white p-5 shadow-sm">
-      <div className="mb-5 flex items-center justify-between">
-        <span className="text-sm font-bold text-foreground">Seat map</span>
-        <span className="rounded-full bg-[#FFF7ED] px-3 py-1 text-xs font-bold text-[#C2410C]">
-          unclear
-        </span>
-      </div>
-      <div className="grid grid-cols-4 gap-3">
-        {seats.map((seat) => (
-          <span
-            key={seat.id}
-            className={`h-11 rounded-xl border ${
-              seat.state === "booked"
-                ? "border-[#CBD5E1] bg-border"
-                : seat.state === "free"
-                  ? "border-[#BAE6FD] bg-accent"
-                  : "border-dashed border-[#CBD5E1] bg-white"
-            }`}
-          />
-        ))}
-      </div>
-      <div className="mt-5 flex items-center justify-between text-xs font-semibold text-muted-foreground">
-        <span>Available?</span>
-        <span>Reserved?</span>
-        <span>Unknown?</span>
-      </div>
-    </div>
-  );
-}
-
-function AccessVisual() {
-  return (
-    <div className="flex h-56 items-end justify-center gap-5 rounded-[1.25rem] bg-[linear-gradient(180deg,var(--background),var(--accent))] p-5">
-      <div className="w-24 rounded-[2rem] border-[7px] border-foreground bg-white p-3 shadow-xl">
-        <div className="mb-3 h-2 rounded-full bg-[#CBD5E1]" />
-        <div className="space-y-2">
-          <div className="h-8 rounded-xl bg-accent" />
-          <div className="h-8 rounded-xl bg-[#F1F5F9]" />
-          <div className="h-8 rounded-xl bg-primary" />
-        </div>
-      </div>
-      <div className="w-20 rounded-[1.4rem] border-[6px] border-[#334155] bg-foreground p-3 text-white shadow-xl">
-        <div className="mb-3 text-center text-xs font-bold">USSD</div>
-        <div className="space-y-2">
-          <div className="h-2 rounded bg-white/70" />
-          <div className="h-2 rounded bg-white/50" />
-          <div className="h-2 rounded bg-white/50" />
-        </div>
-        <div className="mt-5 grid grid-cols-3 gap-1">
-          {["1", "2", "3", "4", "5", "6"].map((key) => (
-            <span
-              key={key}
-              className="flex h-4 items-center justify-center rounded bg-white/10 text-[8px]"
-            >
-              {key}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
   );
 }
 

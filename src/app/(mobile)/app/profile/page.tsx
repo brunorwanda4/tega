@@ -86,9 +86,7 @@ export default function ProfilePage() {
                 {profile.name}
               </h2>
               <div className="flex flex-wrap items-center gap-2">
-                <p className="text-[14px] text-[#828282]">
-                  Main Contact
-                </p>
+                <p className="text-[14px] text-[#828282]">Main Contact</p>
                 <div className="bg-[#219653]/10 px-3 py-1 rounded-full">
                   <span className="text-[12px] font-bold text-[#219653]">
                     Verified

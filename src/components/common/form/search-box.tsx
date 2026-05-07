@@ -43,13 +43,13 @@ const SearchBox = ({
     }, debounceMs);
 
     setTypingTimeout(timeout);
-  }, [query]);
+  }, [query, debounceMs, live, onSearch, typingTimeout]);
 
   useEffect(() => {
     if (query.trim() === "") {
       onSearch("");
     }
-  }, [query]);
+  }, [query, onSearch]);
 
   return (
     <div className={cn("relative flex flex-row", className)}>

@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { GoXCircleFill } from "react-icons/go";
-import { LuBell, LuBus, LuPlay, LuUsers } from "react-icons/lu";
+import { LuBus, LuPlay, LuUsers } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import AppHeader from "../app/_components/app-header";
 

@@ -15,13 +15,12 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import AuthLoadingIcon from "../../_components/auth-loading-icon";
 import { type RegisterType, registerSchema } from "../_schema/register-schema";
 
 const RegisterForm = () => {
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
+  const [_success, setSuccess] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);

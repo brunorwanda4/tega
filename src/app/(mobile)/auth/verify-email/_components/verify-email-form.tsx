@@ -1,9 +1,8 @@
 "use client";
 
-import { OTPInput, REGEXP_ONLY_DIGITS, type SlotProps } from "input-otp";
+import { OTPInput, type SlotProps } from "input-otp";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import type { RegisterType } from "../../register/_schema/register-schema";

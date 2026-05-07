@@ -10,7 +10,6 @@ import {
   ShieldCheck,
   TicketCheck,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   getPrimaryContactMailto,
@@ -202,15 +201,6 @@ const TermsPages = () => {
     </main>
   );
 };
-
-function InfoRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between rounded-2xl border border-border bg-white px-4 py-3">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="text-sm font-semibold text-foreground">{value}</span>
-    </div>
-  );
-}
 
 function SideNote({
   icon: Icon,

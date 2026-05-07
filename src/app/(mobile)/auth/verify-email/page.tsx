@@ -9,10 +9,10 @@ const VerifyEmail = () => {
         <h3 className=" font-semibold text-3xl ">Verify Code</h3>
         <p className=" text-neutral text-sm">
           Please enter the code we just sent to <br />
-           email
+          email
         </p>
       </div>
-<VerifyEmailForm />
+      <VerifyEmailForm />
     </div>
   );
 };

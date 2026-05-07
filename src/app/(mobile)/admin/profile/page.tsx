@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
 import {
   LuChevronRight,
   LuCreditCard,
@@ -56,9 +55,7 @@ export default function ProfilePage() {
                 {primaryProjectContact.name}
               </h2>
               <div className="flex flex-wrap items-center gap-2">
-                <p className="text-[14px] text-[#828282]">
-                  Main Contact
-                </p>
+                <p className="text-[14px] text-[#828282]">Main Contact</p>
                 <div className="bg-[#219653]/10 px-3 py-1 rounded-full">
                   <span className="text-[12px] font-bold text-[#219653]">
                     Verified
@@ -103,7 +100,7 @@ export default function ProfilePage() {
           {menuItems.map((item, index) => (
             <button
               type="button"
-              key={index}
+              key={item.label}
               // onClick={() => router.push(item.link)}
               className={`w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors ${
                 index !== menuItems.length - 1

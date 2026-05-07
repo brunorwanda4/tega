@@ -13,7 +13,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { projectContacts } from "@/data/contacts";
 import {
   Select,
   SelectContent,
@@ -21,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { projectContacts } from "@/data/contacts";
 
 type DriverStatus = "Available" | "Busy";
 type DriverFilter = "all" | DriverStatus;

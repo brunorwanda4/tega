@@ -40,13 +40,10 @@ const MAX_RECENT = 5;
 
 // ─── Search Engine ────────────────────────────────────────────────────────────
 
-interface ParsedQuery {
-  mode: "from-to" | "keyword" | "amount";
-  from?: string; // when mode = from-to
-  to?: string; // when mode = from-to
-  keyword?: string; // when mode = keyword
-  amount?: string; // when mode = amount
-}
+type ParsedQuery =
+  | { mode: "from-to"; from: string; to: string }
+  | { mode: "keyword"; keyword: string }
+  | { mode: "amount"; amount: string };
 
 /**
  * Parses a raw search string into a structured query.
@@ -125,13 +122,13 @@ function scoreFromTo(route: FlatRoute, from: string, to: string): number {
 function matchRoute(route: FlatRoute, parsed: ParsedQuery): boolean {
   if (parsed.mode === "amount") {
     const digits = route.amount.replace(/\D/g, "");
-    return digits.includes(parsed.amount!);
+    return digits.includes(parsed.amount);
   }
   if (parsed.mode === "from-to") {
-    return scoreFromTo(route, parsed.from!, parsed.to!) > 0;
+    return scoreFromTo(route, parsed.from, parsed.to) > 0;
   }
   // keyword: match any field
-  const kw = parsed.keyword!;
+  const kw = parsed.keyword;
   return (
     route.from.toLowerCase().includes(kw) ||
     route.to.toLowerCase().includes(kw) ||
@@ -151,8 +148,8 @@ function searchRoutes(routes: FlatRoute[], raw: string): FlatRoute[] {
     // Sort by score descending so exact matches surface first
     return matched.sort(
       (a, b) =>
-        scoreFromTo(b, parsed.from!, parsed.to!) -
-        scoreFromTo(a, parsed.from!, parsed.to!),
+        scoreFromTo(b, parsed.from, parsed.to) -
+        scoreFromTo(a, parsed.from, parsed.to),
     );
   }
 

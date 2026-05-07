@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React from "react";
 import { LuCheck } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 

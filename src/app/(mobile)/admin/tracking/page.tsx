@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   FaCompass,
   FaCrosshairs,
@@ -57,6 +57,8 @@ export default function NavigationPage() {
             viewBox="0 0 390 440"
             xmlns="http://www.w3.org/2000/svg"
             preserveAspectRatio="xMidYMid meet"
+            role="img"
+            aria-label="Navigation route"
           >
             {/* Drop shadow */}
             <path
