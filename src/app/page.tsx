@@ -34,6 +34,11 @@ import {
   useRef,
   useState,
 } from "react";
+import {
+  getPrimaryContactMailto,
+  primaryProjectContact,
+  projectContacts,
+} from "@/data/contacts";
 
 const brand = {
   name: "Tega",
@@ -735,6 +740,38 @@ function SupportSection({ spotlight = false }: { spotlight?: boolean }) {
         </motion.div>
 
         <motion.div
+          variants={stagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          className="mt-8 grid gap-3 md:grid-cols-3"
+        >
+          {projectContacts.map((contact) => (
+            <motion.a
+              key={contact.email}
+              variants={fadeUp}
+              href={`mailto:${contact.email}?subject=${encodeURIComponent("Tega support")}`}
+              className="rounded-[1.25rem] border border-white/15 bg-white/10 p-4 text-left backdrop-blur transition-colors hover:bg-white/15"
+            >
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-bold">{contact.name}</p>
+                {contact.email === primaryProjectContact.email ? (
+                  <span className="rounded-full bg-white px-2 py-1 text-[11px] font-bold text-primary">
+                    Main
+                  </span>
+                ) : null}
+              </div>
+              <p className="mt-3 break-all text-sm text-white/80">
+                {contact.email}
+              </p>
+              <p className="mt-1 text-sm font-semibold text-white">
+                {contact.phone}
+              </p>
+            </motion.a>
+          ))}
+        </motion.div>
+
+        <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.3 }}
@@ -742,7 +779,7 @@ function SupportSection({ spotlight = false }: { spotlight?: boolean }) {
           className="mt-10 flex flex-col justify-center gap-3 sm:flex-row"
         >
           <ButtonLink
-            href="mailto:contact@tega.rw?subject=Tega%20partnership"
+            href={getPrimaryContactMailto("Tega partnership")}
             variant="light"
           >
             Contact us
@@ -751,7 +788,7 @@ function SupportSection({ spotlight = false }: { spotlight?: boolean }) {
             Request demo
           </ButtonLink>
           <ButtonLink
-            href="mailto:contact@tega.rw?subject=Tega%20MVP%20feedback"
+            href={getPrimaryContactMailto("Tega MVP feedback")}
             variant="secondary"
           >
             Give feedback
@@ -819,7 +856,7 @@ function Footer() {
             </p>
             <div className="mt-5 flex flex-col gap-2">
               <a
-                href="mailto:contact@tega.rw?subject=Tega%20partnership"
+                href={getPrimaryContactMailto("Tega partnership")}
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-sm bg-primary px-4 text-sm font-bold text-white transition-colors hover:bg-primary/90"
               >
                 Contact us

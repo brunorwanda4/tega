@@ -12,6 +12,10 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  getPrimaryContactMailto,
+  primaryProjectContact,
+} from "@/data/contacts";
 
 const termsSections = [
   {
@@ -181,11 +185,13 @@ const TermsPages = () => {
           <div>
             <p className="font-semibold">Questions about these terms?</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              Contact the Tega team for MVP, partnership, or testing questions.
+              Contact the Tega team for MVP, partnership, or testing questions
+              through {primaryProjectContact.email} or{" "}
+              {primaryProjectContact.phone}.
             </p>
           </div>
           <a
-            href="mailto:contact@tega.rw?subject=Tega%20terms%20question"
+            href={getPrimaryContactMailto("Tega terms question")}
             className="inline-flex h-11 items-center justify-center gap-2 rounded-sm bg-primary px-5 text-sm font-bold text-white transition-colors hover:bg-primary/90"
           >
             Contact Tega
