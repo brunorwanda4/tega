@@ -70,7 +70,7 @@ export default function ClientDetailsPage() {
         </div>
       </div>
 
-      <Card>
+      <Card className="py-8">
         <CardContent>
           <button
             type="button"
