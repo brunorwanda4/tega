@@ -16,10 +16,11 @@ import {
 } from "react-icons/lu";
 import type { RegisterType } from "@/app/(mobile)/auth/register/_schema/register-schema";
 import { Button } from "@/components/ui/button";
+import { primaryProjectContact } from "@/data/contacts";
 
 const defaultProfile = {
-  name: "Allen Mugisha",
-  email: "Mugisha@tega.rw",
+  name: primaryProjectContact.name,
+  email: primaryProjectContact.email,
 };
 
 export default function ProfilePage() {
@@ -86,7 +87,7 @@ export default function ProfilePage() {
               </h2>
               <div className="flex flex-wrap items-center gap-2">
                 <p className="text-[14px] text-[#828282]">
-                  Full-stack Developer
+                  Main Contact
                 </p>
                 <div className="bg-[#219653]/10 px-3 py-1 rounded-full">
                   <span className="text-[12px] font-bold text-[#219653]">
@@ -121,7 +122,7 @@ export default function ProfilePage() {
             <div>
               <p className="text-[12px] text-[#828282]">Phone Number</p>
               <p className="text-[15px] font-semibold text-[#1F1F24]">
-                +250 788 000 000
+                {primaryProjectContact.phone}
               </p>
             </div>
           </div>

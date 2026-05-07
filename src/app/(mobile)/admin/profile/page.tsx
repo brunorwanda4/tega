@@ -15,6 +15,7 @@ import {
   LuUser,
 } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
+import { primaryProjectContact } from "@/data/contacts";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -45,18 +46,18 @@ export default function ProfilePage() {
             <div className="relative size-20 rounded-full overflow-hidden border-4 border-[#F3F4F6]">
               <Image
                 src="/images/reponce.jpg"
-                alt="Rwanda Mugisha"
+                alt={primaryProjectContact.name}
                 fill
                 className="object-cover"
               />
             </div>
             <div className="flex-1">
               <h2 className="text-lg font-bold text-[#1F1F24]">
-                Allen Mugisha
+                {primaryProjectContact.name}
               </h2>
               <div className="flex flex-wrap items-center gap-2">
                 <p className="text-[14px] text-[#828282]">
-                  Full-stack Developer
+                  Main Contact
                 </p>
                 <div className="bg-[#219653]/10 px-3 py-1 rounded-full">
                   <span className="text-[12px] font-bold text-[#219653]">
@@ -80,7 +81,7 @@ export default function ProfilePage() {
             <div>
               <p className="text-[12px] text-[#828282]">Email Address</p>
               <p className="text-[15px] font-semibold text-[#1F1F24]">
-                Mugisha@tega.rw
+                {primaryProjectContact.email}
               </p>
             </div>
           </div>
@@ -91,7 +92,7 @@ export default function ProfilePage() {
             <div>
               <p className="text-[12px] text-[#828282]">Phone Number</p>
               <p className="text-[15px] font-semibold text-[#1F1F24]">
-                +250 788 000 000
+                {primaryProjectContact.phone}
               </p>
             </div>
           </div>

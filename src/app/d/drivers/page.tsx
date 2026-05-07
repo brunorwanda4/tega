@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { projectContacts } from "@/data/contacts";
 import {
   Select,
   SelectContent,
@@ -39,8 +40,8 @@ const drivers: Driver[] = [
   {
     id: 1,
     name: "Alex Parker",
-    email: "alex@gmail.com",
-    phone: "+250 784 45 343",
+    email: projectContacts[0].email,
+    phone: projectContacts[0].phone,
     company: "Volcano Express",
     rating: 5,
     trips: 128,
@@ -49,8 +50,8 @@ const drivers: Driver[] = [
   {
     id: 2,
     name: "Jean Claude",
-    email: "jean@gmail.com",
-    phone: "+250 788 123 456",
+    email: projectContacts[1].email,
+    phone: projectContacts[1].phone,
     company: "Kigali Transit",
     rating: 4,
     trips: 92,
@@ -59,8 +60,8 @@ const drivers: Driver[] = [
   {
     id: 3,
     name: "Eric Mutoni",
-    email: "eric@gmail.com",
-    phone: "+250 789 654 321",
+    email: projectContacts[2].email,
+    phone: projectContacts[2].phone,
     company: "Rwanda Moves",
     rating: 5,
     trips: 140,
@@ -69,8 +70,8 @@ const drivers: Driver[] = [
   {
     id: 4,
     name: "Patrick Niyonsaba",
-    email: "patrick@gmail.com",
-    phone: "+250 783 222 111",
+    email: projectContacts[0].email,
+    phone: projectContacts[0].phone,
     company: "City Riders",
     rating: 3,
     trips: 63,
@@ -79,8 +80,8 @@ const drivers: Driver[] = [
   {
     id: 5,
     name: "Marie Uwera",
-    email: "marie@drivers.rw",
-    phone: "+250 781 900 225",
+    email: projectContacts[1].email,
+    phone: projectContacts[1].phone,
     company: "Horizon Express",
     rating: 5,
     trips: 156,
@@ -89,8 +90,8 @@ const drivers: Driver[] = [
   {
     id: 6,
     name: "Bruno Kabaka",
-    email: "bruno@drivers.rw",
-    phone: "+250 786 982 445",
+    email: projectContacts[2].email,
+    phone: projectContacts[2].phone,
     company: "Virunga Coach",
     rating: 4,
     trips: 87,

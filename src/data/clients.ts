@@ -33,11 +33,11 @@ export const clients: Client[] = [
   {
     id: "1",
     name: "Beatrice Carrot",
-    email: "beatrice.carrot@gmail.com",
+    email: "Ngabonzizabrunel@gmail.com",
     gender: "Female",
     location: "Rwanda",
     joined: "04-11-2024",
-    phone: "(+250) 789-324-563",
+    phone: "0785190645",
     image: "https://i.pravatar.cc/150?u=client-1",
     stats: {
       bookings: 12,
@@ -71,11 +71,11 @@ export const clients: Client[] = [
   {
     id: "2",
     name: "Andy Melvin",
-    email: "andy.melvin@gmail.com",
+    email: "ishimwereponse5@gmail.com",
     gender: "Male",
     location: "Rwanda",
     joined: "12-10-2024",
-    phone: "(+250) 788-120-445",
+    phone: "0783599232",
     image: "https://i.pravatar.cc/150?u=client-2",
     stats: {
       bookings: 8,
@@ -99,11 +99,11 @@ export const clients: Client[] = [
   {
     id: "3",
     name: "Iradukunda Marie",
-    email: "iradukunda.marie@gmail.com",
+    email: "mudasumbwaleilla@gmail.com",
     gender: "Female",
     location: "Rwanda",
     joined: "29-09-2024",
-    phone: "(+250) 781-904-225",
+    phone: "0794969163",
     image: "https://i.pravatar.cc/150?u=client-3",
     stats: {
       bookings: 16,
@@ -137,11 +137,11 @@ export const clients: Client[] = [
   {
     id: "4",
     name: "Mugisha Rwanda",
-    email: "mugisha.rwanda@gmail.com",
+    email: "Ngabonzizabrunel@gmail.com",
     gender: "Male",
     location: "Rwanda",
     joined: "18-08-2024",
-    phone: "(+250) 783-222-111",
+    phone: "0785190645",
     image: "https://i.pravatar.cc/150?u=client-4",
     stats: {
       bookings: 5,
@@ -165,11 +165,11 @@ export const clients: Client[] = [
   {
     id: "5",
     name: "John Nathanael",
-    email: "john.nathanael@gmail.com",
+    email: "ishimwereponse5@gmail.com",
     gender: "Male",
     location: "Uganda",
     joined: "05-08-2024",
-    phone: "(+256) 702-481-990",
+    phone: "0783599232",
     image: "https://i.pravatar.cc/150?u=client-5",
     stats: {
       bookings: 10,
@@ -193,11 +193,11 @@ export const clients: Client[] = [
   {
     id: "6",
     name: "Alex Mugabe",
-    email: "alex.mugabe@gmail.com",
+    email: "mudasumbwaleilla@gmail.com",
     gender: "Male",
     location: "Rwanda",
     joined: "21-07-2024",
-    phone: "(+250) 786-982-445",
+    phone: "0794969163",
     image: "https://i.pravatar.cc/150?u=client-6",
     stats: {
       bookings: 14,

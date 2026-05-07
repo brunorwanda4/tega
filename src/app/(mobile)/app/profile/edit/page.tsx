@@ -4,11 +4,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { primaryProjectContact } from "@/data/contacts";
 import AppGoBackButton from "../../_components/common/go-back-button";
 
 const defaultProfile = {
-  name: "Allen Mugisha",
-  email: "Mugisha@tega.rw",
+  name: primaryProjectContact.name,
+  email: primaryProjectContact.email,
 };
 
 export default function EditProfilePage() {

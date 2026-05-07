@@ -1,12 +1,13 @@
 import { CreditCard, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { primaryProjectContact } from "@/data/contacts";
 import AppGoBackButton from "../../_components/common/go-back-button";
 
 const paymentMethods = [
   {
     id: "momo",
     name: "MTN Mobile Money",
-    detail: "+250 788 000 000",
+    detail: primaryProjectContact.phone,
   },
   {
     id: "card",
