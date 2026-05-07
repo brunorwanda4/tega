@@ -34,6 +34,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { PWAInstallPrompt } from "@/components/common/pwa-install-prompt";
 
 const brand = {
   name: "Tega",
@@ -263,6 +264,18 @@ export default function Home() {
   const spotlightTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    const isStandalone = window.matchMedia(
+      "(display-mode: standalone)",
+    ).matches;
+    const isIOSStandalone =
+      (window.navigator as Navigator & { standalone?: boolean }).standalone ===
+      true;
+
+    if ((isStandalone || isIOSStandalone) && window.location.pathname === "/") {
+      window.location.replace("/auth/login");
+      return;
+    }
+
     return () => {
       if (spotlightTimer.current) {
         clearTimeout(spotlightTimer.current);
@@ -308,6 +321,7 @@ export default function Home() {
       <MVPSection spotlight={spotlightSection === "mvp"} />
       <SupportSection spotlight={spotlightSection === "support"} />
       <Footer />
+      <PWAInstallPrompt />
     </main>
   );
 }

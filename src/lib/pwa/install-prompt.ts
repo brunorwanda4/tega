@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
   userChoice: Promise<{
-    outcome: 'accepted' | 'dismissed';
+    outcome: "accepted" | "dismissed";
     platform: string;
   }>;
 }
@@ -17,15 +17,17 @@ export function capturePrompt(event: BeforeInstallPromptEvent): void {
   deferredPrompt = event;
 }
 
-export async function showPrompt(): Promise<'accepted' | 'dismissed' | 'unavailable'> {
+export async function showPrompt(): Promise<
+  "accepted" | "dismissed" | "unavailable"
+> {
   if (!deferredPrompt) {
-    return 'unavailable';
+    return "unavailable";
   }
 
   await deferredPrompt.prompt();
   const { outcome } = await deferredPrompt.userChoice;
   deferredPrompt = null;
-  
+
   return outcome;
 }
 
@@ -34,14 +36,18 @@ export function isInstallable(): boolean {
 }
 
 export function isInstalled(): boolean {
-  if (typeof window === 'undefined') return false;
-  
+  if (typeof window === "undefined") {
+    return false;
+  }
+
   // Check if running in standalone mode
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-  
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches;
+
   // Check for iOS standalone mode
-  const isIOSStandalone = (window.navigator as any).standalone === true;
-  
+  const isIOSStandalone =
+    (window.navigator as Navigator & { standalone?: boolean }).standalone ===
+    true;
+
   return isStandalone || isIOSStandalone;
 }
 
@@ -52,6 +58,7 @@ export function useInstallPrompt() {
   useEffect(() => {
     // Check if already installed
     setIsAppInstalled(isInstalled());
+    setCanInstall(isInstallable());
 
     // Listen for install prompt event
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -65,20 +72,24 @@ export function useInstallPrompt() {
       setCanInstall(false);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', handleAppInstalled);
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt,
+      );
+      window.removeEventListener("appinstalled", handleAppInstalled);
     };
   }, []);
 
   const promptInstall = async () => {
     const outcome = await showPrompt();
-    if (outcome === 'accepted') {
+    if (outcome !== "unavailable") {
       setCanInstall(false);
     }
+    return outcome;
   };
 
   return {
