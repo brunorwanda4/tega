@@ -152,7 +152,9 @@ const ClientsPage = () => {
               </TableHead>
               <TableHead className="text-primary-content">Gender</TableHead>
               <TableHead className="text-primary-content">Location</TableHead>
-              <TableHead className="text-primary-content">Joined date</TableHead>
+              <TableHead className="text-primary-content">
+                Joined date
+              </TableHead>
               <TableHead className="text-primary-content text-right">
                 Activity
               </TableHead>
@@ -171,7 +173,9 @@ const ClientsPage = () => {
                   >
                     <Avatar className="size-8">
                       <AvatarImage src={client.image} alt={client.name} />
-                      <AvatarFallback>{getInitials(client.name)}</AvatarFallback>
+                      <AvatarFallback>
+                        {getInitials(client.name)}
+                      </AvatarFallback>
                     </Avatar>
                     {client.name}
                   </Link>

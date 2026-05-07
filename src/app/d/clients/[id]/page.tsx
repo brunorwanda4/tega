@@ -1,78 +1,89 @@
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
 import { BiMessageAltError } from "react-icons/bi";
-import { useRouter } from "next/navigation";
-
 import {
-  LuChevronDown,
   LuChevronLeft,
   LuChevronRight,
   LuDownload,
   LuExternalLink,
   LuHistory,
-  LuLoaderCircle,
   LuMessageSquare,
   LuPhone,
 } from "react-icons/lu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
-// Mock Client Data based on your Dashboard UI
-const clientData = {
-  name: "John Doe",
-  joined: "21/07/2024",
-  email: "alexparker@gmail.com",
-  phone: "(+250)789-324-56-34",
-  country: "Rwanda",
-  stats: {
-    bookings: 12,
-    bookingsIncrease: "2.5%",
-    reports: 2,
-    reportsDate: "21/07/2021",
-  },
-};
+import { getClientById, getInitials } from "@/data/clients";
 
 export default function ClientDetailsPage() {
   const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const clientData = getClientById(params.id);
+
+  if (!clientData) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
+            <h1 className="text-xl font-bold text-[#1F1F24]">
+              Client not found
+            </h1>
+            <p className="text-sm text-gray-500">
+              The selected client does not exist in the current client list.
+            </p>
+            <Button
+              className="rounded-xl bg-[#1F1F24] text-white"
+              onClick={() => router.push("/d/clients")}
+            >
+              Back to clients
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="">
-      {/* 1. Top Action Bar */}
+    <div>
       <div className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:w-72">
           <input
             type="text"
-            placeholder="Search a driver"
-            className="w-full h-11 pl-4 pr-10 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-1 focus:ring-gray-300"
+            placeholder="Search a client"
+            className="h-11 w-full rounded-lg border border-gray-200 pl-4 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-gray-300"
           />
         </div>
         <div className="flex flex-wrap gap-3">
           <Button
             variant="outline"
-            className="h-11 px-5 border-gray-900 text-gray-900 font-bold flex gap-2 rounded-xl"
+            className="flex h-11 gap-2 rounded-xl border-gray-900 px-5 font-bold text-gray-900"
           >
-            <LuDownload className="size-5" /> Export CV
+            <LuDownload className="size-5" /> Export profile
           </Button>
-          <Button className="h-11 px-5 bg-[#1F1F24] text-white font-bold flex gap-2 rounded-xl">
-            All drivers <LuChevronDown className="size-5" />
+          <Button
+            className="h-11 rounded-xl bg-[#1F1F24] px-5 font-bold text-white"
+            onClick={() => router.push("/d/clients")}
+          >
+            All clients
           </Button>
         </div>
       </div>
+
       <Card>
         <CardContent>
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-gray-900 font-bold mb-8 hover:opacity-70 transition-opacity"
+            className="mb-8 flex items-center gap-2 font-bold text-gray-900 transition-opacity hover:opacity-70"
           >
             <LuChevronLeft className="size-5" /> Back
           </button>
 
           <div className="flex flex-col gap-6 xl:flex-row xl:items-center">
             <Avatar className="size-24 sm:size-32">
-              <AvatarImage src={`https://i.pravatar.cc/150?u=45`} />
-              <AvatarFallback>JD</AvatarFallback>
+              <AvatarImage src={clientData.image} alt={clientData.name} />
+              <AvatarFallback>{getInitials(clientData.name)}</AvatarFallback>
             </Avatar>
 
             <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -81,7 +92,7 @@ export default function ClientDetailsPage() {
                   <h1 className="mb-1 text-2xl font-bold text-[#1F1F24] sm:text-3xl">
                     {clientData.name}
                   </h1>
-                  <p className="text-gray-400 text-sm font-medium">
+                  <p className="font-medium text-gray-400 text-sm">
                     Joined {clientData.joined}
                   </p>
                 </div>
@@ -94,74 +105,74 @@ export default function ClientDetailsPage() {
                   </Button>
                 </div>
               </div>
-              {/*contacts*/}
 
               <div className="grid gap-4 pt-2 sm:grid-cols-3">
                 <div>
-                  <p className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-1">
+                  <p className="mb-1 font-medium text-gray-400 text-sm uppercase tracking-wider">
                     Email
                   </p>
                   <p
                     title={clientData.email}
-                    className="text-[#1F1F24] font-medium line-clamp-1"
+                    className="line-clamp-1 font-medium text-[#1F1F24]"
                   >
                     {clientData.email}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-1">
+                  <p className="mb-1 font-medium text-gray-400 text-sm uppercase tracking-wider">
                     Telephone
                   </p>
                   <p
                     title={clientData.phone}
-                    className="text-[#1F1F24] font-medium line-clamp-1"
+                    className="line-clamp-1 font-medium text-[#1F1F24]"
                   >
                     {clientData.phone}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-1">
+                  <p className="mb-1 font-medium text-gray-400 text-sm uppercase tracking-wider">
                     Country
                   </p>
                   <p
-                    title={clientData.country}
-                    className="text-[#1F1F24] font-medium"
+                    title={clientData.location}
+                    className="font-medium text-[#1F1F24]"
                   >
-                    {clientData.country}
+                    {clientData.location}
                   </p>
                 </div>
               </div>
             </div>
+
             <div className="grid w-full gap-4 sm:grid-cols-2 xl:w-auto">
               <div className="flex gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-                <div className="size-12 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100">
+                <div className="flex size-12 items-center justify-center rounded-xl border border-gray-100 bg-gray-50">
                   <LuHistory className="size-6 text-gray-400" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-[#1F1F24]">
                     {clientData.stats.bookings}
                   </p>
-                  <p className="text-[10px] text-gray-400 font-bold">
+                  <p className="font-bold text-[10px] text-gray-400">
                     Bookings placed
                   </p>
-                  <p className="text-[10px] text-green-500 font-bold">
-                    ↑{clientData.stats.bookingsIncrease} increase
+                  <p className="font-bold text-[10px] text-green-500">
+                    +{clientData.stats.bookingsIncrease} increase
                   </p>
                 </div>
               </div>
 
               <div className="flex gap-4 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-                <div className="size-12 rounded-xl bg-gray-50 flex items-center justify-center border border-gray-100">
+                <div className="flex size-12 items-center justify-center rounded-xl border border-gray-100 bg-gray-50">
                   <BiMessageAltError className="size-6 text-gray-400" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold text-[#1F1F24]">
                     {clientData.stats.reports}
                   </p>
-                  <p className="text-[10px] text-gray-400 font-bold">
+                  <p className="font-bold text-[10px] text-gray-400">
                     Drivers reported
                   </p>
-                  <p className="text-[10px] text-blue-500 font-bold underline cursor-pointer">
+                  <p className="cursor-pointer font-bold text-[10px] text-blue-500 underline">
                     Last updated {clientData.stats.reportsDate}
                   </p>
                 </div>
@@ -169,13 +180,12 @@ export default function ClientDetailsPage() {
             </div>
           </div>
 
-          {/* 4. Travel History Table */}
-          <div className="space-y-6 mt-12">
+          <div className="mt-12 space-y-6">
             <h2 className="text-xl font-bold text-[#1F1F24]">Travel history</h2>
 
             <div className="overflow-x-auto rounded-2xl border border-gray-100">
-              <table className="min-w-[980px] w-full border-collapse text-left">
-                <thead className="bg-[#1F1F24] text-white text-sm font-medium">
+              <table className="w-full min-w-[980px] border-collapse text-left">
+                <thead className="bg-[#1F1F24] font-medium text-sm text-white">
                   <tr>
                     <th className="p-5">Driver names</th>
                     <th className="p-5">Date & Time</th>
@@ -187,86 +197,88 @@ export default function ClientDetailsPage() {
                   </tr>
                 </thead>
                 <tbody className="text-sm">
-                  {[1, 2, 3, 4, 5, 6].map((row, index) => (
+                  {clientData.travelHistory.map((trip, index) => (
                     <tr
-                      key={index}
+                      key={trip.id}
                       className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"} border-b border-gray-100`}
                     >
-                      <td className="p-5 flex items-center gap-3">
-                        {" "}
+                      <td className="flex items-center gap-3 p-5">
                         <Avatar>
                           <AvatarImage
-                            src={`https://i.pravatar.cc/150?u=${index + 100}`}
+                            src={trip.driverAvatar}
+                            alt={trip.driverName}
                           />
-                          <AvatarFallback>AP</AvatarFallback>
+                          <AvatarFallback>
+                            {getInitials(trip.driverName)}
+                          </AvatarFallback>
                         </Avatar>
                         <span className="font-bold text-gray-900">
-                          Alex Parker
+                          {trip.driverName}
                         </span>
                       </td>
-                      <td className="p-5 text-gray-500 font-medium">
-                        04-11-2024, 14:00
+                      <td className="p-5 font-medium text-gray-500">
+                        {trip.dateTime}
                       </td>
-                      <td className=" text-gray-900 font-bold flex items-center gap-1">
-                        Mariot Hotel Kigali{" "}
-                        <LuExternalLink className="size-4 text-blue-500 cursor-pointer" />
+                      <td className="p-5 font-bold text-gray-900">
+                        <span className="inline-flex items-center gap-1">
+                          {trip.pickup}
+                          <LuExternalLink className="size-4 cursor-pointer text-blue-500" />
+                        </span>
                       </td>
-                      <td className=" text-gray-900 font-bold flex-center">
-                        Mariot Hotel Kigali{" "}
+                      <td className="p-5 font-bold text-gray-900">
+                        {trip.destination}
                       </td>
-                      <td className="p-5 font-bold text-gray-900">3000 FRW</td>
-                      <td className="p-5 text-gray-500 font-medium flex items-center gap-1">
-                        #34531{" "}
-                        <LuExternalLink className="size-4 text-blue-500 cursor-pointer" />
+                      <td className="p-5 font-bold text-gray-900">
+                        {trip.payment}
                       </td>
-
+                      <td className="p-5 font-medium text-gray-500">
+                        <span className="inline-flex items-center gap-1">
+                          {trip.receipt}
+                          <LuExternalLink className="size-4 cursor-pointer text-blue-500" />
+                        </span>
+                      </td>
                       <td className="p-5">
                         <Button
                           variant="outline"
-                          className="rounded-lg h-8 px-4 text-xs font-bold border-gray-900 text-gray-900 hover:bg-gray-50"
+                          className="h-8 rounded-lg border-gray-900 px-4 font-bold text-gray-900 text-xs hover:bg-gray-50"
                         >
                           View
                         </Button>
                       </td>
                     </tr>
                   ))}
+
+                  {clientData.travelHistory.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="p-8 text-center text-gray-500">
+                        This client has no travel history yet.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
 
-            {/* 5. Pagination */}
             <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-gray-500 font-bold">
-                Page <span className="text-gray-900">1</span> of 6
+              <p className="font-bold text-gray-500 text-sm">
+                Page <span className="text-gray-900">1</span> of 1
               </p>
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
-                  className="size-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"
+                  className="flex size-8 items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50"
                 >
                   <LuChevronLeft className="size-4" />
                 </button>
                 <button
                   type="button"
-                  className="size-8 rounded-full bg-[#1F1F24] text-white flex items-center justify-center text-xs font-bold"
+                  className="flex size-8 items-center justify-center rounded-full bg-[#1F1F24] font-bold text-white text-xs"
                 >
                   1
                 </button>
                 <button
                   type="button"
-                  className="size-8 rounded-full border border-gray-200 text-gray-500 flex items-center justify-center text-xs font-bold hover:bg-gray-50"
-                >
-                  2
-                </button>
-                <button
-                  type="button"
-                  className="size-8 rounded-full border border-gray-200 text-gray-500 flex items-center justify-center text-xs font-bold hover:bg-gray-50"
-                >
-                  3
-                </button>
-                <button
-                  type="button"
-                  className="size-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50"
+                  className="flex size-8 items-center justify-center rounded-full border border-gray-200 hover:bg-gray-50"
                 >
                   <LuChevronRight className="size-4" />
                 </button>
