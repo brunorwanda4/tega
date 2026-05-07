@@ -71,6 +71,7 @@ const pwaConfig = {
 
 const nextConfig: NextConfig = {
   /* config options here */
+  output: "standalone",
   reactCompiler: true,
   turbopack: {}, // Silence Turbopack warning for webpack-based PWA plugin
   images: {

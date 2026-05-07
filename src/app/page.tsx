@@ -34,7 +34,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { PWAInstallPrompt } from "@/components/common/pwa-install-prompt";
 
 const brand = {
   name: "Tega",
@@ -321,7 +320,6 @@ export default function Home() {
       <MVPSection spotlight={spotlightSection === "mvp"} />
       <SupportSection spotlight={spotlightSection === "support"} />
       <Footer />
-      <PWAInstallPrompt />
     </main>
   );
 }

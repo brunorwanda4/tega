@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
+
+import { PWAInstallPrompt } from "@/components/common/pwa-install-prompt";
 import {
   fontBricolage,
   fontGeistMono,
   fontGeistSans,
   fontInter,
 } from "@/lib/fonts/fonts";
-
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -96,6 +97,7 @@ export default function RootLayout({
         className={`${fontGeistSans.variable} ${fontGeistMono.variable} ${fontBricolage.variable} ${fontInter.variable} antialiased`}
       >
         {children}
+        <PWAInstallPrompt />
       </body>
     </html>
   );
