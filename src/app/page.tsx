@@ -413,16 +413,50 @@ function HeroSection() {
 
         {/*<HeroProductStage />*/}
       </div>
-      <div className="">
-        <div className="relative h-[28rem] w-90 ml-12">
+      <div className="relative flex min-h-[24rem] flex-1 items-center justify-center overflow-hidden px-6 py-8 md:min-h-[30rem] md:px-10">
+        <motion.div
+          aria-hidden="true"
+          className="absolute bottom-12 h-16 w-[120%] max-w-[42rem] rounded-[100%] bg-primary/10 blur-2xl"
+          animate={{ scaleX: [0.92, 1.08, 0.92], opacity: [0.34, 0.5, 0.34] }}
+          transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          aria-hidden="true"
+          className="absolute bottom-14 h-2 w-[92%] max-w-[36rem] overflow-hidden rounded-full bg-foreground/10"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45, duration: 0.5 }}
+        >
+          <motion.div
+            className="h-full w-[42%] rounded-full bg-[repeating-linear-gradient(90deg,transparent_0_18px,rgba(255,255,255,0.9)_18px_42px,transparent_42px_62px)]"
+            animate={{ x: ["-45%", "245%"] }}
+            transition={{ duration: 1.35, repeat: Infinity, ease: "linear" }}
+          />
+        </motion.div>
+        <motion.div
+          className="relative h-[22rem] w-full max-w-[31rem] sm:h-[27rem]"
+          initial={{ opacity: 0, x: 110, rotate: 1.5 }}
+          animate={{
+            opacity: 1,
+            x: 0,
+            y: [0, -9, 0],
+            rotate: [0, -0.4, 0.35, 0],
+          }}
+          transition={{
+            opacity: { duration: 0.55, ease: "easeOut" },
+            x: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+            y: { duration: 3.2, repeat: Infinity, ease: "easeInOut" },
+            rotate: { duration: 3.2, repeat: Infinity, ease: "easeInOut" },
+          }}
+        >
           <Image
             src={"/svg/bus.svg"}
-            alt="home page"
+            alt="Illustration of a Tega bus"
             fill
             priority
-            className=" object-contain rounded-2xl"
+            className="object-contain drop-shadow-[0_28px_45px_rgba(15,23,42,0.22)]"
           />
-        </div>
+        </motion.div>
       </div>
     </section>
   );
