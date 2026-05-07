@@ -2,13 +2,12 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 import { FaFileCsv } from "react-icons/fa";
 import {
   FiChevronLeft,
   FiChevronRight,
   FiDownload,
-  FiExternalLink,
   FiPlus,
   FiSearch,
 } from "react-icons/fi";
@@ -38,31 +37,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-// Types
-interface Client {
-  id: string;
-  name: string;
-  email: string;
-  gender: "Male" | "Female";
-  location: string;
-  date: string;
-  image: string;
-}
+import { clients, getInitials } from "@/data/clients";
 
 const ClientsPage = () => {
-  const [clients, setClients] = useState<Client[]>([
-    {
-      id: "1",
-      name: "Beatrice Carrot",
-      email: "andy@gmail.com",
-      gender: "Male",
-      location: "Rwanda",
-      date: "04-11-2024",
-      image: "https://i.pravatar.cc/150?u=1",
-    },
-    // Repeat or map for more rows as per image...
-  ]);
+  const [search, setSearch] = useState("");
+
+  const filteredClients = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
+    if (!query) return clients;
+
+    return clients.filter((client) =>
+      [
+        client.name,
+        client.email,
+        client.gender,
+        client.location,
+        client.joined,
+        client.phone,
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(query),
+    );
+  }, [search]);
 
   return (
     <motion.div
@@ -76,6 +74,8 @@ const ClientsPage = () => {
           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/50" />
           <Input
             placeholder="Search a client"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
             className="pl-10 bg-base-100 border-base-300 focus:ring-primary"
           />
         </div>
@@ -99,8 +99,11 @@ const ClientsPage = () => {
                   type="email"
                   className="bg-base-200"
                 />
-                <select className="select select-bordered w-full bg-base-200">
-                  <option disabled selected>
+                <select
+                  defaultValue=""
+                  className="select select-bordered w-full bg-base-200"
+                >
+                  <option disabled value="">
                     Select Gender
                   </option>
                   <option>Male</option>
@@ -149,47 +152,58 @@ const ClientsPage = () => {
               </TableHead>
               <TableHead className="text-primary-content">Gender</TableHead>
               <TableHead className="text-primary-content">Location</TableHead>
-              <TableHead className="text-primary-content">04-11-2024</TableHead>
+              <TableHead className="text-primary-content">Joined date</TableHead>
               <TableHead className="text-primary-content text-right">
                 Activity
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {[...Array(10)].map((_, i) => (
+            {filteredClients.map((client, i) => (
               <TableRow
-                key={`${i}-123${i + 9}`}
+                key={client.id}
                 className={i % 2 === 0 ? "bg-base-100" : "bg-base-200/50"}
               >
                 <TableCell className="font-medium">
                   <Link
-                    href={`/d/clients/${i + 1}`}
+                    href={`/d/clients/${client.id}`}
                     className="flex items-center gap-3"
                   >
                     <Avatar className="size-8">
-                      <AvatarImage src={`https://i.pravatar.cc/150?u=${i}`} />
-                      <AvatarFallback>BC</AvatarFallback>
+                      <AvatarImage src={client.image} alt={client.name} />
+                      <AvatarFallback>{getInitials(client.name)}</AvatarFallback>
                     </Avatar>
-                    Beatrice Carrot
+                    {client.name}
                   </Link>
                 </TableCell>
                 <TableCell className="text-base-content/70">
-                  andy@gmail.com
+                  {client.email}
                 </TableCell>
-                <TableCell>Male</TableCell>
-                <TableCell>Rwanda</TableCell>
-                <TableCell>04-11-2024</TableCell>
+                <TableCell>{client.gender}</TableCell>
+                <TableCell>{client.location}</TableCell>
+                <TableCell>{client.joined}</TableCell>
                 <TableCell className="text-right">
                   <Button
+                    asChild
                     variant="outline"
                     size="sm"
                     className="rounded-full px-6 hover:bg-neutral hover:text-neutral-content"
                   >
-                    View
+                    <Link href={`/d/clients/${client.id}`}>View</Link>
                   </Button>
                 </TableCell>
               </TableRow>
             ))}
+            {filteredClients.length === 0 && (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="py-8 text-center text-base-content/60"
+                >
+                  No clients match your search.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
@@ -197,7 +211,7 @@ const ClientsPage = () => {
       {/* Pagination */}
       <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm font-medium">
-          Page <span className="text-primary">1</span> of 12
+          Page <span className="text-primary">1</span> of 1
         </p>
         <div className="flex flex-wrap items-center gap-2">
           <Button
