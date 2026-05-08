@@ -50,7 +50,6 @@ logs/
 *.log
 
 # env files (can opt-in for committing if needed)
-.env*
 !.env.example
 !.env.sample
 !.env.template
@@ -65,7 +64,6 @@ logs/
 next-env.d.ts
 
 # local editor and OS files
-.vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -93,3 +91,4 @@ temp/
 # prisma
 prisma/*.db
 prisma/*.db-journal
+config.bat

@@ -18,7 +18,7 @@ import type { RegisterType } from "@/app/(mobile)/auth/register/_schema/register
 import { Button } from "@/components/ui/button";
 import { primaryProjectContact } from "@/data/contacts";
 
-const defaultProfile = {
+const defaultProfile: { name: string; email: string } = {
   name: primaryProjectContact.name,
   email: primaryProjectContact.email,
 };
