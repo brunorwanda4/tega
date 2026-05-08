@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { primaryProjectContact } from "@/data/contacts";
 import AppGoBackButton from "../../_components/common/go-back-button";
 
-const defaultProfile = {
+const defaultProfile: { name: string; email: string } = {
   name: primaryProjectContact.name,
   email: primaryProjectContact.email,
 };
